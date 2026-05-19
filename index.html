@@ -2641,6 +2641,98 @@ body.is-dragging #canvas-host canvas { cursor: grabbing; }
 /* GAP 15 — mix-blend-mode: screen on chrome wordmark */
 .home-mark .wordmark { mix-blend-mode: screen; }
 
+/* ═══════════════════════════════════════════════════════════════
+   V23 — HOTPOINT MARKERS (3D-projected interactive indicators)
+   Float at world positions of coin, person, fulcrum — updated
+   every frame via camera.project() in the animation loop.
+   ═══════════════════════════════════════════════════════════════ */
+.hotpoint-marker {
+  position: fixed;
+  z-index: 8;
+  pointer-events: auto;
+  /* transform: translate(-50%, -50%) set inline via JS */
+  will-change: left, top;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.hotpoint-marker.visible {
+  display: flex;
+  opacity: 1;
+}
+body.transitioning .hotpoint-marker {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.hotpoint-dot {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(201,169,110,0.85);
+  box-shadow: 0 0 6px rgba(201,169,110,0.7), 0 0 14px rgba(201,169,110,0.3);
+  z-index: 2;
+}
+@keyframes hotpoint-breathe {
+  0%, 100% { transform: scale(1);    opacity: 0.9; }
+  50%       { transform: scale(1.18); opacity: 1;   }
+}
+.hotpoint-dot { animation: hotpoint-breathe 2.2s ease-in-out infinite; }
+
+.hotpoint-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(201,169,110,0.35);
+  animation: hotpoint-ring-expand 2.2s ease-out infinite;
+}
+.hotpoint-ring-2 { animation-delay: 1.1s; }
+@keyframes hotpoint-ring-expand {
+  0%   { width: 10px; height: 10px; opacity: 0.7; }
+  100% { width: 36px; height: 36px; opacity: 0;   }
+}
+
+/* Tooltip label */
+.hotpoint-tip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(6,9,10,0.95);
+  border: 1px solid rgba(201,169,110,0.28);
+  padding: 4px 10px 3px;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.24em;
+  color: rgba(201,169,110,0.8);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  transform: translateX(-50%) translateY(4px);
+  text-transform: uppercase;
+}
+@media (hover: hover) {
+  .hotpoint-marker:hover .hotpoint-tip {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Substep dash stagger entry animation */
+@keyframes substep-slide-in {
+  from { transform: scaleX(0); opacity: 0; }
+  to   { transform: scaleX(1); opacity: 1; }
+}
+.substep-dash {
+  transform-origin: left center;
+  animation: substep-slide-in 0.35s cubic-bezier(0.215,0.61,0.355,1) both;
+}
+/* Stagger each dash by index — set inline by JS */
+
 /* ───────────────────────────────────────────────────────────────
    GAP 27 — will-change on animated elements
    ─────────────────────────────────────────────────────────────── */
@@ -4238,6 +4330,35 @@ textarea.engage-input-v2 { resize: none; line-height: 1.6; }
 
   <!-- V20: Film grain overlay — procedural LCG noise canvas, z-index:3, mix-blend-mode:overlay -->
   <canvas id="pcm-grain" aria-hidden="true"></canvas>
+
+  <!-- V23: HotPoint markers — 3D-projected interactive indicators -->
+  <!-- Coin (left, capital counterweight) -->
+  <div class="hotpoint-marker" id="hp-coin" role="button" tabindex="0"
+       aria-label="Capital — click to inspect" data-part="coin"
+       onclick="window.openPartDetail&&window.openPartDetail('coin')">
+    <div class="hotpoint-ring"></div>
+    <div class="hotpoint-ring hotpoint-ring-2"></div>
+    <div class="hotpoint-dot"></div>
+    <span class="hotpoint-tip">Capital</span>
+  </div>
+  <!-- Person (right, the sponsor / operator) -->
+  <div class="hotpoint-marker" id="hp-person" role="button" tabindex="0"
+       aria-label="Sponsor — click to inspect" data-part="person"
+       onclick="window.openPartDetail&&window.openPartDetail('person')">
+    <div class="hotpoint-ring"></div>
+    <div class="hotpoint-ring hotpoint-ring-2"></div>
+    <div class="hotpoint-dot"></div>
+    <span class="hotpoint-tip">Sponsor</span>
+  </div>
+  <!-- Fulcrum (center, where structure lives) -->
+  <div class="hotpoint-marker" id="hp-fulcrum" role="button" tabindex="0"
+       aria-label="Fulcrum — click to inspect" data-part="fulcrum"
+       onclick="window.openPartDetail&&window.openPartDetail('fulcrum')">
+    <div class="hotpoint-ring"></div>
+    <div class="hotpoint-ring hotpoint-ring-2"></div>
+    <div class="hotpoint-dot"></div>
+    <span class="hotpoint-tip">Fulcrum</span>
+  </div>
 
   <main id="main-content"></main>
 
@@ -8061,6 +8182,34 @@ function animate() {
     }
   }
 
+  // ─── V23: HotPoint 3D → screen projection ───────────────────────────────
+  // Runs every frame; projects coin/person/fulcrum world positions to CSS px.
+  // Only visible on Home section (idx 0) to avoid clutter.
+  if (window._hotpointEnabled && window.pcmRoot && camera) {
+    const showHotpoints = (window.activeIdx || 0) === 0 && !isTransitioning;
+    const hp = window._hotpointParts;
+    if (hp) {
+      const W = window.innerWidth, H = window.innerHeight;
+      const wPos = new THREE.Vector3();
+      for (const [id, obj] of Object.entries(hp)) {
+        const el = document.getElementById('hp-' + id);
+        if (!el || !obj) continue;
+        if (!showHotpoints) {
+          el.classList.remove('visible');
+          continue;
+        }
+        obj.getWorldPosition(wPos);
+        wPos.project(camera);
+        const sx = (wPos.x * 0.5 + 0.5) * W;
+        const sy = (-wPos.y * 0.5 + 0.5) * H;
+        el.style.left = sx + 'px';
+        el.style.top  = sy + 'px';
+        el.style.transform = 'translate(-50%, -50%)';
+        el.classList.add('visible');
+      }
+    }
+  }
+
   // Render
   if (window.composer) window.composer.render();
   else if (window.renderer) window.renderer.render(scene, camera);
@@ -8406,6 +8555,65 @@ _menuObserver.observe(document.body, { attributes: true, attributeFilter: ['clas
 
 
 // ═══════════════════════════════════════════════════════════════════════════
+// V23 — HOTPOINT INITIALIZATION
+// Traverses the scene graph to find coin, person, and fulcrum Objects3D,
+// stores references for projection in the animate() loop.
+// Runs 500ms after load to ensure scene is fully built.
+setTimeout(() => {
+  if (!window.pcmRoot || !window.leverGroup) return;
+
+  const hp = {};
+
+  // Search leverGroup for coin and person
+  window.leverGroup.traverse(obj => {
+    if (obj.userData && obj.userData.partId === 'coin')   hp.coin   = obj;
+    if (obj.userData && obj.userData.partId === 'person') hp.person = obj;
+  });
+
+  // Search root for fulcrum
+  window.pcmRoot.traverse(obj => {
+    if (obj.userData && obj.userData.partId === 'fulcrum') hp.fulcrum = obj;
+  });
+
+  window._hotpointParts   = hp;
+  window._hotpointEnabled = true;
+
+  // Wire up keyboard accessibility for hotpoints
+  document.querySelectorAll('.hotpoint-marker').forEach(el => {
+    el.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        const part = el.dataset.part;
+        if (part && window.openPartDetail) window.openPartDetail(part);
+      }
+    });
+  });
+
+  // Wire openPartDetail to the existing detail card system
+  window.openPartDetail = function(partId) {
+    const PART_DETAIL = window.PART_DETAIL || {};
+    const info = PART_DETAIL[partId];
+    if (!info) return;
+    const card = document.getElementById('detail-card');
+    if (!card) return;
+
+    const labelEl = card.querySelector('.card-label');
+    const titleEl = card.querySelector('.card-title');
+    const bodyEl  = card.querySelector('.card-body');
+
+    if (labelEl) labelEl.textContent = info.label || '';
+    if (titleEl) titleEl.textContent = info.title || '';
+    if (bodyEl)  bodyEl.textContent  = info.body  || '';
+
+    card.classList.remove('hidden');
+
+    // Announce for a11y
+    if (typeof window.pcmAnnounce === 'function') {
+      window.pcmAnnounce(`Detail panel open: ${info.title}`);
+    }
+  };
+}, 600);
+
 // V22.A — BATTERY TOGGLE (Battery Status API + manual override)
 // Detects low battery (<20%) and activates low-power mode, which reduces
 // grain, disables ring animations, and halves bloom intensity.
@@ -8512,6 +8720,7 @@ _menuObserver.observe(document.body, { attributes: true, attributeFilter: ['clas
       nav.innerHTML = Array.from({ length: count }, (_, i) => `
         <button class="substep-dash${i === activeIdx ? ' active' : ''}"
           aria-label="Go to step ${i + 1}" data-step="${i}"
+          style="animation-delay:${i * 0.06}s"
           onclick="window.setMode&&window.setMode(${i})">
         </button>
       `).join('');
@@ -8519,6 +8728,10 @@ _menuObserver.observe(document.body, { attributes: true, attributeFilter: ['clas
     nav.classList.add('visible');
     nav.querySelectorAll('.substep-dash').forEach((d, i) => {
       d.classList.toggle('active', i === activeIdx);
+      // Re-trigger stagger animation on rebuild
+      d.style.animationName = 'none';
+      void d.offsetHeight;
+      d.style.animationName = '';
     });
   };
 
