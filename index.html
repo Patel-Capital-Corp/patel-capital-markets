@@ -4391,9 +4391,158 @@ textarea.engage-input-v2 { resize: none; line-height: 1.6; }
 @media (max-width: 900px) {
   .parallax-reveal-host { display: none; }
 }
+
+/* ── Section End Indicator (v24) ─────────────────────────── */
+.section-end-indicator {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  z-index: 10;
+}
+.section-end-indicator.visible {
+  opacity: 1;
+}
+.section-end-indicator .sei-label {
+  font-family: var(--font-mono, 'Space Mono', monospace);
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(201,169,110,0.55);
+}
+.section-end-indicator .sei-arrow {
+  width: 14px;
+  height: 14px;
+  animation: sei-pulse 1.6s ease-in-out infinite;
+}
+.section-end-indicator .sei-arrow path {
+  fill: none;
+  stroke: rgba(201,169,110,0.55);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+@keyframes sei-pulse {
+  0%, 100% { transform: translateY(0); opacity: 0.55; }
+  50%       { transform: translateY(3px); opacity: 1; }
+}
+/* ── Per-Section Geometric Accent (v24) ─────────────────── */
+.geo-accent {
+  position: fixed;
+  z-index: 4;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+.geo-accent.visible {
+  opacity: 1;
+}
   </style>
 </head>
 <body class="pcm-body">
+
+  <!-- Geometric Accent Layer (v24) -->
+  <svg id="geo-accent-svg" class="geo-accent" xmlns="http://www.w3.org/2000/svg"
+    width="300" height="300" viewBox="0 0 300 300"
+    aria-hidden="true" role="presentation">
+    <g id="geo-accent-group"></g>
+  </svg>
+  <script>
+  (function() {
+    // Geometric patterns per section index
+    // 0: Home     — concentric circles (top-right)
+    // 3: Senior   — grid of dots (top-left)
+    // 4: Sub Cap  — diagonal lines (bottom-right)
+    // 5: Equity   — radial lines (top-left)
+    var GEO_PATTERNS = {
+      0: {
+        pos: { right:'0', top:'0', left:'', bottom:'' }, opacity: 0.10,
+        render: function() {
+          var s = '';
+          for (var r = 20; r <= 140; r += 24) {
+            s += '<circle cx="300" cy="0" r="' + r + '" fill="none" stroke="#C9A96E" stroke-width="0.8"/>';
+          }
+          return s;
+        }
+      },
+      3: {
+        pos: { left:'0', top:'0', right:'', bottom:'' }, opacity: 0.08,
+        render: function() {
+          var s = '';
+          for (var row = 0; row < 7; row++) {
+            for (var col = 0; col < 7; col++) {
+              s += '<circle cx="' + (20 + col*30) + '" cy="' + (20 + row*30) + '" r="2" fill="#C9A96E"/>';
+            }
+          }
+          return s;
+        }
+      },
+      4: {
+        pos: { right:'0', bottom:'0', left:'', top:'' }, opacity: 0.09,
+        render: function() {
+          var s = '';
+          for (var i = 0; i < 12; i++) {
+            var offset = i * 22;
+            s += '<line x1="' + (offset - 20) + '" y1="300" x2="' + (offset + 130) + '" y2="0" stroke="#C9A96E" stroke-width="0.7"/>';
+          }
+          return s;
+        }
+      },
+      5: {
+        pos: { left:'0', top:'0', right:'', bottom:'' }, opacity: 0.12,
+        render: function() {
+          var s = '';
+          var pi = Math.PI;
+          for (var a = 0; a < 360; a += 18) {
+            var rad = a * pi / 180;
+            s += '<line x1="0" y1="0" x2="' + (200*Math.cos(rad)).toFixed(1) + '" y2="' + (200*Math.sin(rad)).toFixed(1) + '" stroke="#C9A96E" stroke-width="0.6"/>';
+          }
+          return s;
+        }
+      }
+    };
+
+    window._updateGeoAccent = function(idx) {
+      var svg = document.getElementById('geo-accent-svg');
+      var grp = document.getElementById('geo-accent-group');
+      if (!svg || !grp) return;
+
+      var pat = GEO_PATTERNS[idx];
+      if (!pat) {
+        svg.classList.remove('visible');
+        return;
+      }
+
+      // Apply position
+      var pos = pat.pos;
+      svg.style.right  = pos.right  !== undefined ? pos.right  : '';
+      svg.style.left   = pos.left   !== undefined ? pos.left   : '';
+      svg.style.top    = pos.top    !== undefined ? pos.top    : '';
+      svg.style.bottom = pos.bottom !== undefined ? pos.bottom : '';
+
+      // Render SVG pattern
+      grp.innerHTML = pat.render();
+
+      // Fade transition: remove visible, then re-add after a frame
+      svg.classList.remove('visible');
+      svg.style.opacity = '';
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          svg.style.opacity = pat.opacity;
+          svg.classList.add('visible');
+        });
+      });
+    };
+  })();
+  </script>
+
   <a href="#main-content" class="skip-to-content">Skip to content</a>
 
   <noscript>
@@ -5465,6 +5614,15 @@ window.setMode = function(idx) {
   if (typeof window._updateVisualPanel === 'function') {
     window._updateVisualPanel(window.activeIdx || 0, idx);
   }
+  // Show section-end indicator when last mode reached
+  if (s && s.modes && idx === s.modes.length - 1) {
+    clearTimeout(window._seiTimer);
+    window._seiTimer = setTimeout(function() {
+      if (typeof window._showSectionEndIndicator === 'function') window._showSectionEndIndicator();
+    }, 800);
+  } else {
+    if (typeof window._hideSectionEndIndicator === 'function') window._hideSectionEndIndicator();
+  }
 };
 
 function updateSectionUI(idx) {
@@ -5955,6 +6113,10 @@ window.updateCopyContent = updateCopyContent;
           <div id="copy-modes" class="modes-row" style="display:none"></div>
           <div id="mode-body" class="mode-body"></div>
           <div id="mode-stats" class="mode-stats" style="display:none"></div>
+          <div class="section-end-indicator" id="section-end-indicator" aria-hidden="true">
+            <span class="sei-label">Continue</span>
+            <svg class="sei-arrow" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg"><path d="M2 4 L7 9 L12 4"/></svg>
+          </div>
           <div id="copy-contact" class="contact-section" style="display:none">
             <form id="contact-form" class="contact-form" onsubmit="window.submitContact(event)">
               <input type="text" name="name" placeholder="Your Name" class="pcm-input" required autocomplete="name">
@@ -5976,6 +6138,17 @@ window.updateCopyContent = updateCopyContent;
         </div>
       </div>
     `);
+
+    // Wire section-end indicator helpers
+    window._showSectionEndIndicator = function() {
+      var el = document.getElementById('section-end-indicator');
+      if (el) el.classList.add('visible');
+    };
+    window._hideSectionEndIndicator = function() {
+      var el = document.getElementById('section-end-indicator');
+      if (el) el.classList.remove('visible');
+      clearTimeout(window._seiTimer);
+    };
   }
 
   // ---------------------------------------------------------------------------
@@ -6674,17 +6847,58 @@ window.updateCopyContent = updateCopyContent;
         const modeStats = activeMode && activeMode.stats;
         const statsToShow = modeStats && modeStats.length ? modeStats : data.stats;
         if (statsToShow) {
-          // Fade out → update → fade in for smooth transition
+          // Fade out → update with count-up animation → fade in
           statsEl.style.opacity = '0';
           statsEl.style.transition = 'opacity 0.3s ease';
           setTimeout(() => {
             statsEl.innerHTML = statsToShow.map(([val, lbl]) => `
               <div class="visual-panel-large-stat">
-                <div class="vp-stat-val">${val}</div>
+                <div class="vp-stat-val" data-raw="${val}">${val}</div>
                 <div class="vp-stat-label">${lbl}</div>
               </div>
             `).join('<div class="vp-divider" style="width:20px;height:1px;background:rgba(201,169,110,0.12);margin:4px auto;"></div>');
             statsEl.style.opacity = '1';
+
+            // Count-up animation for numeric stat values (v24)
+            statsEl.querySelectorAll('.vp-stat-val').forEach(function(el) {
+              var raw = el.getAttribute('data-raw') || el.textContent;
+              // Match optional non-digit prefix, a number (int or float), then suffix
+              var numMatch = raw.match(/^([^\d]*)(\d+(?:\.\d+)?)(.*)$/);
+              if (numMatch && parseFloat(numMatch[2]) > 0) {
+                var prefix = numMatch[1];
+                var target = parseFloat(numMatch[2]);
+                var suffix = numMatch[3];
+                var decimalPlaces = (numMatch[2].indexOf('.') >= 0) ? numMatch[2].split('.')[1].length : 0;
+                var startTime = performance.now();
+                var DURATION = 1000; // 1.0s
+                function cubicEase(t) {
+                  return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+                }
+                function tick(now) {
+                  var elapsed = now - startTime;
+                  var progress = Math.min(elapsed / DURATION, 1);
+                  var eased = cubicEase(progress);
+                  var current = target * eased;
+                  var formatted = decimalPlaces > 0
+                    ? current.toFixed(decimalPlaces)
+                    : Math.round(current).toString();
+                  el.textContent = prefix + formatted + suffix;
+                  if (progress < 1) {
+                    requestAnimationFrame(tick);
+                  } else {
+                    el.textContent = raw; // ensure exact final value
+                  }
+                }
+                requestAnimationFrame(tick);
+              } else {
+                // Not clearly numeric — cross-fade opacity
+                el.style.opacity = '0';
+                el.style.transition = 'opacity 0.5s ease';
+                requestAnimationFrame(function() {
+                  requestAnimationFrame(function() { el.style.opacity = '1'; });
+                });
+              }
+            });
           }, 160);
         }
         // Also show mode name label
@@ -8888,6 +9102,9 @@ function showSectionCopy(idx) {
   const copy = document.querySelector('.scene-copy');
   if (!copy) return;
 
+  // Hide section-end indicator on every section show
+  if (typeof window._hideSectionEndIndicator === 'function') window._hideSectionEndIndicator();
+
   // Section 9 (Engage): engage-cinematic takes over — don't show scene-copy
   // Section 6 (Execution): execution-stage-host takes over — don't show scene-copy
   if (idx === 9 || idx === 6) {
@@ -8900,6 +9117,16 @@ function showSectionCopy(idx) {
   copy.classList.remove('hidden');
   copy.classList.add('visible');
   updateCopyContent(idx);
+  // For sections without modes: show section-end indicator after 2s
+  {
+    const _seiSec = window.SECTIONS && window.SECTIONS[idx];
+    if (_seiSec && (!_seiSec.modes || _seiSec.modes.length === 0)) {
+      clearTimeout(window._seiTimer);
+      window._seiTimer = setTimeout(function() {
+        if (typeof window._showSectionEndIndicator === 'function') window._showSectionEndIndicator();
+      }, 2000);
+    }
+  }
 
   if (window.gsap) {
     gsap.killTweensOf('.reveal-inner, .pre-title, .body-text, .stat-item, .tag, .mode-btn, .title-rule, .sub-title');
@@ -9718,6 +9945,10 @@ window.onSectionChange = function(idx) {
   audioEngine.setSection(idx);
   // Sync all chrome state (exec stages, engage, visual panel, parallax, etc.)
   if (typeof window.updateChrome === 'function') window.updateChrome(idx);
+  // Update geometric accent layer (v24)
+  if (typeof window._updateGeoAccent === 'function') window._updateGeoAccent(idx);
+  // Hide section-end indicator on section change (v24)
+  if (typeof window._hideSectionEndIndicator === 'function') window._hideSectionEndIndicator();
 };
 
 /* Keyboard shortcut: M */
