@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patel Capital Markets — Offline</title>
+  <meta name="description" content="Patel Capital Markets — Engineering Creative Finance.">
+  <meta name="theme-color" content="#c9a96e">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #06090a;
+      --bg-alt: #0f1814;
+      --brass: #c9a96e;
+      --ink: #e3eee6;
+      --green: #1a2520;
+      --font-serif: 'Cormorant Garamond', Georgia, serif;
+      --font-mono: 'Space Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-mono);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Background geometry */
+    .bg-ring {
+      position: fixed;
+      border-radius: 50%;
+      border: 1px solid;
+      pointer-events: none;
+      animation: ring-pulse 6s ease-in-out infinite;
+    }
+    .bg-ring-1 {
+      width: 420px; height: 420px;
+      border-color: rgba(201,169,110,0.06);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      animation-delay: 0s;
+    }
+    .bg-ring-2 {
+      width: 620px; height: 620px;
+      border-color: rgba(201,169,110,0.04);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      animation-delay: 1.5s;
+    }
+    .bg-ring-3 {
+      width: 820px; height: 820px;
+      border-color: rgba(26,37,32,0.5);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      animation-delay: 3s;
+    }
+    @keyframes ring-pulse {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+
+    /* SVG lever mark */
+    .pcm-mark {
+      margin-bottom: 40px;
+      opacity: 0.9;
+    }
+
+    /* Content */
+    .content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      max-width: 500px;
+    }
+
+    .offline-label {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.4em;
+      color: rgba(201,169,110,0.4);
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .brand-name {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+
+    .tagline {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.3em;
+      color: rgba(201,169,110,0.45);
+      text-transform: uppercase;
+      margin-bottom: 40px;
+    }
+
+    .rule {
+      width: 40px;
+      height: 1px;
+      background: var(--brass);
+      margin: 0 auto 32px;
+      box-shadow: 0 0 8px rgba(201,169,110,0.4);
+    }
+
+    .offline-msg {
+      font-family: var(--font-serif);
+      font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+      font-weight: 400;
+      color: var(--ink);
+      line-height: 1.6;
+      margin-bottom: 16px;
+      opacity: 0.9;
+    }
+
+    .offline-sub {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      color: rgba(227,238,230,0.35);
+      line-height: 1.8;
+      margin-bottom: 40px;
+    }
+
+    .retry-btn {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--brass);
+      background: transparent;
+      border: 1px solid rgba(201,169,110,0.4);
+      padding: 14px 28px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+      margin-bottom: 32px;
+    }
+    .retry-btn:hover {
+      background: rgba(201,169,110,0.08);
+      border-color: var(--brass);
+    }
+
+    .contact-line {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      color: rgba(201,169,110,0.3);
+    }
+    .contact-line a {
+      color: rgba(201,169,110,0.55);
+      text-decoration: none;
+      transition: color 0.25s ease;
+    }
+    .contact-line a:hover { color: var(--brass); }
+
+    @media (max-width: 480px) {
+      body { padding: 24px; }
+      .bg-ring-1 { width: 280px; height: 280px; }
+      .bg-ring-2 { width: 420px; height: 420px; }
+      .bg-ring-3 { width: 560px; height: 560px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-ring bg-ring-1"></div>
+  <div class="bg-ring bg-ring-2"></div>
+  <div class="bg-ring bg-ring-3"></div>
+
+  <div class="content">
+    <!-- PCM lever mark — inline SVG matching logo geometry -->
+    <div class="pcm-mark" aria-hidden="true">
+      <svg viewBox="0 0 120 90" width="120" height="90" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Outer ring arc -->
+        <circle cx="60" cy="40" r="34" stroke="rgba(201,169,110,0.3)" stroke-width="1.2" stroke-dasharray="4,6"/>
+        <!-- Lever bar -->
+        <line x1="22" y1="43" x2="98" y2="35" stroke="rgba(201,169,110,0.7)" stroke-width="2" stroke-linecap="round"/>
+        <!-- Coin (left) -->
+        <circle cx="22" cy="43" r="8" fill="rgba(217,185,122,0.18)" stroke="rgba(201,169,110,0.6)" stroke-width="1.2"/>
+        <text x="22" y="47" text-anchor="middle" fill="rgba(201,169,110,0.9)" font-family="Georgia,serif" font-size="9" font-weight="bold">$</text>
+        <!-- Person (right) -->
+        <circle cx="98" cy="32" r="4.5" fill="rgba(201,169,110,0.25)" stroke="rgba(201,169,110,0.55)" stroke-width="1"/>
+        <line x1="98" y1="36.5" x2="98" y2="44" stroke="rgba(201,169,110,0.55)" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="94" y1="39" x2="102" y2="39" stroke="rgba(201,169,110,0.45)" stroke-width="1.2" stroke-linecap="round"/>
+        <line x1="95" y1="44" x2="98" y2="49" stroke="rgba(201,169,110,0.45)" stroke-width="1.2" stroke-linecap="round"/>
+        <line x1="101" y1="44" x2="98" y2="49" stroke="rgba(201,169,110,0.45)" stroke-width="1.2" stroke-linecap="round"/>
+        <!-- Fulcrum -->
+        <polygon points="60,50 65,62 55,62" fill="rgba(26,37,32,0.8)" stroke="rgba(201,169,110,0.35)" stroke-width="1"/>
+        <circle cx="60" cy="50" r="2.5" fill="rgba(201,169,110,0.55)"/>
+        <!-- Text: PCM -->
+        <text x="60" y="80" text-anchor="middle" fill="rgba(201,169,110,0.25)" font-family="Georgia,serif" font-size="8" letter-spacing="4">PCM</text>
+      </svg>
+    </div>
+
+    <div class="offline-label">Connection Unavailable</div>
+
+    <div class="brand-name">Patel Capital Markets</div>
+    <div class="tagline">Engineering Creative Finance</div>
+
+    <div class="rule"></div>
+
+    <p class="offline-msg">
+      You appear to be offline.
+    </p>
+    <p class="offline-sub">
+      The full cinematic experience requires a network connection.<br>
+      Check your connection and try again.
+    </p>
+
+    <button class="retry-btn" onclick="window.location.reload()">
+      Reconnect &rarr;
+    </button>
+
+    <div class="contact-line">
+      Direct: <a href="mailto:deals@patelcapital.markets">deals@patelcapital.markets</a>
+    </div>
+  </div>
+
+  <script>
+    // Auto-retry every 15 seconds when offline
+    // If we come back online, redirect to the main experience
+    window.addEventListener('online', () => {
+      window.location.href = '/';
+    });
+
+    let retryCount = 0;
+    const MAX_AUTO_RETRY = 4;
+
+    function scheduleRetry() {
+      if (retryCount >= MAX_AUTO_RETRY) return;
+      setTimeout(() => {
+        retryCount++;
+        // Ping the health endpoint — lightweight check
+        fetch('/api/health', { method: 'GET', cache: 'no-store' })
+          .then(r => { if (r.ok) window.location.href = '/'; })
+          .catch(() => scheduleRetry());
+      }, 15000);
+    }
+    scheduleRetry();
+  </script>
+</body>
+</html>

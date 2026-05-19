@@ -340,19 +340,23 @@ body.transitioning .cinema-bar {
   width: 100%;
   max-width: 680px;
   padding: 0 24px;
+  /* V20: Added scale to transition — content scales from 0.96 to 1 on reveal,
+     matching seacat's Gap-14 scale-in unveil pattern. Combined with the
+     translateY lift, this gives a genuine 3D-depth reveal feel. */
   transition: opacity 0.8s var(--ease-soft),
               transform 0.8s var(--ease-soft);
 }
 
 .scene-copy.hidden {
   opacity: 0;
-  transform: translateX(-50%) translateY(-55%);
+  /* scale(0.96): content appears to emerge from depth as it reveals */
+  transform: translateX(-50%) translateY(-55%) scale(0.96);
   pointer-events: none;
 }
 
 .scene-copy.visible {
   opacity: 1;
-  transform: translateX(-50%) translateY(-50%);
+  transform: translateX(-50%) translateY(-50%) scale(1);
   pointer-events: auto;
 }
 
@@ -367,12 +371,12 @@ body.transitioning .cinema-bar {
               max-width 0.9s var(--ease-cinema);
 }
 .scene-copy.split-layout.hidden {
-  transform: translateX(-50%) translateY(-55%);
+  transform: translateX(-50%) translateY(-55%) scale(0.96);
   opacity: 0;
   pointer-events: none;
 }
 .scene-copy.split-layout.visible {
-  transform: translateX(-50%) translateY(-50%);
+  transform: translateX(-50%) translateY(-50%) scale(1);
   opacity: 1;
   pointer-events: auto;
 }
@@ -1148,30 +1152,86 @@ body.transitioning .cinema-bar {
 }
 
 /* ─── CIRCULAR PROGRESS INDICATOR ─── */
+/* ── Circular progress nav (V19 — seacat-style dual ring, clickable ticks) ── */
 .circular-progress {
   position: fixed;
-  bottom: 90px;
+  bottom: 80px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 18;
-  pointer-events: none;
-  opacity: 0.6;
+  pointer-events: auto; /* container allows events; circ-tick-hit elements are clickable */
+  opacity: 0.55;
   transition: opacity 0.4s ease;
+  cursor: none;
 }
-.circular-progress:hover { opacity: 1; }
-.circular-progress svg {
-  display: block;
+@media (hover: hover) {
+  .circular-progress:hover { opacity: 1; }
 }
-.circ-static { stroke: rgba(201,169,110,0.12); fill: none; }
-.circ-dashed { stroke: rgba(201,169,110,0.08); fill: none; stroke-dasharray: 1 4; }
-.circ-progress-arc { fill: none; stroke: var(--brass); transition: stroke-dashoffset 1.4s cubic-bezier(0.77,0,0.175,1); }
+.circular-progress svg { display: block; overflow: visible; }
+
+/* Rings */
+.circ-outer-static {
+  stroke: rgba(201,169,110,0.1); fill: none;
+  stroke-width: 0.6;
+}
+.circ-outer-dashed {
+  stroke: rgba(201,169,110,0.06); fill: none;
+  stroke-dasharray: 2 2;
+  stroke-width: 0.5;
+}
+.circ-inner-static {
+  stroke: rgba(201,169,110,0.08); fill: none;
+  stroke-width: 0.5;
+}
+.circ-inner-dashed {
+  stroke: rgba(201,169,110,0.05); fill: none;
+  stroke-dasharray: 1 4;
+  stroke-width: 0.5;
+}
+/* Progress arc */
+.circ-progress-arc {
+  fill: none; stroke: var(--brass);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1.4s cubic-bezier(0.77,0,0.175,1),
+              stroke-dasharray 1.4s cubic-bezier(0.77,0,0.175,1);
+}
+/* Outer selection ring — dashed halo */
+.circ-selection-ring {
+  fill: none; stroke: rgba(201,169,110,0.18);
+  stroke-dasharray: 6 2;
+  stroke-width: 0.5;
+  transform-origin: 50px 50px;
+  animation: circ-selection-spin 18s linear infinite;
+}
+@keyframes circ-selection-spin {
+  to { transform: rotate(360deg); }
+}
+/* Tick marks */
+.circ-tick {
+  stroke: rgba(201,169,110,0.2);
+  stroke-linecap: round;
+  transition: stroke 0.3s ease;
+}
+.circ-tick.active { stroke: var(--brass); }
+/* Section number readout */
 .circ-section-num {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 10px;
   fill: var(--brass);
   text-anchor: middle;
   dominant-baseline: central;
   letter-spacing: 0.15em;
+  transition: opacity 0.3s ease;
+}
+/* Clickable tick hit-targets (invisible, for UX) */
+.circ-tick-hit {
+  fill: transparent;
+  cursor: none;
+  pointer-events: auto; /* works even when parent has pointer-events: none */
+}
+@media (hover: hover) {
+  .circ-tick-hit:hover + line.circ-tick { stroke: rgba(201,169,110,0.5); }
 }
 
 /* ─── VIDEO SCALE-IN TRANSITION (seacat-style) ─── */
@@ -1211,16 +1271,51 @@ body.transitioning .cinema-bar {
 }
 .section-atmosphere.visible { opacity: 1; }
 /* Per-section background gradients */
-.section-atm-0 { background: radial-gradient(ellipse 70% 50% at 50% 50%, rgba(26,37,32,0.15) 0%, transparent 70%); }
-.section-atm-1 { background: radial-gradient(ellipse 80% 60% at 40% 60%, rgba(45,62,54,0.12) 0%, transparent 70%); }
-.section-atm-2 { background: radial-gradient(ellipse 60% 70% at 60% 40%, rgba(26,37,32,0.1) 0%, transparent 70%); }
-.section-atm-3 { background: linear-gradient(155deg, rgba(15,24,20,0.2) 0%, rgba(45,62,54,0.08) 50%, transparent 100%); }
-.section-atm-4 { background: linear-gradient(155deg, rgba(6,9,10,0.3) 0%, rgba(26,37,32,0.15) 100%); }
-.section-atm-5 { background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(201,169,110,0.04) 0%, rgba(26,37,32,0.1) 50%, transparent 80%); }
-.section-atm-6 { background: linear-gradient(200deg, rgba(15,24,20,0.25) 0%, transparent 60%); }
-.section-atm-7 { background: radial-gradient(ellipse 90% 70% at 50% 50%, rgba(26,37,32,0.2) 0%, transparent 70%); }
-.section-atm-8 { background: linear-gradient(140deg, rgba(15,24,20,0.18) 0%, transparent 50%); }
-.section-atm-9 { background: radial-gradient(ellipse 70% 80% at 50% 60%, rgba(201,169,110,0.06) 0%, rgba(26,37,32,0.08) 50%, transparent 80%); }
+/* V20: Enhanced per-section atmospheric color temperatures — each section has a
+   distinct cinematic mood. The atmosphere div cross-fades between these
+   gradients over 1.2s as sections transition.
+   Opacity base: ~0.22–0.35 — enough to read against the dark bg shader,
+   subtle enough to never overpower the 3D centerpiece. */
+.section-atm-0 {
+  /* Home — deep forest green radial bloom, centered, draws eye to logo */
+  background: radial-gradient(ellipse 75% 55% at 50% 52%, rgba(26,37,32,0.32) 0%, rgba(15,24,20,0.12) 55%, transparent 80%);
+}
+.section-atm-1 {
+  /* Firm Overview — broad warm-left pull, founder warmth */
+  background: radial-gradient(ellipse 90% 65% at 35% 58%, rgba(45,62,54,0.28) 0%, rgba(26,37,32,0.08) 60%, transparent 85%);
+}
+.section-atm-2 {
+  /* Platform Edge — sharp upper-right origin, three-pillar energy */
+  background: conic-gradient(from 140deg at 65% 38%, rgba(26,37,32,0.22) 0deg, transparent 80deg, rgba(45,62,54,0.14) 180deg, transparent 240deg);
+}
+.section-atm-3 {
+  /* Senior Debt — horizontal band of cool green-black, institutional weight */
+  background: linear-gradient(175deg, rgba(15,24,20,0.38) 0%, rgba(45,62,54,0.16) 40%, transparent 75%);
+}
+.section-atm-4 {
+  /* Sub Capital — deep risk-tranche tilt, darker lower half */
+  background: linear-gradient(165deg, transparent 0%, rgba(15,24,20,0.28) 45%, rgba(6,9,10,0.42) 100%);
+}
+.section-atm-5 {
+  /* Equity — warmest section: brass echo blooms at top-center */
+  background: radial-gradient(ellipse 80% 65% at 50% 35%, rgba(201,169,110,0.07) 0%, rgba(45,62,54,0.18) 45%, transparent 80%);
+}
+.section-atm-6 {
+  /* Execution — cinematic left-sweep, process energy */
+  background: linear-gradient(210deg, rgba(15,24,20,0.35) 0%, rgba(26,37,32,0.12) 45%, transparent 70%);
+}
+.section-atm-7 {
+  /* Underwriting — deep center bloom, analytical focus */
+  background: radial-gradient(ellipse 85% 75% at 50% 50%, rgba(26,37,32,0.30) 0%, rgba(15,24,20,0.08) 60%, transparent 85%);
+}
+.section-atm-8 {
+  /* Compliance — tight upper-left institutional corner */
+  background: linear-gradient(145deg, rgba(15,24,20,0.32) 0%, rgba(26,37,32,0.10) 40%, transparent 65%);
+}
+.section-atm-9 {
+  /* Engage — warmest close: brass radiance at center, invitation energy */
+  background: radial-gradient(ellipse 75% 85% at 50% 58%, rgba(201,169,110,0.09) 0%, rgba(45,62,54,0.20) 40%, rgba(26,37,32,0.06) 65%, transparent 85%);
+}
 
 /* ─── HORIZONTAL MODE CAROUSEL (seacat Inside-the-heart style) ─── */
 .modes-carousel {
@@ -1375,6 +1470,32 @@ body.transitioning .cinema-bar {
 }
 
 /* ------------------------------------------------------------
+   55b. FILM GRAIN OVERLAY (V20 — cinematic noise texture)
+   Canvas element at 40% resolution, CSS-scaled to full viewport.
+   mix-blend-mode: overlay adds both light and dark grain on the
+   dark scene background — genuine procedural LCG noise, updated
+   every other animation frame for authentic film-grain motion.
+   ------------------------------------------------------------ */
+#pcm-grain {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  /* CSS dimensions stretch the low-res canvas to full viewport.
+     No image-rendering: pixelated — bilinear blur gives softer, more
+     film-like grain rather than digital pixel noise. */
+  width: 100% !important;
+  height: 100% !important;
+  opacity: 0.042;
+  mix-blend-mode: overlay;
+  will-change: opacity;
+}
+/* Reduced-motion: freeze grain at one frame (static but present) */
+@media (prefers-reduced-motion: reduce) {
+  #pcm-grain { animation: none; opacity: 0.022; }
+}
+
+/* ------------------------------------------------------------
    56–57. LANDSCAPE GATE
    ------------------------------------------------------------ */
 .landscape-gate {
@@ -1499,21 +1620,8 @@ body.transitioning .cinema-bar {
 }
 
 /* ------------------------------------------------------------
-   60. PCM FOOTER
+   60. PCM FOOTER — see GAP 25 block below for the full spec
    ------------------------------------------------------------ */
-.pcm-footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  z-index: 10;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  color: var(--ink);
-  opacity: 0.4;
-  padding: 0 40px 6px;
-  pointer-events: none;
-}
 
 /* ------------------------------------------------------------
    61. SCROLLBAR
@@ -1716,13 +1824,29 @@ body.transitioning .cinema-bar {
   margin: 10px 0;
   max-width: 420px;
   min-height: 48px;
-  transition: opacity 0.3s;
+  /* V21: cinematic mode transition — fade + Y-lift, matching seacat panel reveal */
+  transition: opacity 0.28s ease, transform 0.28s cubic-bezier(0.215,0.61,0.355,1);
+}
+.mode-body.mode-exiting {
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none;
+}
+.mode-body.mode-entering {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.mode-body.mode-visible {
+  opacity: 0.85;
+  transform: translateY(0);
 }
 
 .mode-stats {
   display: flex;
   gap: 24px;
   margin: 10px 0;
+  /* V21: matched transition for the stats row */
+  transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.215,0.61,0.355,1);
 }
 
 /* ─────────────────────────────────────────────
@@ -2898,55 +3022,216 @@ body.is-dragging #canvas-host canvas { cursor: grabbing; }
 }
 
 /* ───────────────────────────────────────────────────────────────
-   GAP 25 — Grid-layout footer (replaces old footer)
+   GAP 25 — V18 seacat-level footer
+   Full expandable footer: thin strip in all sections, full
+   content on Engage (section 9). Matches seacat height/layout.
    ─────────────────────────────────────────────────────────────── */
 .pcm-footer {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 48px;
+  bottom: 0; left: 0; right: 0;
   z-index: 18;
+  height: 56px;
+  background: linear-gradient(to top, rgba(6,9,10,0.94) 0%, rgba(6,9,10,0) 100%);
+  pointer-events: none;
+  overflow: hidden;
+  transition: height 0.85s cubic-bezier(0.215,0.61,0.355,1),
+              background-color 0.85s ease;
+  will-change: height;
+}
+.pcm-footer.is-engage {
+  height: 290px;
+  background: rgba(6,9,10,0.97);
+}
+
+/* ── Thin strip — always at the bottom ─── */
+.footer-strip {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 56px;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  padding: 0 var(--margin, 60px);
-  background: linear-gradient(0deg, rgba(6, 9, 10, 0.9) 0%, transparent 100%);
-  pointer-events: none;
-  opacity: 1;
-  font-family: var(--font-mono);
-  font-size: 9px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: rgba(227, 238, 230, 0.3);
-}
-.pcm-footer .footer-left {
-  text-align: left;
-  font-family: var(--font-mono);
-  font-size: 9px;
-  letter-spacing: 0.2em;
-  color: rgba(227, 238, 230, 0.3);
-  text-transform: uppercase;
+  padding: 0 var(--margin,60px);
   pointer-events: auto;
+  z-index: 2;
 }
-.pcm-footer .footer-center {
+.footer-strip-left {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: rgba(227,238,230,0.28);
+  text-transform: uppercase;
+}
+.footer-strip-left a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+@media (hover:hover) {
+  .footer-strip-left a:hover { color: var(--brass); }
+}
+.footer-strip-center {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  color: rgba(201,169,110,0.5);
+  text-transform: uppercase;
   text-align: center;
 }
-.pcm-footer .footer-cta {
+.footer-strip-right {
   font-family: var(--font-mono);
   font-size: 9px;
-  letter-spacing: 0.2em;
-  color: var(--brass);
+  letter-spacing: 0.22em;
+  color: rgba(201,169,110,0.35);
   text-transform: uppercase;
-  position: relative;
+  text-align: right;
+}
+
+/* ── Full expanded area — visible only on Engage ─── */
+.footer-full {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  bottom: 56px; /* sits above the strip */
+  padding: 36px var(--margin,60px) 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0s ease 0s, transform 0s ease 0s;
+  pointer-events: none;
+}
+.pcm-footer.is-engage .footer-full {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.6s ease 0.28s, transform 0.6s cubic-bezier(0.215,0.61,0.355,1) 0.28s;
   pointer-events: auto;
-  cursor: none;
+}
+
+/* Top row: brand left, CTA right */
+.footer-full-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 40px;
+}
+.footer-brand-block {
+  flex: 0 0 auto;
+}
+.footer-brand-name {
+  font-family: var(--font-serif);
+  font-size: clamp(26px, 3.2vw, 42px);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--ink);
+  line-height: 1.05;
+  margin-bottom: 9px;
+}
+.footer-brand-tagline {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.32em;
+  color: rgba(201,169,110,0.48);
+  text-transform: uppercase;
+  line-height: 1.7;
+}
+
+/* Footer CTA block */
+.footer-cta-block {
+  text-align: right;
+  flex: 0 0 auto;
+  align-self: flex-end;
+}
+.footer-cta {
+  font-family: var(--font-serif);
+  font-size: clamp(20px, 2.4vw, 32px);
+  letter-spacing: 0.08em;
+  color: var(--brass);
   text-decoration: none;
   background: none;
   border: none;
-  padding: 4px 2px;
+  cursor: none;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 4px;
+  transition: color 0.3s;
 }
-.pcm-footer .footer-cta::after {
+/* Dotted underline — always present */
+.footer-cta::before {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  border-bottom: 1px dotted rgba(201,169,110,0.32);
+}
+/* Solid brass underline — slides in on hover */
+.footer-cta::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: var(--brass);
+  box-shadow: 0 0 10px rgba(201,169,110,0.45);
+  transform: scaleX(0);
+  transform-origin: 0% 50%;
+  transition: transform 0.42s cubic-bezier(0.215,0.61,0.355,1);
+}
+@media (hover:hover) {
+  .footer-cta:hover { color: var(--coin-gold); }
+  .footer-cta:hover::after { transform: scaleX(1); }
+}
+.footer-cta-email {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.28em;
+  color: rgba(201,169,110,0.38);
+  text-transform: uppercase;
+  margin-top: 9px;
+  text-align: right;
+}
+
+/* Bottom row: copyright left, links right */
+.footer-full-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(201,169,110,0.12);
+  padding-top: 14px;
+  margin-top: 12px;
+}
+.footer-copy {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  color: rgba(227,238,230,0.26);
+  text-transform: uppercase;
+  line-height: 1.6;
+}
+.footer-copy a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+@media (hover:hover) {
+  .footer-copy a:hover { color: var(--brass); }
+}
+.footer-links {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+.footer-social-link {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  color: rgba(201,169,110,0.42);
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: none;
+  transition: color 0.3s;
+  position: relative;
+}
+.footer-social-link::after {
   content: '';
   position: absolute;
   bottom: -2px; left: 0; right: 0;
@@ -2954,43 +3239,45 @@ body.is-dragging #canvas-host canvas { cursor: grabbing; }
   background: var(--brass);
   transform: scaleX(0);
   transform-origin: 0% 50%;
-  transition: transform 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+  transition: transform 0.35s cubic-bezier(0.215,0.61,0.355,1);
 }
-@media (hover: hover) {
-  .pcm-footer .footer-cta:hover::after { transform: scaleX(1); }
+@media (hover:hover) {
+  .footer-social-link:hover { color: var(--brass); }
+  .footer-social-link:hover::after { transform: scaleX(1); }
 }
-.pcm-footer .footer-right {
-  text-align: right;
+.footer-credits-btn {
   font-family: var(--font-mono);
   font-size: 9px;
-  letter-spacing: 0.2em;
-  color: rgba(201, 169, 110, 0.4);
-  pointer-events: auto;
-}
-.pcm-footer .footer-credits-link {
+  letter-spacing: 0.22em;
+  color: rgba(201,169,110,0.42);
+  text-transform: uppercase;
   background: none;
   border: none;
-  color: rgba(201, 169, 110, 0.5);
-  font-family: var(--font-mono);
-  font-size: 9px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
   cursor: none;
-  padding: 4px 6px;
-  margin-left: 10px;
+  padding: 0;
   transition: color 0.3s;
 }
-@media (hover: hover) {
-  .pcm-footer .footer-credits-link:hover { color: var(--brass); }
+@media (hover:hover) {
+  .footer-credits-btn:hover { color: var(--brass); }
 }
-@media (max-width: 768px) {
-  .pcm-footer {
-    height: 38px;
-    grid-template-columns: 1fr;
-    text-align: center;
-  }
-  .pcm-footer .footer-center,
-  .pcm-footer .footer-right { display: none; }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .pcm-footer.is-engage { height: 260px; }
+  .footer-full { padding: 28px 32px 18px; }
+  .footer-brand-name { font-size: 22px; }
+  .footer-cta { font-size: 20px; }
+  .footer-strip { padding: 0 32px; }
+}
+@media (max-width: 600px) {
+  .pcm-footer.is-engage { height: 280px; }
+  .footer-full-top { flex-direction: column; gap: 20px; }
+  .footer-cta-block { text-align: left; align-self: auto; }
+  .footer-cta-email { text-align: left; }
+  .footer-full-bottom { flex-direction: column; gap: 12px; align-items: flex-start; }
+  .footer-strip-center,
+  .footer-strip-right { display: none; }
+  .footer-strip { grid-template-columns: 1fr; }
 }
 
 /* ───────────────────────────────────────────────────────────────
@@ -3745,21 +4032,64 @@ textarea.engage-input-v2 { resize: none; line-height: 1.6; }
   <!-- Per-section atmosphere gradient -->
   <div id="section-atmosphere" class="section-atmosphere section-atm-0 visible" aria-hidden="true"></div>
 
+  <!-- V20: Film grain overlay — procedural LCG noise canvas, z-index:3, mix-blend-mode:overlay -->
+  <canvas id="pcm-grain" aria-hidden="true"></canvas>
+
   <main id="main-content"></main>
 
   <!-- Circular section progress -->
-  <div class="circular-progress" id="circular-progress" aria-hidden="true">
-    <svg viewBox="0 0 80 80" width="80" height="80">
-      <circle class="circ-static" cx="40" cy="40" r="36" stroke-width="0.8"/>
-      <circle class="circ-dashed" cx="40" cy="40" r="30" stroke-width="0.6"/>
-      <!-- Progress arc: circumference = 2*PI*36 = ~226.2 -->
-      <circle id="circ-arc" class="circ-progress-arc" cx="40" cy="40" r="36"
-        stroke-width="1.2"
-        stroke-dasharray="226.2 226.2"
-        stroke-dashoffset="226.2"
-        stroke-linecap="round"
-        transform="rotate(-90 40 40)"/>
-      <text class="circ-section-num" x="40" y="40" id="circ-num">01</text>
+  <!-- V19: Seacat-style dual-ring circular progress nav with clickable section ticks -->
+  <div class="circular-progress" id="circular-progress" role="navigation" aria-label="Section progress indicator">
+    <svg viewBox="0 0 100 100" width="110" height="110">
+      <!-- Outer static ring -->
+      <circle class="circ-outer-static" cx="50" cy="50" r="46"/>
+      <!-- Outer dashed ring (spinning via CSS animation for seacat halo effect) -->
+      <circle class="circ-selection-ring" cx="50" cy="50" r="46"/>
+      <!-- Mid static ring -->
+      <circle class="circ-inner-static" cx="50" cy="50" r="36"/>
+      <!-- Inner dashed ring -->
+      <circle class="circ-inner-dashed" cx="50" cy="50" r="30"/>
+      <!-- Progress arc: circumference = 2*PI*40 = ~251.3 -->
+      <!-- Sits between outer (r46) and inner (r36): r=41 -->
+      <circle id="circ-arc" class="circ-progress-arc" cx="50" cy="50" r="41"
+        stroke-dasharray="257.6 257.6"
+        stroke-dashoffset="257.6"
+        transform="rotate(-90 50 50)"/>
+      <!-- 10 radial tick marks at 36° intervals (r=46 outer edge) -->
+      <!-- Generated: each tick has a hit-target circle and a visual line -->
+      <!-- Section index encoded in data-section attribute; JS wires onclick -->
+      <!-- TICK 0 → 12 o'clock -->
+      <line id="circ-tick-0" class="circ-tick" x1="50" y1="3" x2="50" y2="8" stroke-width="1.5"/>
+      <circle class="circ-tick-hit" cx="50" cy="5.5" r="5" data-section="0" onclick="window.goToSection&&window.goToSection(0,0&lt;(window.activeIdx||0)?1:-1)" aria-label="Go to Home section"/>
+      <!-- TICK 1 → ~36° -->
+      <line id="circ-tick-1" class="circ-tick" x1="78.5" y1="12.5" x2="75.3" y2="17.1" stroke-width="1.5"/>
+      <circle class="circ-tick-hit" cx="77" cy="14.8" r="5" data-section="1" onclick="window.goToSection&&window.goToSection(1,1&lt;(window.activeIdx||0)?-1:1)" aria-label="Go to Firm Overview"/>
+      <!-- TICK 2 → ~72° -->
+      <line id="circ-tick-2" class="circ-tick" x1="96" y1="36.5" x2="91.4" y2="38.1" stroke-width="1.5"/>
+      <circle class="circ-tick-hit" cx="93.7" cy="37.3" r="5" data-section="2" onclick="window.goToSection&&window.goToSection(2,2&lt;(window.activeIdx||0)?-1:1)" aria-label="Go to Platform Edge"/>
+      <!-- TICK 3 → ~108° -->
+      <line id="circ-tick-3" class="circ-tick" x1="96" y1="63.5" x2="91.4" y2="61.9" stroke-width="1.5"/>
+      <circle class="circ-tick-hit" cx="93.7" cy="62.7" r="5" data-section="3" onclick="window.goToSection&&window.goToSection(3,3&lt;(window.activeIdx||0)?-1:1)" aria-label="Go to Senior Debt"/>
+      <!-- TICK 4 → ~144° -->
+      <line id="circ-tick-4" class="circ-tick" x1="78.5" y1="87.5" x2="75.3" y2="82.9" stroke-width="1.5"/>
+      <circle class="circ-tick-hit" cx="77" cy="85.2" r="5" data-section="4" onclick="window.goToSection&&window.goToSection(4,4&lt;(window.activeIdx||0)?-1:1)" aria-label="Go to Sub Capital"/>
+      <!-- TICK 5 → ~180° (6 o'clock) -->
+      <line id="circ-tick-5" class="circ-tick" x1="50" y1="97" x2="50" y2="92" stroke-width="1.5"/>
+      <circle class="circ-tick-hit" cx="50" cy="94.5" r="5" data-section="5" onclick="window.goToSection&&window.goToSection(5,5&lt;(window.activeIdx||0)?-1:1)" aria-label="Go to Equity"/>
+      <!-- TICK 6 → ~216° -->
+      <line id="circ-tick-6" class="circ-tick" x1="21.5" y1="87.5" x2="24.7" y2="82.9" stroke-width="1.5"/>
+      <circle class="circ-tick-hit" cx="23" cy="85.2" r="5" data-section="6" onclick="window.goToSection&&window.goToSection(6,6&lt;(window.activeIdx||0)?-1:1)" aria-label="Go to Execution"/>
+      <!-- TICK 7 → ~252° -->
+      <line id="circ-tick-7" class="circ-tick" x1="4" y1="63.5" x2="8.6" y2="61.9" stroke-width="1.5"/>
+      <circle class="circ-tick-hit" cx="6.3" cy="62.7" r="5" data-section="7" onclick="window.goToSection&&window.goToSection(7,7&lt;(window.activeIdx||0)?-1:1)" aria-label="Go to Underwriting"/>
+      <!-- TICK 8 → ~288° -->
+      <line id="circ-tick-8" class="circ-tick" x1="4" y1="36.5" x2="8.6" y2="38.1" stroke-width="1.5"/>
+      <circle class="circ-tick-hit" cx="6.3" cy="37.3" r="5" data-section="8" onclick="window.goToSection&&window.goToSection(8,8&lt;(window.activeIdx||0)?-1:1)" aria-label="Go to Compliance"/>
+      <!-- TICK 9 → ~324° -->
+      <line id="circ-tick-9" class="circ-tick" x1="21.5" y1="12.5" x2="24.7" y2="17.1" stroke-width="1.5"/>
+      <circle class="circ-tick-hit" cx="23" cy="14.8" r="5" data-section="9" onclick="window.goToSection&&window.goToSection(9,9&lt;(window.activeIdx||0)?-1:1)" aria-label="Go to Engage"/>
+      <!-- Center section number -->
+      <text class="circ-section-num" x="50" y="50" id="circ-num">01</text>
     </svg>
   </div>
 
@@ -4505,7 +4835,14 @@ function updateCopyContent(idx) {
       </button>
     `).join('') + '<span class="mode-drag-indicator"></span>';
     modesEl.style.display = '';
+    _lastModeIdx = 0; // reset direction tracking on section change
     showModeContent(0, s);
+    // Mark mode-body as visible immediately on first render (no transition needed)
+    const modeBodyEl = document.getElementById('mode-body');
+    if (modeBodyEl) {
+      modeBodyEl.classList.remove('mode-exiting', 'mode-entering');
+      modeBodyEl.classList.add('mode-visible');
+    }
     // Position drag indicator after layout
     requestAnimationFrame(() => {
       if (typeof window.updateModeIndicator === 'function') window.updateModeIndicator(0);
@@ -4565,22 +4902,68 @@ function updateCopyContent(idx) {
   if (fill) fill.style.width = `${(idx / 9) * 100}%`;
 }
 
+// Track last mode idx for direction-aware transitions
+let _lastModeIdx = 0;
+
 function showModeContent(idx, section) {
   const s = section || (window.SECTIONS && window.SECTIONS[window.activeIdx || 0]);
   if (!s || !s.modes) return;
   const mode = s.modes[idx];
   if (!mode) return;
   const el = id => document.getElementById(id);
-  if (el('mode-body')) el('mode-body').textContent = mode.body;
+  const modeBody  = el('mode-body');
   const modeStats = el('mode-stats');
-  if (modeStats && mode.stats) {
-    modeStats.innerHTML = mode.stats.map(([v, l]) =>
-      `<div class="stat-item"><span class="stat-val">${v}</span><span class="stat-label">${l}</span></div>`
-    ).join('');
-    modeStats.style.display = '';
-  } else if (modeStats) {
-    modeStats.style.display = 'none';
+
+  // V21: Cinematic directional transition — exit current content up or down
+  // depending on which direction the mode index is moving.
+  const dir = idx >= _lastModeIdx ? 1 : -1; // +1 = forward (exit up), -1 = backward (exit down)
+  _lastModeIdx = idx;
+
+  function applyContent() {
+    if (modeBody) modeBody.textContent = mode.body;
+    if (modeStats && mode.stats) {
+      modeStats.innerHTML = mode.stats.map(([v, l]) =>
+        `<div class="stat-item"><span class="stat-val">${v}</span><span class="stat-label">${l}</span></div>`
+      ).join('');
+      modeStats.style.display = '';
+    } else if (modeStats) {
+      modeStats.style.display = 'none';
+    }
   }
+
+  if (modeBody) {
+    // Phase 1: exit current content (fade + slide in exit direction)
+    modeBody.classList.remove('mode-visible', 'mode-entering');
+    modeBody.classList.add('mode-exiting');
+    if (modeStats) {
+      modeStats.style.opacity = '0';
+      modeStats.style.transition = 'opacity 0.18s ease';
+      modeStats.style.transform = `translateY(${-6 * dir}px)`;
+    }
+    setTimeout(() => {
+      // Phase 2: swap content, place entering from opposite end
+      applyContent();
+      modeBody.classList.remove('mode-exiting');
+      modeBody.classList.add('mode-entering');
+      // entering: start below if going forward, above if going back
+      modeBody.style.transform = `translateY(${12 * dir}px)`;
+      // Trigger reflow so the transition fires
+      void modeBody.offsetHeight;
+      // Phase 3: animate into visible position
+      requestAnimationFrame(() => {
+        modeBody.classList.remove('mode-entering');
+        modeBody.classList.add('mode-visible');
+        modeBody.style.transform = '';
+        if (modeStats) {
+          modeStats.style.opacity = '1';
+          modeStats.style.transform = 'translateY(0)';
+        }
+      });
+    }, 190);
+  } else {
+    applyContent();
+  }
+
   // Update active mode btn
   document.querySelectorAll('.mode-btn').forEach((btn, i) => {
     btn.classList.toggle('active', i === idx);
@@ -4634,12 +5017,24 @@ function updateSectionUI(idx) {
   const arc = document.getElementById('circ-arc');
   const circNum = document.getElementById('circ-num');
   if (arc) {
-    const circumference = 2 * Math.PI * 36; // ~226.2
-    const progress = idx / 9; // 0 to 1
+    // V19: r=41, circumference = 2*PI*41 = ~257.6
+    const circumference = 2 * Math.PI * 41;
+    const progress = idx / 9; // 0 (home) to 1 (engage)
     const dashoffset = circumference * (1 - progress);
     arc.style.strokeDashoffset = dashoffset.toFixed(1);
   }
   if (circNum) circNum.textContent = String(idx + 1).padStart(2, '0');
+
+  // V19: Update tick marks — active tick = current section, all others muted
+  for (let ti = 0; ti < 10; ti++) {
+    const tick = document.getElementById('circ-tick-' + ti);
+    if (!tick) continue;
+    if (ti === idx) {
+      tick.classList.add('active');
+    } else {
+      tick.classList.remove('active');
+    }
+  }
 
   // Section atmosphere
   const atm = document.getElementById('section-atmosphere');
@@ -4668,6 +5063,77 @@ function updateModeIndicator(idx) {
 window.updateModeIndicator = updateModeIndicator;
 window.updateSectionUI = updateSectionUI;
 window.updateCopyContent = updateCopyContent;
+
+// ─── V18: Touch swipe on modes-row ──────────────────────────────────────────
+// Horizontal swipe (≥40px) on the mode buttons row cycles modes left/right.
+// Prevents the global section-transition swipe from triggering during mode swipes.
+(function wireModesSwipe() {
+  let _sx = 0, _sy = 0, _swipeActive = false;
+  const THRESHOLD = 40;
+  const VERTICAL_CANCEL = 30; // abort if vertical drift is too large
+
+  function getModeCount() {
+    return document.querySelectorAll('.mode-btn').length;
+  }
+  function getActiveMode() {
+    const btns = document.querySelectorAll('.mode-btn');
+    for (let i = 0; i < btns.length; i++) {
+      if (btns[i].classList.contains('active')) return i;
+    }
+    return 0;
+  }
+
+  document.addEventListener('touchstart', (e) => {
+    const row = e.target.closest('.modes-row');
+    if (!row) return;
+    const t = e.touches[0];
+    _sx = t.clientX;
+    _sy = t.clientY;
+    _swipeActive = true;
+  }, { passive: true });
+
+  document.addEventListener('touchmove', (e) => {
+    if (!_swipeActive) return;
+    const row = e.target.closest('.modes-row');
+    if (!row) { _swipeActive = false; return; }
+    const t = e.touches[0];
+    const dx = t.clientX - _sx;
+    const dy = t.clientY - _sy;
+    // Cancel if predominantly vertical (user is probably trying to scroll sections)
+    if (Math.abs(dy) > VERTICAL_CANCEL && Math.abs(dy) > Math.abs(dx)) {
+      _swipeActive = false;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (!_swipeActive) return;
+    _swipeActive = false;
+
+    const changedTouch = e.changedTouches[0];
+    const dx = changedTouch.clientX - _sx;
+    const dy = changedTouch.clientY - _sy;
+
+    // Require horizontal dominance and sufficient distance
+    if (Math.abs(dx) < THRESHOLD || Math.abs(dy) > Math.abs(dx) * 0.8) return;
+
+    const count = getModeCount();
+    if (count <= 1) return;
+
+    const current = getActiveMode();
+    let next = current;
+    if (dx < 0) {
+      // Swipe left → next mode
+      next = Math.min(current + 1, count - 1);
+    } else {
+      // Swipe right → prev mode
+      next = Math.max(current - 1, 0);
+    }
+
+    if (next !== current && typeof window.setMode === 'function') {
+      window.setMode(next);
+    }
+  }, { passive: true });
+})();
 
 
   // ─── chrome.js (IIFE; runs immediately, exposes initChrome) ────────
@@ -5270,27 +5736,72 @@ window.updateCopyContent = updateCopyContent;
 
   function buildFooter() {
     insertHTML('beforeend', `
-      <footer class="pcm-footer" role="contentinfo" aria-label="Site footer">
-        <div class="footer-left">
-          © 2026 Patel Capital Markets · <a href="mailto:deals@patelcapital.markets" style="color:inherit;text-decoration:none;">deals@patelcapital.markets</a>
-          <button class="footer-credits-link"
-            onclick="document.getElementById('credits-modal').classList.remove('hidden')"
-            aria-label="Open credits modal">
-            Credits
-          </button>
+      <footer class="pcm-footer" id="pcm-footer" role="contentinfo" aria-label="Site footer">
+
+        <!-- Expanded full content — visible on Engage section -->
+        <div class="footer-full" id="footer-full" aria-hidden="true">
+          <div class="footer-full-top">
+            <div class="footer-brand-block">
+              <div class="footer-brand-name">Patel Capital Markets</div>
+              <div class="footer-brand-tagline">
+                Engineering Creative Finance<br>
+                Control The Leverage
+              </div>
+            </div>
+            <div class="footer-cta-block">
+              <a href="#" class="footer-cta" id="footer-cta-engage"
+                 onclick="window.goToSection && window.goToSection(9,1); return false;"
+                 aria-label="Go to the Engage section">
+                Bring us your deal →
+              </a>
+              <div class="footer-cta-email">deals@patelcapital.markets</div>
+            </div>
+          </div>
+
+          <div class="footer-full-bottom">
+            <div class="footer-copy">
+              © 2026 Patel Capital Markets ·
+              <a href="mailto:deals@patelcapital.markets" aria-label="Send email">
+                deals@patelcapital.markets
+              </a>
+            </div>
+            <div class="footer-links">
+              <a href="https://linkedin.com/company/patelcapitalmarkets"
+                 class="footer-social-link"
+                 target="_blank" rel="noopener noreferrer"
+                 aria-label="Patel Capital Markets on LinkedIn">
+                LinkedIn
+              </a>
+              <a href="mailto:deals@patelcapital.markets"
+                 class="footer-social-link"
+                 aria-label="Email Patel Capital Markets">
+                Email
+              </a>
+              <button class="footer-credits-btn"
+                onclick="document.getElementById('credits-modal') && document.getElementById('credits-modal').classList.remove('hidden')"
+                aria-label="View credits">
+                Credits
+              </button>
+            </div>
+          </div>
         </div>
-        <div class="footer-center">
-          <a href="#" class="footer-cta" id="footer-cta-engage"
-             onclick="window.goToSection && window.goToSection(9,1); return false;"
-             aria-label="Go to the Engage section to start a conversation">
-             Bring us your deal →
-          </a>
+
+        <!-- Thin strip — always visible at bottom -->
+        <div class="footer-strip">
+          <div class="footer-strip-left">
+            © 2026 PCM ·
+            <a href="mailto:deals@patelcapital.markets" aria-label="Email">
+              deals@patelcapital.markets
+            </a>
+          </div>
+          <div class="footer-strip-center" aria-live="polite">
+            <span id="footer-section-name">Home</span>
+          </div>
+          <div class="footer-strip-right">
+            <span id="footer-counter">01 / 10</span>
+          </div>
         </div>
-        <div class="footer-right" id="footer-section-counter" aria-live="polite">
-          <span id="footer-section">Home</span>
-          <span style="opacity:0.4;margin:0 6px;">·</span>
-          <span id="footer-counter">01 / 10</span>
-        </div>
+
       </footer>
     `);
   }
@@ -5970,11 +6481,24 @@ window.updateCopyContent = updateCopyContent;
     if (metaSection) metaSection.textContent = `${String(idx + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}`;
     if (metaCaption) metaCaption.textContent = SECTION_NAMES[idx] || '';
 
-    // Footer section label + counter (new grid footer)
-    const footerSection = document.getElementById('footer-section');
-    if (footerSection) footerSection.textContent = SECTION_NAMES[idx] || '';
+    // Footer: section name + counter in strip
+    const footerSectionName = document.getElementById('footer-section-name');
+    if (footerSectionName) footerSectionName.textContent = SECTION_NAMES[idx] || '';
     const footerCounter = document.getElementById('footer-counter');
     if (footerCounter) footerCounter.textContent = `${String(idx + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}`;
+
+    // Footer: expand/collapse on Engage section (idx 9)
+    const footer = document.getElementById('pcm-footer');
+    const footerFull = document.getElementById('footer-full');
+    if (footer) {
+      if (idx === 9) {
+        footer.classList.add('is-engage');
+        if (footerFull) footerFull.setAttribute('aria-hidden', 'false');
+      } else {
+        footer.classList.remove('is-engage');
+        if (footerFull) footerFull.setAttribute('aria-hidden', 'true');
+      }
+    }
 
     // Triangle masks per section
     if (typeof window.applyTriangles === 'function') {
@@ -7326,6 +7850,72 @@ animate();
 })();
 
 // ────────────────────────────────────────────────
+// V20 — FILM GRAIN: procedural LCG noise canvas
+// Runs independently of Three.js at ~30fps (every 2nd rAF).
+// Canvas is at 40% viewport resolution; CSS scales it to full size.
+// mix-blend-mode: overlay adds both bright and dark grain on the
+// near-black (#06090a) backdrop, creating authentic film-grain texture.
+// ────────────────────────────────────────────────
+(function initGrain() {
+  const canvas = document.getElementById('pcm-grain');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d', { willReadFrequently: false, alpha: false });
+  if (!ctx) return;
+
+  // Drawing resolution: 40% of viewport — bilinear upscale gives softer grain
+  const SCALE = 0.40;
+  let w = 1, h = 1;
+
+  function resize() {
+    w = Math.max(1, Math.ceil(window.innerWidth  * SCALE));
+    h = Math.max(1, Math.ceil(window.innerHeight * SCALE));
+    canvas.width  = w;
+    canvas.height = h;
+  }
+  resize();
+
+  let _resizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(_resizeTimer);
+    _resizeTimer = setTimeout(resize, 150);
+  }, { passive: true });
+
+  // Splitmix32-derived hash — extremely fast, high quality distribution
+  // Each frame uses a different seed so grain is never repeated.
+  let frameIdx = 0;
+  let _skip = 0;
+  const SKIP_FRAMES = 2; // draw every Nth rAF → ~30fps grain at 60fps display
+
+  function drawGrain() {
+    requestAnimationFrame(drawGrain);
+    if (++_skip < SKIP_FRAMES) return;
+    _skip = 0;
+
+    const imgData = ctx.createImageData(w, h);
+    const d = imgData.data;
+    const n = (frameIdx++ * 0x9e3779b9) | 0; // base seed per frame
+
+    // Fill pixels with LCG-derived noise (grey values only, full alpha)
+    let state = n;
+    for (let i = 0; i < d.length; i += 4) {
+      // Murmur3-inspired scramble — no sin/cos, branch-free
+      state = Math.imul(state ^ (state >>> 16), 0x45d9f3b);
+      state = Math.imul(state ^ (state >>> 13), 0x3a7a5c25);
+      state ^= (state >>> 16);
+      const v = ((state >>> 24) & 0xff);
+      d[i]     = v;   // R
+      d[i + 1] = v;   // G (same as R → greyscale)
+      d[i + 2] = v;   // B
+      d[i + 3] = 255; // A
+    }
+    ctx.putImageData(imgData, 0, 0);
+  }
+
+  // Delay first draw until after page is painted to avoid competing with loader
+  requestAnimationFrame(drawGrain);
+})();
+
+// ────────────────────────────────────────────────
 // GAP 11 — Triangular corner masks per section
 // ────────────────────────────────────────────────
 const TRIANGLE_CONFIGS = [
@@ -7509,19 +8099,28 @@ setTimeout(() => {
 })();
 
 // ────────────────────────────────────────────────
-// GAP 25 — Footer CTA wiring (engage with belt-link)
-// ────────────────────────────────────────────────
+// GAP 25 — V18 Footer wiring
+// ─────────────────────────────────────────────────
+// CTA: navigate to Engage section on click (belt-link style)
+// Footer expand: already handled in updateChrome via .is-engage class
 setTimeout(() => {
   const ctaEl = document.getElementById('footer-cta-engage');
   if (ctaEl) {
+    // Belt-hover: the ::after underline is handled purely in CSS.
+    // Add an additional cursor-tracking glow class for extra craft.
     ctaEl.addEventListener('mouseenter', () => {
-      ctaEl.style.color = 'var(--coin-gold)';
+      ctaEl.classList.add('cta-hovered');
     });
     ctaEl.addEventListener('mouseleave', () => {
-      ctaEl.style.color = '';
+      ctaEl.classList.remove('cta-hovered');
     });
   }
-}, 200);
+  // Ensure footer reflects initial section (idx 0 on load)
+  const footer = document.getElementById('pcm-footer');
+  if (footer && (window.activeIdx || 0) !== 9) {
+    footer.classList.remove('is-engage');
+  }
+}, 300);
 
 // ────────────────────────────────────────────────
 // GAP 26 — A11y: ensure every interactive element has aria-label
@@ -8450,6 +9049,33 @@ window.addEventListener('keydown', e => {
   if (typeof updateCopyContent === 'function') updateCopyContent(0);
   if (typeof updateSectionUI === 'function') updateSectionUI(0);
   if (typeof window.updateChrome === 'function') window.updateChrome(0);
+
+  // ── SERVICE WORKER REGISTRATION (PWA offline support) ─────────────────────
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js', { scope: '/' })
+        .then(reg => {
+          // Auto-update: when a new SW is waiting, activate it immediately
+          reg.addEventListener('updatefound', () => {
+            const sw = reg.installing;
+            if (!sw) return;
+            sw.addEventListener('statechange', () => {
+              if (sw.state === 'installed' && navigator.serviceWorker.controller) {
+                // A new version is available — silently reload for seamless update
+                sw.postMessage({ type: 'SKIP_WAITING' });
+                navigator.serviceWorker.addEventListener('controllerchange', () => {
+                  window.location.reload();
+                }, { once: true });
+              }
+            });
+          });
+        })
+        .catch(err => {
+          // SW registration failure is non-fatal — the site still works online
+          console.warn('[PCM] Service worker registration failed:', err.message);
+        });
+    });
+  }
 
   </script>
 </body>
