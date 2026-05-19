@@ -5769,6 +5769,164 @@ body.menu-open .menu-hamburger-line:nth-child(3) { transform: translateY(-3.25px
   opacity: 1;
 }
 
+
+/* ── PART I: Mobile responsive breakpoints ── */
+@media (max-width: 768px) {
+  .scene-copy {
+    right: 16px !important;
+    left: 16px !important;
+    transform: translateY(-50%) !important;
+    max-width: calc(100vw - 32px) !important;
+  }
+  body[data-section="0"] .scene-copy {
+    left: 50% !important;
+    right: auto !important;
+    transform: translate(-50%, -50%) !important;
+  }
+  .copy-title, .scene-copy__title {
+    font-size: clamp(22px, 7vw, 36px) !important;
+  }
+  #bottom-menu {
+    gap: 0 !important;
+    padding: 6px 8px 10px !important;
+    overflow-x: auto !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+    justify-content: flex-start !important;
+  }
+  #bottom-menu::-webkit-scrollbar { display: none; }
+  .section-btn__label {
+    font-size: 11px !important;
+  }
+  #controls-cluster {
+    bottom: 68px !important;
+    right: 12px !important;
+    gap: 6px !important;
+  }
+  #controls-cluster button {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 14px !important;
+  }
+  #top-nav {
+    padding: 14px 16px 0 !important;
+  }
+  .mode-switcher {
+    bottom: 90px !important;
+  }
+  .block-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    width: calc(100vw - 32px) !important;
+  }
+  #hint-cluster {
+    display: none !important;
+  }
+}
+
+/* ── PART I: iOS Safari fixed-position fix ── */
+body.is-ios .scene-copy {
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+body.is-ios canvas {
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+body.is-ios #bottom-menu {
+  padding-bottom: env(safe-area-inset-bottom, 14px);
+}
+
+/* ── PART I: Focus visible rings ── */
+:focus-visible {
+  outline: 2px solid #c9a96e !important;
+  outline-offset: 3px !important;
+}
+button:focus-visible,
+a:focus-visible {
+  box-shadow: 0 0 0 3px rgba(201,169,110,0.35) !important;
+}
+
+/* ── PART I: Tab navigation — logical order ── */
+.skip-link:focus { top: 16px !important; }
+
+/* ── PART I: Section-bg-overlay mobile ── */
+@media (max-width: 768px) {
+  .section-bg-overlay {
+    opacity: 0.6 !important;
+  }
+}
+
+/* ── PART I: Print styles ── */
+@media print {
+  canvas, #bottom-menu, .side-nav, #controls-cluster,
+  #battery-toggle, #pcm-cursor, #menu-toggle-btn { display: none !important; }
+  body { background: white !important; color: black !important; }
+}
+
+
+/* ── PART I: Intro loader / loading screen ── */
+#pcm-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9990;
+  background: #06090a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  transition: opacity 0.85s cubic-bezier(0.16,1,0.3,1);
+}
+#pcm-loader.dismissed {
+  opacity: 0;
+  pointer-events: none;
+}
+.loader-wordmark {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(24px, 4vw, 44px);
+  font-weight: 500;
+  color: #c9a96e;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-align: center;
+}
+.loader-slogan {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.38em;
+  text-transform: uppercase;
+  color: rgba(201,169,110,0.45);
+  text-align: center;
+}
+.loader-spinner {
+  width: 40px;
+  height: 40px;
+  border: 1.5px solid rgba(201,169,110,0.2);
+  border-top-color: #c9a96e;
+  border-radius: 50%;
+  animation: loader-spin 1.2s linear infinite;
+}
+@keyframes loader-spin { to { transform: rotate(360deg); } }
+.loader-status {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(201,169,110,0.35);
+  text-align: center;
+  min-height: 16px;
+}
+.loader-hairline {
+  width: 0%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #c9a96e, transparent);
+  transition: width 3s ease;
+  box-shadow: 0 0 8px rgba(201,169,110,0.5);
+}
+#pcm-loader.loading .loader-hairline {
+  width: 280px;
+}
+
 </style>
 </head>
 <body class="pcm-body" data-section="0">
@@ -9959,6 +10117,8 @@ function animate() {
       }
 }
 animate();
+      window.dispatchEvent(new Event("pcm:sceneready"));
+      if (window.pcmLog) window.pcmLog("Scene ready — rendering");
 
 // ═══════════════════════════════════════════════════════════════
 // PCM v13 — SEACAT PARITY: runtime initializers
@@ -14402,6 +14562,52 @@ function animateStatPanels() {
       }
     });
   }, 500);
+})();
+
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: Loader dismiss — wire to pcm-loader element
+// ═══════════════════════════════════════════════════════════════
+(function wireLoaderDismiss() {
+  const loader = document.getElementById('pcm-loader');
+  if (!loader) return;
+
+  // Override dismiss function
+  window.pcmDismissLoader = function() {
+    loader.classList.remove('loading');
+    loader.classList.add('dismissed');
+    setTimeout(() => {
+      loader.style.display = 'none';
+      document.body.style.opacity = '1';
+    }, 900);
+  };
+
+  // Progress animation
+  const hairline = document.getElementById('loader-hairline');
+  const status = document.getElementById('loader-status');
+  const STEPS = [
+    [0, 'Initializing WebGL...'],
+    [300, 'Building 3D geometry...'],
+    [700, 'Loading postprocessing chain...'],
+    [1200, 'Calibrating 7-light rig...'],
+    [1800, 'Engineering the stack...'],
+    [2400, 'Control The Leverage'],
+  ];
+
+  STEPS.forEach(([delay, text]) => {
+    setTimeout(() => {
+      if (status) status.textContent = text;
+      const progress = Math.round((STEPS.indexOf(STEPS.find(s => s[1] === text)) + 1) / STEPS.length * 100);
+      loader.setAttribute('aria-valuenow', progress);
+    }, delay);
+  });
+
+  // Auto-dismiss after 3.5s OR when Three.js scene ready
+  const autoTimer = setTimeout(() => { window.pcmDismissLoader(); }, 3500);
+  window.addEventListener('pcm:sceneready', () => {
+    clearTimeout(autoTimer);
+    setTimeout(window.pcmDismissLoader, 400);
+  });
 })();
 
 </script>
