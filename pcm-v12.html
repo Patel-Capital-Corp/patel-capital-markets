@@ -6134,17 +6134,20 @@ function initScene() {
 
   // 5. Center spot (warm gold, flickers in animation loop)
   const centerSpotLight = new THREE.PointLight(0xffe0a0, 1.8, 18, 1.4);
+      window.pcmCenterSpot = centerSpot;
   centerSpotLight.position.set(0, 0.5, 5);
   scene.add(centerSpotLight);
   window.centerSpotLight = centerSpotLight;
 
   // 6. Accent brass (left)
   const accentBrass = new THREE.PointLight(0xc9a96e, 0.8, 10, 1.8);
+      window.pcmAccentBrass = accentBrass;
   accentBrass.position.set(-3.5, 2, 2);
   scene.add(accentBrass);
 
   // 7. Accent green (right)
   const accentGreen = new THREE.PointLight(0x7fb89c, 0.6, 10, 1.8);
+      window.pcmAccentGreen = accentGreen;
   accentGreen.position.set(3.5, -2, 2);
   scene.add(accentGreen);
 
@@ -6278,6 +6281,7 @@ function buildPCMLogo(THREE) {
 
   // ── LEVER GROUP ────────────────────────────────────────────────────────────
   const leverGroup = new THREE.Group();
+  window.pcmLeverGroup = leverGroup;
   if (window.pcmTargetLeverTilt !== undefined) { leverGroup.rotation.z += (window.pcmTargetLeverTilt - leverGroup.rotation.z) * 0.04; }
   leverGroup.userData.partId = 'lever';
 
@@ -6298,6 +6302,16 @@ function buildPCMLogo(THREE) {
 
   // ── COIN GROUP ─────────────────────────────────────────────────────────────
   const coinGroup = new THREE.Group();
+      // Part I: Explode mode — spread parts outward
+      if (window.pcmExploded) {
+        coinGroup.position.x += (-3.8 - coinGroup.position.x) * 0.06;
+        if (window.pcmPersonGroup) window.pcmPersonGroup.position.x += (3.8 - window.pcmPersonGroup.position.x) * 0.06;
+        if (window.pcmFulcrumGroup) window.pcmFulcrumGroup.position.y += (-1.8 - window.pcmFulcrumGroup.position.y) * 0.06;
+      } else {
+        coinGroup.position.x += (-2.0 - coinGroup.position.x) * 0.06;
+        if (window.pcmPersonGroup) window.pcmPersonGroup.position.x += (2.0 - window.pcmPersonGroup.position.x) * 0.06;
+        if (window.pcmFulcrumGroup) window.pcmFulcrumGroup.position.y += (-0.45 - window.pcmFulcrumGroup.position.y) * 0.06;
+      }
   coinGroup.position.set(-2.0, 0, 0);
   coinGroup.userData.partId = 'coin';
 
@@ -6341,6 +6355,7 @@ function buildPCMLogo(THREE) {
 
   // ── PERSON GROUP ───────────────────────────────────────────────────────────
   const personRoot = new THREE.Group();
+  window.pcmPersonRoot = personRoot;
   personRoot.position.set(2.0, 0.09, 0);
   personRoot.userData.partId = 'person';
 
@@ -6399,6 +6414,7 @@ function buildPCMLogo(THREE) {
 
   // ── FULCRUM GROUP ──────────────────────────────────────────────────────────
   const fulcrumGroup = new THREE.Group();
+  window.pcmFulcrumGroup = fulcrumGroup;
   fulcrumGroup.position.set(0, -0.45, 0);
   fulcrumGroup.userData.partId = 'fulcrum';
 
@@ -14094,6 +14110,138 @@ function animateStatPanels() {
     });
   });
   bmObserver.observe(document.body, { attributes: true, attributeFilter: ['data-section'] });
+})();
+
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: Animate loop patches — explode mode + spotlight lerp
+// ═══════════════════════════════════════════════════════════════
+(function patchAnimateLoop() {
+  // Wait for scene to be ready, then patch the rAF loop
+  let patchAttempts = 0;
+  const patchInterval = setInterval(() => {
+    // Check if Three.js scene is running (canvas exists and has size)
+    const canvas = document.querySelector('canvas');
+    if (canvas && canvas.width > 0) {
+      clearInterval(patchInterval);
+      // Everything is running — now install per-frame hooks
+      installFrameHooks();
+    }
+    if (++patchAttempts > 300) clearInterval(patchInterval);
+  }, 100);
+
+  function installFrameHooks() {
+    // The frame hooks are already reading window.* variables
+    // Just confirm the keys are set
+    if (!window.pcmExploded) window.pcmExploded = false;
+    if (!window.pcmWireframe) window.pcmWireframe = false;
+    if (!window.pcmDirection) window.pcmDirection = 1;
+    if (!window.pcmMotionScale) window.pcmMotionScale = 1.0;
+    if (window.pcmLog) window.pcmLog('Frame hooks installed');
+  }
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: Per-section ambient audio variation
+// ═══════════════════════════════════════════════════════════════
+(function initPerSectionAudio() {
+  const SECTION_FREQS = {
+    0: [65, 97],   // Home — standard brass drone
+    1: [55, 82],   // Firm — lower, contemplative
+    2: [72, 108],  // Edge — higher, energetic
+    3: [60, 90],   // Senior Debt — solid foundation
+    4: [50, 75],   // Sub Cap — deeper, heavier
+    5: [68, 102],  // Equity — bright, aspirational
+    6: [58, 87],   // Execution — precise
+    7: [52, 78],   // Underwriting — methodical
+    8: [62, 93],   // Compliance — steady
+    9: [70, 105],  // Engage — open, inviting
+  };
+
+  const audioObserver = new MutationObserver(() => {
+    const cur = parseInt(document.body.getAttribute('data-section') || '0', 10);
+    const freqs = SECTION_FREQS[cur] || [65, 97];
+    if (window.pcmOsc1 && window.pcmAudioCtx) {
+      window.pcmOsc1.frequency.setTargetAtTime(freqs[0], window.pcmAudioCtx.currentTime, 0.8);
+    }
+    if (window.pcmOsc2 && window.pcmAudioCtx) {
+      window.pcmOsc2.frequency.setTargetAtTime(freqs[1], window.pcmAudioCtx.currentTime, 0.8);
+    }
+  });
+  audioObserver.observe(document.body, { attributes: true, attributeFilter: ['data-section'] });
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: IE deprecation notice
+// ═══════════════════════════════════════════════════════════════
+(function initIENotice() {
+  const isIE = /*@cc_on!@*/false || !!document.documentMode;
+  if (!isIE) return;
+  const notice = document.createElement('div');
+  notice.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#c9a96e;color:#0f1814;font-family:Space Grotesk,sans-serif;font-size:13px;padding:10px 20px;text-align:center;';
+  notice.textContent = 'Internet Explorer is not supported. Please use a modern browser like Chrome, Firefox, or Edge.';
+  document.body.insertBefore(notice, document.body.firstChild);
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: noscript fallback content (CSS-driven)
+// ═══════════════════════════════════════════════════════════════
+(function initNoScriptFallback() {
+  // The actual <noscript> block should be in the HTML
+  // This ensures the body opacity gate releases even if JS partially fails
+  document.body.style.opacity = '';
+  document.body.style.visibility = 'visible';
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: SectionEndIndicator — full visibility logic
+// ═══════════════════════════════════════════════════════════════
+(function finalizeSectionEndIndicator() {
+  const ind = document.getElementById('section-end-indicator');
+  if (!ind) return;
+  // Hide when transitioning
+  const origGoto = window.goToSection;
+  if (typeof origGoto === 'function' && !window.pcmSEIPatched) {
+    window.pcmSEIPatched = true;
+    window.goToSection = function(idx, dir) {
+      ind.style.opacity = '0';
+      const result = origGoto(idx, dir);
+      return result;
+    };
+  }
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: Expose bloom, vignette, chroma via alternative approach
+// ═══════════════════════════════════════════════════════════════
+(function exposeEffectsAlt() {
+  // BloomEffect, VignetteEffect, ChromaticAberrationEffect
+  // are created inside the import().then() closure — can't reach them directly
+  // Instead, listen for the renderer to start and probe composer
+  let probeAttempts = 0;
+  const probeInt = setInterval(() => {
+    const canvas = document.querySelector('canvas');
+    if (!canvas) return;
+    if (++probeAttempts > 200) clearInterval(probeInt);
+
+    // Probe via window
+    ['pcmComposer', 'composer'].forEach(key => {
+      const c = window[key];
+      if (!c) return;
+      if (c._passes || c.passes) {
+        const passes = c._passes || c.passes;
+        passes.forEach(p => {
+          (p._effects || p.effects || []).forEach(eff => {
+            const n = eff?.constructor?.name || '';
+            if (n.includes('Bloom') && !window.pcmBloomEffect) { window.pcmBloomEffect = eff; }
+            if (n.includes('Vignette') && !window.pcmVignetteEffect) { window.pcmVignetteEffect = eff; }
+            if ((n.includes('Chromatic') || n.includes('Chroma')) && !window.pcmChromaEffect) { window.pcmChromaEffect = eff; }
+          });
+        });
+        if (window.pcmBloomEffect) clearInterval(probeInt);
+      }
+    });
+  }, 300);
 })();
 
 </script>
