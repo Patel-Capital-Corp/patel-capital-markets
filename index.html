@@ -659,10 +659,11 @@ body.transitioning .cinema-bar {
   z-index: 20;
   background: linear-gradient(
     to top,
-    rgba(6, 9, 10, 0.85) 0%,
+    rgba(6, 9, 10, 0.92) 0%,
+    rgba(6, 9, 10, 0.6) 60%,
     transparent 100%
   );
-  padding: 14px 40px 18px;
+  padding: 16px 36px 20px;
 }
 
 /* ------------------------------------------------------------
@@ -687,7 +688,7 @@ body.transitioning .cinema-bar {
   border: none;
   border-bottom: 2px solid transparent;
   cursor: none;
-  opacity: 0.5;
+  opacity: 0.65;
   transition: opacity 0.3s var(--ease-soft),
               color 0.3s var(--ease-soft),
               border-color 0.3s var(--ease-soft),
@@ -1793,36 +1794,49 @@ body.transitioning .cinema-bar {
 
 .mode-btn {
   background: transparent;
-  border: 1px solid rgba(201, 169, 110, 0.25);
-  color: var(--cream);
+  border: none;
+  border-bottom: 1px solid rgba(201, 169, 110, 0.2);
+  color: rgba(232,220,196,0.5);
   font-family: 'Space Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.18em;
-  padding: 6px 14px;
+  font-size: 9.5px;
+  letter-spacing: 0.2em;
+  padding: 6px 10px 8px;
   cursor: pointer;
   text-transform: uppercase;
-  transition: all 0.3s;
+  transition: color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
 }
-
-.mode-btn.active {
+.mode-btn::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 0;
+  height: 2px;
   background: var(--brass);
-  color: var(--bg);
-  border-color: var(--brass);
+  transition: width 0.35s cubic-bezier(0.34,1.56,0.64,1);
 }
-
-.mode-btn:hover:not(.active) {
-  border-color: var(--brass);
+.mode-btn.active {
   color: var(--brass);
+  border-bottom-color: transparent;
+}
+.mode-btn.active::after {
+  width: 100%;
+  box-shadow: 0 0 10px rgba(201,169,110,0.5);
+}
+.mode-btn:hover:not(.active) {
+  color: rgba(201,169,110,0.7);
+  border-bottom-color: rgba(201,169,110,0.35);
 }
 
 .mode-body {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.7;
   color: var(--ink);
-  opacity: 0.85;
+  opacity: 0.88;
   margin: 10px 0;
-  max-width: 420px;
+  max-width: 460px;
   min-height: 48px;
   /* V21: cinematic mode transition — fade + Y-lift, matching seacat panel reveal */
   transition: opacity 0.28s ease, transform 0.28s cubic-bezier(0.215,0.61,0.355,1);
@@ -1861,10 +1875,11 @@ body.transitioning .cinema-bar {
 
 .stat-val {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 1.8rem;
+  font-size: 2.4rem;
   color: var(--brass);
   letter-spacing: 0.05em;
   line-height: 1;
+  font-weight: 300;
 }
 
 .stat-label {
@@ -1897,6 +1912,163 @@ body.transitioning .cinema-bar {
   text-transform: uppercase;
 }
 
+
+
+/* ═══════════════════════════════════════════════════
+   V23 — BLOCK GRID (Platform Edge 3-up feature cards)
+   ═══════════════════════════════════════════════════ */
+.block-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin: 16px 0 8px;
+  max-width: 560px;
+}
+.block-grid-item {
+  border: 1px solid rgba(201,169,110,0.18);
+  background: rgba(201,169,110,0.04);
+  padding: 14px 16px 16px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.35s ease, background 0.35s ease;
+  cursor: default;
+}
+.block-grid-item::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(201,169,110,0.5), transparent);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+.block-grid-item:hover {
+  border-color: rgba(201,169,110,0.4);
+  background: rgba(201,169,110,0.07);
+}
+.block-grid-item:hover::before { opacity: 1; }
+.block-grid-num {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.3em;
+  color: rgba(201,169,110,0.55);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+.block-grid-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.0rem;
+  letter-spacing: 0.12em;
+  color: var(--brass);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  line-height: 1.2;
+}
+.block-grid-body {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px;
+  line-height: 1.55;
+  color: var(--ink);
+  opacity: 0.7;
+}
+
+/* ═══════════════════════════════════════════════════
+   V23 — CONNECTOR LINE (Execution 5-stage process)
+   ═══════════════════════════════════════════════════ */
+.connector-stages {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  max-width: 400px;
+  margin: 18px 0;
+}
+.connector-stage {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  position: relative;
+  padding-bottom: 20px;
+  opacity: 0.35;
+  transform: translateX(-8px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.connector-stage.revealed {
+  opacity: 1;
+  transform: translateX(0);
+}
+.connector-stage-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+.connector-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(201,169,110,0.3);
+  border: 1px solid rgba(201,169,110,0.5);
+  margin-top: 3px;
+  flex-shrink: 0;
+  transition: background 0.4s ease, box-shadow 0.4s ease;
+}
+.connector-stage.revealed .connector-dot {
+  background: var(--brass);
+  box-shadow: 0 0 8px rgba(201,169,110,0.6);
+}
+.connector-line-vert {
+  width: 1px;
+  flex: 1;
+  background: linear-gradient(180deg, rgba(201,169,110,0.4), rgba(201,169,110,0.08));
+  margin-top: 4px;
+  min-height: 20px;
+}
+.connector-stage:last-child .connector-line-vert { display: none; }
+.connector-stage-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.0rem;
+  letter-spacing: 0.14em;
+  color: var(--brass);
+  text-transform: uppercase;
+  margin-bottom: 3px;
+  line-height: 1.2;
+}
+.connector-stage-body {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--ink);
+  opacity: 0.7;
+}
+
+/* ─────────────────────────────────────────────
+   CALLOUT BLOCK (pull quote, Firm Overview etc)
+   ───────────────────────────────────────────── */
+.callout-block {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem;
+  font-style: italic;
+  line-height: 1.7;
+  color: var(--brass);
+  opacity: 0.92;
+  max-width: 500px;
+  margin: 18px 0 12px;
+  padding: 16px 24px;
+  border-left: 1px solid rgba(201,169,110,0.55);
+  background: rgba(201,169,110,0.04);
+  position: relative;
+}
+.callout-block::before {
+  content: '"';
+  position: absolute;
+  top: 4px;
+  left: 10px;
+  font-size: 3rem;
+  line-height: 1;
+  color: rgba(201,169,110,0.22);
+  font-style: normal;
+}
+
 /* ─────────────────────────────────────────────
    4. LONG BLOCK
    ───────────────────────────────────────────── */
@@ -1920,7 +2092,7 @@ body.transitioning .cinema-bar {
 
 .poetic-block {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   line-height: 2.2;
   color: var(--brass);
   opacity: 0.9;
@@ -2089,16 +2261,17 @@ select.pcm-input option {
   font-family: 'Space Mono', monospace;
   font-size: 9px;
   letter-spacing: 0.22em;
-  color: rgba(201, 169, 110, 0.5);
+  color: rgba(201, 169, 110, 0.65);
   margin-bottom: 3px;
 }
 
 .btn-name {
   display: block;
   font-family: 'Cormorant Garamond', serif;
-  font-size: 13px;
+  font-size: 15px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 /* ─────────────────────────────────────────────
@@ -2770,19 +2943,19 @@ body.is-dragging #canvas-host canvas { cursor: grabbing; }
 }
 .substep-nav.visible { display: flex; }
 .substep-dash {
-  width: 44px;
-  height: 3px;
-  background: rgba(201,169,110,0.14);
+  width: 32px;
+  height: 2px;
+  background: rgba(201,169,110,0.18);
   border-radius: 1px;
   cursor: pointer;
-  transition: background 0.4s ease, box-shadow 0.4s ease, width 0.3s ease;
+  transition: background 0.4s ease, box-shadow 0.4s ease, width 0.35s cubic-bezier(0.34,1.56,0.64,1);
   position: relative;
   flex-shrink: 0;
 }
 .substep-dash.active {
   background: var(--brass);
-  box-shadow: 0 0 10px rgba(201,169,110,0.55), 0 0 20px rgba(201,169,110,0.2);
-  width: 56px;
+  box-shadow: 0 0 8px rgba(201,169,110,0.6), 0 0 16px rgba(201,169,110,0.25);
+  width: 52px;
 }
 .substep-dash:hover:not(.active) {
   background: rgba(201,169,110,0.35);
@@ -5027,6 +5200,22 @@ function updateCopyContent(idx) {
     longEl.style.display = s.longBlock ? '' : 'none';
   }
 
+  // Callout (pull quote — Firm Overview and others)
+  let calloutEl = document.getElementById('copy-callout');
+  if (!calloutEl) {
+    calloutEl = document.createElement('blockquote');
+    calloutEl.id = 'copy-callout';
+    calloutEl.className = 'callout-block';
+    const longBlockEl = document.getElementById('copy-long');
+    if (longBlockEl && longBlockEl.parentNode) {
+      longBlockEl.parentNode.insertBefore(calloutEl, longBlockEl.nextSibling);
+    }
+  }
+  if (calloutEl) {
+    calloutEl.textContent = s.callout || '';
+    calloutEl.style.display = s.callout ? '' : 'none';
+  }
+
   // Poetic block
   const poeticEl = el('copy-poetic');
   if (poeticEl) {
@@ -5067,6 +5256,83 @@ function updateCopyContent(idx) {
       substepNav.classList.remove('visible');
       substepNav.innerHTML = '';
     }
+  }
+
+  // Block grid (Platform Edge section 2 — 3-column feature cards)
+  let blockGridEl = document.getElementById('copy-block-grid');
+  if (!blockGridEl) {
+    blockGridEl = document.createElement('div');
+    blockGridEl.id = 'copy-block-grid';
+    blockGridEl.className = 'block-grid';
+    const modesRowEl = document.getElementById('copy-modes');
+    if (modesRowEl && modesRowEl.parentNode) {
+      modesRowEl.parentNode.insertBefore(blockGridEl, modesRowEl.nextSibling);
+    }
+  }
+  if (idx === 2 && s.modes && blockGridEl) { // Platform Edge
+    blockGridEl.innerHTML = s.modes.map((m, i) => `
+      <div class="block-grid-item">
+        <div class="block-grid-num">${String(i + 1).padStart(2,'0')}</div>
+        <div class="block-grid-name">${m.name}</div>
+        <div class="block-grid-body">${m.body}</div>
+      </div>
+    `).join('');
+    blockGridEl.style.display = 'grid';
+    // Hide mode buttons for Platform Edge — block grid replaces them
+    const modesRowEl = document.getElementById('copy-modes');
+    if (modesRowEl) modesRowEl.style.display = 'none';
+    const modeBodyEl = document.getElementById('mode-body');
+    if (modeBodyEl) modeBodyEl.style.display = 'none';
+    const modeStatsEl = document.getElementById('mode-stats');
+    if (modeStatsEl) modeStatsEl.style.display = 'none';
+  } else if (blockGridEl) {
+    blockGridEl.style.display = 'none';
+    // Ensure mode buttons show for other sections
+    const modeBodyEl = document.getElementById('mode-body');
+    if (modeBodyEl && idx !== 2) modeBodyEl.style.display = '';
+  }
+
+  // Connector stages (Execution section 6)
+  let connectorEl = document.getElementById('copy-connector');
+  if (!connectorEl && idx === 6) {
+    connectorEl = document.createElement('div');
+    connectorEl.id = 'copy-connector';
+    connectorEl.className = 'connector-stages';
+    const stagesData = [
+      ['Discovery',    'Listening deeply to the deal, the sponsor, the asset, the market.'],
+      ['Underwriting', 'Stress-testing every assumption before we go to market.'],
+      ['Structuring',  'Engineering the capital stack for maximum optionality.'],
+      ['Term Sheet',   'The first market test — our structure meets real capital.'],
+      ['Close',        'Proof of concept. Repeatable. Documented. Defensible.'],
+    ];
+    connectorEl.innerHTML = stagesData.map(([name, body], i) => `
+      <div class="connector-stage" data-stage="${i}">
+        <div class="connector-stage-left">
+          <div class="connector-dot"></div>
+          <div class="connector-line-vert"></div>
+        </div>
+        <div class="connector-stage-right">
+          <div class="connector-stage-name">${name}</div>
+          <div class="connector-stage-body">${body}</div>
+        </div>
+      </div>
+    `).join('');
+    const bodyEl = document.getElementById('copy-body');
+    if (bodyEl && bodyEl.parentNode) {
+      bodyEl.parentNode.insertBefore(connectorEl, bodyEl.nextSibling);
+    }
+    // Progressive reveal of stages via scroll (driven by _execStageReveal)
+    window._updateConnectorStages = function(revealedCount) {
+      const stages = connectorEl.querySelectorAll('.connector-stage');
+      stages.forEach((s, i) => {
+        s.classList.toggle('revealed', i < revealedCount);
+      });
+    };
+    // Reveal first stage immediately
+    setTimeout(() => { if (window._updateConnectorStages) window._updateConnectorStages(1); }, 400);
+  }
+  if (connectorEl) {
+    connectorEl.style.display = idx === 6 ? 'flex' : 'none';
   }
 
   // Contact form (legacy scene-copy form — hide when engage-cinematic takes over)
@@ -6094,6 +6360,11 @@ window.updateCopyContent = updateCopyContent;
     let svgBuilt = false;
 
     window._execStageReveal = function(scrollDelta) {
+      // Update connector stages as exec scroll progresses
+      if (typeof window._updateConnectorStages === 'function') {
+        const revealed = Math.min(5, Math.floor(execScrollAccum / 120) + 1);
+        window._updateConnectorStages(revealed);
+      }
       if (!execVisible) return false;
       execScrollAccum += scrollDelta;
 
@@ -8680,6 +8951,42 @@ function showSectionCopy(idx) {
       { opacity: 0, y: 10 },
       { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out', delay: 0.38 }
     );
+
+    // V23 — Callout block reveal
+    const calloutReveal = document.getElementById('copy-callout');
+    if (calloutReveal && calloutReveal.style.display !== 'none') {
+      gsap.fromTo(calloutReveal,
+        { opacity: 0, x: -14 },
+        { opacity: 0.92, x: 0, duration: 0.7, ease: 'power2.out', delay: 0.68 }
+      );
+    }
+
+    // V23 — Long block reveal
+    const longReveal = document.getElementById('copy-long');
+    if (longReveal && longReveal.style.display !== 'none') {
+      gsap.fromTo(longReveal,
+        { opacity: 0, y: 10 },
+        { opacity: 0.8, y: 0, duration: 0.65, ease: 'power2.out', delay: 0.62 }
+      );
+    }
+
+    // V23 — Block grid items staggered
+    const bgItems = document.querySelectorAll('.block-grid-item');
+    if (bgItems.length) {
+      gsap.fromTo(bgItems,
+        { opacity: 0, y: 18, scale: 0.95 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: 'power2.out', stagger: 0.1, delay: 0.65 }
+      );
+    }
+
+    // V23 — Connector stages (Execution section) initial dim-reveal
+    const connStages = document.querySelectorAll('.connector-stage');
+    if (connStages.length) {
+      gsap.fromTo(connStages,
+        { opacity: 0, x: -10 },
+        { opacity: 0.35, x: 0, duration: 0.5, ease: 'power2.out', stagger: 0.08, delay: 0.55 }
+      );
+    }
   }
 
   window.showSectionCopy = showSectionCopy;
