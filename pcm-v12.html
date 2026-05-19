@@ -9479,6 +9479,7 @@ document.addEventListener('click', e => {
   const hits = raycaster.intersectObjects(root.children, true);
   if (hits.length > 0) {
     const partId = getPartId(hits[0].object);
+        window.lastPickedPartId = partId;
     if (partId) showDetailCard(partId, e.clientX, e.clientY);
   }
 });
@@ -9489,6 +9490,9 @@ let hoveredPartId = null;
 const baseScales = new Map();
 
 function setPartScale(partId, scale) {
+          // Part I: dispatch to detail card
+          if (window.pcmPickPart) { const ev = e || window.event; window.pcmPickPart(partId, ev?.clientX || window.innerWidth/2, ev?.clientY || window.innerHeight/2); }
+
   const root = window.pcmRoot;
   if (!root) return;
   root.traverse(obj => {
@@ -14242,6 +14246,162 @@ function animateStatPanels() {
       }
     });
   }, 300);
+})();
+
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: Detail card — part-pick implementation
+// ═══════════════════════════════════════════════════════════════
+(function initDetailCard() {
+  const PART_DETAILS = {
+    'person':    { label: 'Sponsor', title: 'The Operator', body: 'Real estate sponsors who bring the deal, the local intelligence, the operating expertise. The figure standing on the long side of the lever — the one moving the asset.' },
+    'coin':      { label: 'Capital', title: 'The Counterweight', body: 'Senior debt, mezzanine, preferred equity, common JV. Dollars sized and structured to each transaction. The disc on the short side of the lever.' },
+    'fulcrum':   { label: 'Fulcrum', title: 'Where Structure Lives', body: 'Where structure meets leverage. The capital-stack engineering that lets a small sliver of equity move a large asset. Our entire practice lives here.' },
+    'upArrow':   { label: 'Lift', title: 'Yield Enhancement', body: 'Cheaper coupon, longer tenor, smarter covenants. Programmatic value creation through structure — not market timing.' },
+    'downArrow': { label: 'Load', title: 'Risk Transfer', body: 'Subordinate capital and credit enhancement that absorbs the first loss so the senior stays cheap. Engineered subordination is the product.' },
+    'ringOuter': { label: 'The Stack', title: 'Everything Together', body: 'The complete capital stack — engineered top-to-bottom for each transaction. Bound by underwriting, not by template.' },
+  };
+
+  let card = document.getElementById('detail-card');
+  if (!card) {
+    card = document.createElement('div');
+    card.id = 'detail-card';
+    card.className = 'detail-card';
+    card.setAttribute('role', 'dialog');
+    card.setAttribute('aria-modal', 'false');
+    card.innerHTML = `
+      <button class="detail-card__close" id="detail-card-close" aria-label="Close">✕</button>
+      <div class="detail-card__label" id="detail-card-label"></div>
+      <div class="detail-card__title" id="detail-card-title"></div>
+      <div class="detail-card__rule"></div>
+      <div class="detail-card__body" id="detail-card-body"></div>
+    `;
+    document.body.appendChild(card);
+
+    const closeBtn = card.querySelector('#detail-card-close');
+    if (closeBtn) closeBtn.addEventListener('click', () => closeDetailCard());
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && card.classList.contains('visible')) closeDetailCard();
+    });
+  }
+
+  function openDetailCard(partId, x, y) {
+    const data = PART_DETAILS[partId];
+    if (!data) return;
+
+    const labelEl = document.getElementById('detail-card-label');
+    const titleEl = document.getElementById('detail-card-title');
+    const bodyEl = document.getElementById('detail-card-body');
+    if (labelEl) labelEl.textContent = data.label;
+    if (titleEl) titleEl.textContent = data.title;
+    if (bodyEl) bodyEl.textContent = data.body;
+
+    // Position card, clamp to viewport
+    const W = 280, H = 160;
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const cx = Math.max(16, Math.min(x + 16, vw - W - 16));
+    const cy = Math.max(16, Math.min(y - H / 2, vh - H - 16));
+
+    card.style.left = cx + 'px';
+    card.style.top = cy + 'px';
+    card.style.display = 'block';
+    setTimeout(() => card.classList.add('visible'), 10);
+
+    if (window.pcmTrack) window.pcmTrack('part_pick', { partId });
+    if (window.pcmAnnounce) window.pcmAnnounce(`Inspecting: ${data.title}`);
+  }
+
+  function closeDetailCard() {
+    card.classList.remove('visible');
+    setTimeout(() => { card.style.display = 'none'; }, 350);
+  }
+
+  window.pcmPickPart = function(partId, x, y) {
+    if (card.classList.contains('visible') && document.getElementById('detail-card-label')?.textContent === (PART_DETAILS[partId]?.label || '')) {
+      closeDetailCard();
+    } else {
+      openDetailCard(partId, x || window.innerWidth / 2, y || window.innerHeight / 2);
+    }
+  };
+  window.pcmCloseDetailCard = closeDetailCard;
+
+  // Wire raycaster clicks — the existing raycaster in Scene3D.tsx
+  // triggers on canvas click. Here we hook if the click event bubbles from canvas
+  // with a partId on the event detail
+  document.addEventListener('pcm:partpick', e => {
+    const { partId, x, y } = e.detail || {};
+    if (partId) openDetailCard(partId, x, y);
+  });
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: CSS Vignette overlay strengthen
+// ═══════════════════════════════════════════════════════════════
+(function strengthenVignette() {
+  let vig = document.getElementById('vignette-overlay') || document.querySelector('.vignette-overlay');
+  if (!vig) {
+    vig = document.createElement('div');
+    vig.id = 'vignette-overlay';
+    vig.setAttribute('aria-hidden', 'true');
+    vig.style.cssText = 'position:fixed;inset:0;z-index:8;pointer-events:none;background:radial-gradient(ellipse at 50% 50%,transparent 38%,rgba(6,9,10,0.62) 78%,rgba(6,9,10,0.88) 100%);';
+    document.body.appendChild(vig);
+  }
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: Canvas click → raycaster → detail card
+// ═══════════════════════════════════════════════════════════════
+(function initCanvasClickRaycaster() {
+  // Intercept canvas clicks and dispatch to detail card
+  // The main raycaster is in the Three.js scene — it sets window.lastPickedPartId
+  // We hook the canvas click event to read that
+  let lastPickX = 0, lastPickY = 0;
+
+  document.addEventListener('click', e => {
+    const canvas = document.querySelector('canvas');
+    if (!canvas || !e.target === canvas) return;
+    // Check if a partId was picked (set by the scene raycaster)
+    if (window.lastPickedPartId) {
+      window.pcmPickPart && window.pcmPickPart(window.lastPickedPartId, lastPickX, lastPickY);
+      window.lastPickedPartId = null;
+    }
+  });
+
+  document.addEventListener('mousemove', e => { lastPickX = e.clientX; lastPickY = e.clientY; });
+  document.addEventListener('touchend', e => {
+    const t = e.changedTouches[0];
+    if (t) { lastPickX = t.clientX; lastPickY = t.clientY; }
+  });
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: Hover scale — strengthen cursor over parts
+// ═══════════════════════════════════════════════════════════════
+(function strengthenHoverScale() {
+  // The hover scale is driven by the raycaster in the animate loop
+  // which sets window.hoveredPartId
+  // We ensure these are read by the scale logic
+  if (!window.pcmHoveredPartId) window.pcmHoveredPartId = null;
+  // Hook: canvas mousemove triggers scene raycaster hover
+  // window.hoveredPartId is set by scene, scale lerp reads it
+  // These are already set up in the existing Scene3D code
+  // Strengthen: ensure cursor shows hot state on hover
+  let hoverCheckInterval = setInterval(() => {
+    const canvas = document.querySelector('canvas');
+    if (!canvas) return;
+    clearInterval(hoverCheckInterval);
+
+    canvas.addEventListener('mousemove', () => {
+      if (window.hoveredPartId) {
+        document.body.classList.add('cursor-hot');
+        canvas.style.cursor = 'pointer';
+      } else {
+        document.body.classList.remove('cursor-hot');
+        canvas.style.cursor = 'none';
+      }
+    });
+  }, 500);
 })();
 
 </script>
