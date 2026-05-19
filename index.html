@@ -3031,6 +3031,614 @@ textarea:focus-visible {
     display: none !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   V15 — REMAINING SEACAT GAPS: HYBRID SCROLL, SPLIT PANEL,
+   EXECUTION STAGES, ENGAGE CINEMATIC, LANDSCAPE SVG
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ───────────────────────────────────────────────────────────────
+   GAP 5/23 — EXECUTION STAGES: Hybrid vertical-scroll section
+   5 stages revealed sequentially as user scrolls within section
+   ─────────────────────────────────────────────────────────────── */
+.execution-stage-host {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(700px, 88vw);
+  z-index: 14;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.7s var(--ease-cinema);
+}
+.execution-stage-host.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+.exec-stages-title {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.35em;
+  color: rgba(201,169,110,0.45);
+  text-transform: uppercase;
+  margin-bottom: 28px;
+  text-align: center;
+}
+.exec-stage-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.exec-stage-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  padding: 20px 0;
+  border-top: 1px solid rgba(201,169,110,0.08);
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.65s cubic-bezier(0.16,1,0.3,1),
+              transform 0.65s cubic-bezier(0.16,1,0.3,1),
+              border-color 0.65s;
+  position: relative;
+}
+.exec-stage-row:last-child {
+  border-bottom: 1px solid rgba(201,169,110,0.08);
+}
+.exec-stage-row.revealed {
+  opacity: 1;
+  transform: translateY(0);
+  border-top-color: rgba(201,169,110,0.18);
+}
+.exec-stage-row.revealed + .exec-stage-row {
+  border-top-color: rgba(201,169,110,0.18);
+}
+.exec-stage-num-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid rgba(201,169,110,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  color: rgba(201,169,110,0.5);
+  transition: background 0.5s, border-color 0.5s, color 0.5s, box-shadow 0.5s;
+}
+.exec-stage-row.active .exec-stage-num-badge {
+  background: var(--brass);
+  border-color: var(--brass);
+  color: #06090a;
+  box-shadow: 0 0 14px var(--brass), 0 0 28px rgba(201,169,110,0.3);
+}
+.exec-stage-row.passed .exec-stage-num-badge {
+  background: rgba(201,169,110,0.2);
+  border-color: rgba(201,169,110,0.4);
+  color: rgba(201,169,110,0.7);
+}
+.exec-stage-content h3 {
+  font-family: var(--font-serif);
+  font-size: clamp(1rem, 2vw, 1.35rem);
+  font-weight: 400;
+  color: rgba(227,238,230,0.5);
+  letter-spacing: 0.1em;
+  margin: 0 0 5px;
+  transition: color 0.5s;
+}
+.exec-stage-row.active .exec-stage-content h3,
+.exec-stage-row.passed .exec-stage-content h3 {
+  color: var(--ink);
+}
+.exec-stage-content p {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: rgba(227,238,230,0.35);
+  line-height: 1.7;
+  margin: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.6s cubic-bezier(0.16,1,0.3,1),
+              color 0.5s,
+              opacity 0.5s;
+  opacity: 0;
+}
+.exec-stage-row.active .exec-stage-content p,
+.exec-stage-row.passed .exec-stage-content p {
+  max-height: 80px;
+  opacity: 1;
+  color: rgba(227,238,230,0.6);
+}
+/* Connector line trace between stages */
+.exec-stage-connector {
+  position: absolute;
+  left: 32px;
+  top: 49px;
+  width: 1px;
+  height: calc(100% - 10px);
+  background: rgba(201,169,110,0.08);
+  overflow: hidden;
+}
+.exec-stage-connector::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 0%;
+  background: linear-gradient(180deg, var(--brass), rgba(201,169,110,0.3));
+  box-shadow: 0 0 6px rgba(201,169,110,0.4);
+  transition: height 0.7s cubic-bezier(0.16,1,0.3,1);
+}
+.exec-stage-row.passed .exec-stage-connector::after,
+.exec-stage-row.active .exec-stage-connector::after {
+  height: 100%;
+}
+
+/* ───────────────────────────────────────────────────────────────
+   GAP 22 — SPLIT PANEL: Right-column visual for mode sections
+   ─────────────────────────────────────────────────────────────── */
+.section-visual-panel {
+  position: fixed;
+  right: 0;
+  top: 0;
+  bottom: 70px;
+  width: 48%;
+  z-index: 6;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(24px);
+  transition: opacity 0.9s var(--ease-cinema), transform 0.9s var(--ease-cinema);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.section-visual-panel.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+/* Left-edge separator */
+.section-visual-panel::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 15%; bottom: 15%;
+  width: 1px;
+  background: linear-gradient(180deg, transparent 0%, rgba(201,169,110,0.12) 50%, transparent 100%);
+}
+.visual-panel-inner {
+  width: min(320px, 90%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+.visual-panel-large-stat {
+  text-align: center;
+}
+.vp-stat-val {
+  font-family: var(--font-serif);
+  font-size: clamp(3rem, 5vw, 5.5rem);
+  font-weight: 300;
+  color: var(--brass);
+  letter-spacing: 0.05em;
+  line-height: 1;
+  opacity: 0.85;
+}
+.vp-stat-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.38em;
+  color: rgba(232,220,196,0.35);
+  text-transform: uppercase;
+  margin-top: 8px;
+}
+.vp-divider {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(180deg, rgba(201,169,110,0.3), transparent);
+}
+.vp-mode-indicator {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.vp-mode-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(201,169,110,0.2);
+  border: 1px solid rgba(201,169,110,0.3);
+  transition: all 0.4s;
+}
+.vp-mode-dot.active {
+  background: var(--brass);
+  box-shadow: 0 0 8px rgba(201,169,110,0.5);
+  transform: scale(1.5);
+}
+.vp-geo-shape {
+  width: 120px;
+  height: 120px;
+  border: 1px solid rgba(201,169,110,0.1);
+  border-radius: 50%;
+  position: relative;
+  animation: slowSpin 18s linear infinite;
+}
+.vp-geo-shape::before {
+  content: '';
+  position: absolute;
+  inset: 12px;
+  border: 1px solid rgba(201,169,110,0.06);
+  border-radius: 50%;
+  animation: slowSpin 12s linear infinite reverse;
+}
+.vp-geo-shape::after {
+  content: '';
+  position: absolute;
+  inset: 28px;
+  border: 1px solid rgba(201,169,110,0.15);
+  border-radius: 50%;
+  animation: slowSpin 8s linear infinite;
+}
+@keyframes slowSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+/* Narrow viewport: hide split panel */
+@media (max-width: 900px) {
+  .section-visual-panel { display: none; }
+}
+
+/* ───────────────────────────────────────────────────────────────
+   GAP 24 — LANDSCAPE GATE: SVG phone rotation graphic
+   ─────────────────────────────────────────────────────────────── */
+.landscape-gate__svg-wrap {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  margin: 0 auto 20px;
+}
+.phone-svg-group {
+  transform-origin: 70px 70px;
+  animation: phoneRotateAnim 3.4s cubic-bezier(0.4,0,0.2,1) infinite;
+}
+@keyframes phoneRotateAnim {
+  0%   { transform: rotate(0deg); }
+  25%  { transform: rotate(0deg); }
+  60%  { transform: rotate(-90deg); }
+  85%  { transform: rotate(-90deg); }
+  100% { transform: rotate(0deg); }
+}
+.rotate-arc {
+  transform-origin: 70px 70px;
+  animation: arcDashAnim 3.4s cubic-bezier(0.4,0,0.2,1) infinite;
+}
+@keyframes arcDashAnim {
+  0%   { opacity: 0.3; }
+  25%  { opacity: 0.3; }
+  42%  { opacity: 1; }
+  60%  { opacity: 0.3; }
+  100% { opacity: 0.3; }
+}
+
+/* ───────────────────────────────────────────────────────────────
+   GAP ENGAGE — Full cinematic contact experience
+   ─────────────────────────────────────────────────────────────── */
+.engage-cinematic {
+  position: fixed;
+  inset: 0;
+  z-index: 13;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.8s var(--ease-cinema);
+}
+.engage-cinematic.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+.engage-two-col {
+  display: flex;
+  width: min(900px, 92vw);
+  gap: 0;
+  height: min(620px, 85vh);
+}
+.engage-left-col {
+  flex: 0 0 42%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 48px 44px 48px 0;
+  border-right: 1px solid rgba(201,169,110,0.12);
+  position: relative;
+}
+.engage-right-col {
+  flex: 1;
+  padding: 48px 0 48px 44px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow-y: auto;
+  /* Custom scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(201,169,110,0.3) transparent;
+}
+.engage-right-col::-webkit-scrollbar { width: 2px; }
+.engage-right-col::-webkit-scrollbar-track { background: transparent; }
+.engage-right-col::-webkit-scrollbar-thumb { background: rgba(201,169,110,0.3); }
+.engage-section-label {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.38em;
+  color: rgba(201,169,110,0.45);
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+.engage-headline {
+  font-family: var(--font-serif);
+  font-size: clamp(1.8rem, 3.5vw, 3rem);
+  font-weight: 300;
+  color: var(--ink);
+  letter-spacing: 0.08em;
+  line-height: 1.25;
+  margin: 0 0 16px;
+}
+.engage-brass-rule {
+  width: 28px;
+  height: 1px;
+  background: var(--brass);
+  margin: 20px 0;
+  box-shadow: 0 0 10px rgba(201,169,110,0.5);
+}
+.engage-descriptor {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: rgba(227,238,230,0.5);
+  line-height: 1.8;
+  margin: 0 0 28px;
+}
+.engage-direct-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.engage-direct-label {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.3em;
+  color: rgba(201,169,110,0.35);
+  text-transform: uppercase;
+}
+.engage-direct-email {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: rgba(201,169,110,0.7);
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  position: relative;
+  display: inline-block;
+  transition: color 0.3s;
+}
+.engage-direct-email::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 0; right: 0;
+  height: 1px;
+  background: var(--brass);
+  transform: scaleX(0);
+  transform-origin: 0%;
+  transition: transform 0.4s cubic-bezier(0.215,0.61,0.355,1);
+}
+@media (hover: hover) {
+  .engage-direct-email:hover { color: var(--brass); }
+  .engage-direct-email:hover::after { transform: scaleX(1); }
+}
+/* Form within right col */
+.engage-form-v2 {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.engage-field-label {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.3em;
+  color: rgba(201,169,110,0.4);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  display: block;
+}
+.engage-input-v2 {
+  width: 100%;
+  box-sizing: border-box;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(201,169,110,0.15);
+  padding: 8px 0;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.3s;
+}
+.engage-input-v2:focus { border-bottom-color: rgba(201,169,110,0.5); }
+.engage-input-v2::placeholder {
+  color: rgba(227,238,230,0.2);
+  font-family: var(--font-body);
+  font-size: 12px;
+}
+select.engage-input-v2 option { background: #0f1814; color: var(--ink); }
+textarea.engage-input-v2 { resize: none; line-height: 1.6; }
+.engage-submit-v2 {
+  margin-top: 4px;
+  background: transparent;
+  border: 1px solid rgba(201,169,110,0.25);
+  padding: 13px 28px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  color: var(--brass);
+  text-transform: uppercase;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  align-self: flex-start;
+  transition: border-color 0.3s, color 0.3s;
+}
+.engage-submit-v2::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(201,169,110,0.1);
+  transform: scaleX(0);
+  transform-origin: 0%;
+  transition: transform 0.4s cubic-bezier(0.215,0.61,0.355,1);
+  z-index: -1;
+}
+@media (hover: hover) {
+  .engage-submit-v2:hover { border-color: rgba(201,169,110,0.5); }
+  .engage-submit-v2:hover::after { transform: scaleX(1); }
+}
+.engage-status-v2 {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--brass);
+  min-height: 18px;
+}
+@media (max-width: 700px) {
+  .engage-two-col { flex-direction: column; height: auto; }
+  .engage-left-col { flex: none; padding: 32px 0 24px; border-right: none; border-bottom: 1px solid rgba(201,169,110,0.12); }
+  .engage-right-col { padding: 24px 0 32px; }
+}
+
+/* ───────────────────────────────────────────────────────────────
+   GAP 17 — FIRM OVERVIEW: Parallax image reveal block
+   ─────────────────────────────────────────────────────────────── */
+.parallax-reveal-host {
+  position: fixed;
+  right: 60px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 280px;
+  z-index: 6;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.9s var(--ease-cinema);
+}
+.parallax-reveal-host.visible {
+  opacity: 1;
+}
+.parallax-clip-wrap {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  border-left: 1px solid rgba(201,169,110,0.12);
+}
+.parallax-inner {
+  width: 100%;
+  transform: translateY(0);
+  transition: transform 0.1s linear;
+  will-change: transform;
+}
+/* PCM brand illustration for Firm Overview */
+.pcm-brand-geo {
+  width: 100%;
+  aspect-ratio: 3/4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 32px;
+  box-sizing: border-box;
+  background:
+    radial-gradient(ellipse 60% 40% at 50% 40%, rgba(45,62,54,0.4) 0%, transparent 70%),
+    linear-gradient(180deg, rgba(15,24,20,0.6) 0%, rgba(6,9,10,0.2) 100%);
+}
+.geo-ring-outer {
+  width: 140px;
+  height: 140px;
+  border: 1px solid rgba(201,169,110,0.2);
+  border-radius: 50%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: slowSpin 20s linear infinite;
+}
+.geo-ring-outer::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(201,169,110,0.08);
+  border-radius: 50%;
+  animation: slowSpin 14s linear infinite reverse;
+}
+.geo-pcm-monogram {
+  position: absolute;
+  font-family: var(--font-serif);
+  font-size: 28px;
+  font-weight: 400;
+  letter-spacing: 0.3em;
+  color: rgba(201,169,110,0.6);
+  animation: none;
+  transform: rotate(0deg);
+}
+/* Override parent spin for the monogram */
+.geo-ring-outer .geo-pcm-monogram {
+  animation: counterSpin 20s linear infinite;
+}
+@keyframes counterSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(-360deg); }
+}
+.geo-tagline {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.38em;
+  color: rgba(201,169,110,0.3);
+  text-transform: uppercase;
+  text-align: center;
+}
+.geo-hairline {
+  width: 40px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(201,169,110,0.3), transparent);
+}
+.geo-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+.geo-stat-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(201,169,110,0.06);
+}
+.geo-stat-val {
+  font-family: var(--font-serif);
+  font-size: 15px;
+  color: var(--brass);
+  font-weight: 400;
+}
+.geo-stat-lbl {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.22em;
+  color: rgba(227,238,230,0.35);
+  text-transform: uppercase;
+  align-self: center;
+}
+@media (max-width: 900px) {
+  .parallax-reveal-host { display: none; }
+}
   </style>
 </head>
 <body class="pcm-body">
@@ -3815,21 +4423,51 @@ function updateCopyContent(idx) {
     modesEl.style.display = 'none';
   }
 
-  // Contact form
+  // Contact form (legacy scene-copy form — hide when engage-cinematic takes over)
   const contactEl = el('copy-contact');
   if (contactEl) {
-    contactEl.style.display = s.hasContact ? '' : 'none';
+    // Hide the old inline contact form — engage-cinematic handles section 9
+    contactEl.style.display = 'none';
   }
 
   // Home wordmark vs regular copy
   const homeMark = document.querySelector('.home-mark');
   const sceneCopy = document.querySelector('.scene-copy');
+
+  // Section 9 (Engage): full engage-cinematic UI; hide scene-copy entirely
+  if (idx === 9) {
+    if (sceneCopy) {
+      sceneCopy.classList.remove('visible');
+      sceneCopy.classList.add('hidden');
+    }
+    homeMark?.classList.remove('visible');
+    if (el('meta-section')) el('meta-section').textContent = `${String(idx + 1).padStart(2,'0')} / 10`;
+    if (el('meta-caption')) el('meta-caption').textContent = s.preTitle || '';
+    const fill = document.querySelector('.progress-bar-fill');
+    if (fill) fill.style.width = '100%';
+    return; // engage-cinematic is shown by updateChrome
+  }
+
   if (idx === 0) {
     homeMark?.classList.add('visible');
     if (sceneCopy) sceneCopy.style.bottom = '160px';
   } else {
     homeMark?.classList.remove('visible');
     if (sceneCopy) sceneCopy.style.bottom = '';
+  }
+
+  // Section 6 (Execution): show a compact header in scene-copy,
+  // full stage list is in execution-stage-host
+  if (idx === 6) {
+    if (el('copy-body')) el('copy-body').textContent = '';
+    if (el('copy-stats') && s.stats) {
+      el('copy-stats').innerHTML = s.stats.map(([val, label]) =>
+        `<div class="stat-item"><span class="stat-val">${val}</span><span class="stat-label">${label}</span></div>`
+      ).join('');
+    }
+    if (el('copy-poetic')) {
+      el('copy-poetic').style.display = 'none';
+    }
   }
 
   // Top meta
@@ -3870,6 +4508,10 @@ function showModeContent(idx, section) {
 window.setMode = function(idx) {
   const s = window.SECTIONS?.[window.activeIdx || 0];
   showModeContent(idx, s);
+  // Update visual panel mode dots
+  if (typeof window._updateVisualPanel === 'function') {
+    window._updateVisualPanel(window.activeIdx || 0, idx);
+  }
 };
 
 function updateSectionUI(idx) {
@@ -4568,7 +5210,318 @@ window.updateCopyContent = updateCopyContent;
   }
 
   // ---------------------------------------------------------------------------
-  // 14. Contact Form Submit
+  // 14c. Execution Stages Host (Gap 5/23 — hybrid scroll reveal)
+  // ---------------------------------------------------------------------------
+  function buildExecutionStages() {
+    const host = document.createElement('div');
+    host.id = 'execution-stage-host';
+    host.className = 'execution-stage-host';
+    host.setAttribute('aria-hidden', 'true');
+    const EXEC_STAGES = [
+      { num: '01', title: 'Discovery', desc: 'Listening first. Sponsor memo, rent roll, business plan, market thesis — everything on the table before we form a view.' },
+      { num: '02', title: 'Underwriting', desc: 'Stress-testing every assumption. DSCR, LTC, LTV, sensitivity scenarios. We model so the numbers hold under scrutiny.' },
+      { num: '03', title: 'Structuring', desc: 'Engineering the capital stack. Covenant design, tranche sizing, conversion features — every degree of freedom explored.' },
+      { num: '04', title: 'Term Sheet', desc: 'The test. Every structural decision lands on paper. Pricing, tenor, covenants, intercreditor — all negotiated before lender selection.' },
+      { num: '05', title: 'Close', desc: 'The proof. We run the process from term sheet to funded in the time we promised. That is the product.' },
+    ];
+    host.innerHTML = `
+      <div class="exec-stages-title">How We Work</div>
+      <div class="exec-stage-list" id="exec-stage-list">
+        ${EXEC_STAGES.map((s, i) => `
+          <div class="exec-stage-row" id="exec-stage-${i}" data-idx="${i}">
+            <div class="exec-stage-num-badge">${s.num}</div>
+            <div class="exec-stage-content">
+              <h3>${s.title}</h3>
+              <p>${s.desc}</p>
+            </div>
+            ${i < EXEC_STAGES.length - 1 ? '<div class="exec-stage-connector"></div>' : ''}
+          </div>
+        `).join('')}
+      </div>
+    `;
+    document.body.appendChild(host);
+
+    // Scroll-driven reveal logic
+    let execScrollAccum = 0;
+    let activeStage = -1;
+    let execVisible = false;
+
+    window._execStageReveal = function(scrollDelta) {
+      if (!execVisible) return false;
+      execScrollAccum += scrollDelta;
+
+      // Each stage needs ~120px of scroll to reveal
+      const stageThreshold = 120;
+      const newStage = Math.min(4, Math.floor(execScrollAccum / stageThreshold));
+
+      if (newStage !== activeStage) {
+        // Reveal all stages up to newStage
+        for (let i = 0; i <= newStage; i++) {
+          const row = document.getElementById(`exec-stage-${i}`);
+          if (row) {
+            row.classList.add('revealed');
+            row.classList.toggle('active', i === newStage);
+            row.classList.toggle('passed', i < newStage);
+          }
+        }
+        // Un-active stages beyond newStage when scrolling back
+        for (let i = newStage + 1; i < 5; i++) {
+          const row = document.getElementById(`exec-stage-${i}`);
+          if (row) {
+            row.classList.remove('revealed', 'active', 'passed');
+          }
+        }
+        activeStage = newStage;
+      }
+
+      // Consume scroll until all 5 stages revealed + small buffer; then pass through
+      return execScrollAccum < (stageThreshold * 5 + 80);
+    };
+
+    window._setExecVisible = function(v) {
+      execVisible = v;
+      const h = document.getElementById('execution-stage-host');
+      if (h) h.classList.toggle('visible', v);
+      if (!v) {
+        // Reset when leaving
+        execScrollAccum = 0;
+        activeStage = -1;
+        document.querySelectorAll('.exec-stage-row').forEach(r => r.classList.remove('revealed','active','passed'));
+      }
+    };
+  }
+
+  // ---------------------------------------------------------------------------
+  // 14d. Section Visual Panel (Gap 22 — split-panel for mode sections)
+  // ---------------------------------------------------------------------------
+  function buildSectionVisualPanel() {
+    const PANEL_DATA = {
+      3: { label: 'Senior Debt', stats: [['$15M–$500M','Deal Size'],['6–10wk','Close'],['SOFR+175–450','Spread']] },
+      4: { label: 'Subordinate Capital', stats: [['10–14%','Coupon Range'],['65–85%','Attachment'],['3–7yr','Tenor']] },
+      5: { label: 'Joint-Venture Equity', stats: [['85–95%','LP Position'],['12–20%','IRR Target'],['1.6–2.4×','MOIC']] },
+      7: { label: 'Underwriting', stats: [['50+','Scenarios'],['1.20×','Min DSCR'],['48hr','Indication']] },
+    };
+
+    const panel = document.createElement('div');
+    panel.id = 'section-visual-panel';
+    panel.className = 'section-visual-panel';
+    panel.setAttribute('aria-hidden', 'true');
+    panel.innerHTML = `
+      <div class="visual-panel-inner" id="vp-inner">
+        <div class="vp-geo-shape"></div>
+        <div class="vp-mode-indicator" id="vp-mode-dots"></div>
+        <div class="vp-divider"></div>
+        <div id="vp-stats"></div>
+      </div>
+    `;
+    document.body.appendChild(panel);
+
+    window._updateVisualPanel = function(sectionIdx, modeIdx) {
+      const data = PANEL_DATA[sectionIdx];
+      const p = document.getElementById('section-visual-panel');
+      if (!p) return;
+
+      if (!data) {
+        p.classList.remove('visible');
+        return;
+      }
+      p.classList.add('visible');
+
+      // Mode dots
+      const modes = window.SECTIONS && window.SECTIONS[sectionIdx] && window.SECTIONS[sectionIdx].modes;
+      const dotsEl = document.getElementById('vp-mode-dots');
+      if (dotsEl && modes) {
+        dotsEl.innerHTML = modes.map((_, i) =>
+          `<div class="vp-mode-dot ${i === (modeIdx||0) ? 'active' : ''}"></div>`
+        ).join('');
+      }
+
+      // Stats
+      const statsEl = document.getElementById('vp-stats');
+      if (statsEl && data.stats) {
+        statsEl.innerHTML = data.stats.map(([val, lbl]) => `
+          <div class="visual-panel-large-stat">
+            <div class="vp-stat-val">${val}</div>
+            <div class="vp-stat-label">${lbl}</div>
+          </div>
+        `).join('<div class="vp-divider" style="width:24px;height:1px;background:rgba(201,169,110,0.15);margin:0 auto;"></div>');
+      }
+    };
+  }
+
+  // ---------------------------------------------------------------------------
+  // 14e. Parallax Reveal for Firm Overview (Gap 17)
+  // ---------------------------------------------------------------------------
+  function buildParallaxReveal() {
+    const host = document.createElement('div');
+    host.id = 'parallax-reveal-host';
+    host.className = 'parallax-reveal-host';
+    host.setAttribute('aria-hidden', 'true');
+    host.innerHTML = `
+      <div class="parallax-clip-wrap">
+        <div class="parallax-inner" id="parallax-inner">
+          <div class="pcm-brand-geo">
+            <div class="geo-ring-outer">
+              <span class="geo-pcm-monogram">PCM</span>
+            </div>
+            <div class="geo-hairline"></div>
+            <div class="geo-tagline">Engineering Creative Finance</div>
+            <div class="geo-stats">
+              <div class="geo-stat-row">
+                <span class="geo-stat-val">$3.4B</span>
+                <span class="geo-stat-lbl">Under Advisement</span>
+              </div>
+              <div class="geo-stat-row">
+                <span class="geo-stat-val">126</span>
+                <span class="geo-stat-lbl">Closed Transactions</span>
+              </div>
+              <div class="geo-stat-row">
+                <span class="geo-stat-val">2019</span>
+                <span class="geo-stat-lbl">Founded</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(host);
+
+    // Parallax on scroll within Firm Overview section
+    window._updateParallaxReveal = function(sectionIdx, scrollProgress) {
+      const h = document.getElementById('parallax-reveal-host');
+      const inner = document.getElementById('parallax-inner');
+      if (!h || !inner) return;
+
+      const visible = sectionIdx === 1; // Firm Overview
+      h.classList.toggle('visible', visible);
+      if (visible && scrollProgress !== undefined) {
+        // Parallax: inner moves slower than outer = scroll * 0.3 * 100px
+        const offset = scrollProgress * 30; // max 30px shift
+        inner.style.transform = `translateY(${-offset}px)`;
+      }
+    };
+  }
+
+  // ---------------------------------------------------------------------------
+  // 14f. Engage Cinematic (full-screen contact experience)
+  // ---------------------------------------------------------------------------
+  function buildEngageCinematic() {
+    const host = document.createElement('div');
+    host.id = 'engage-cinematic';
+    host.className = 'engage-cinematic';
+    host.innerHTML = `
+      <div class="engage-two-col" role="main" id="engage-main">
+        <!-- Left: brand / description -->
+        <div class="engage-left-col">
+          <div class="engage-section-label">Contact · Engage</div>
+          <h1 class="engage-headline">Bring Us Your Complex Deal</h1>
+          <div class="engage-brass-rule" aria-hidden="true"></div>
+          <p class="engage-descriptor">
+            The deals that don't fit anywhere else are the ones we're built for.
+            Reach out with the sponsor memo, the rent roll, or just a thesis.
+          </p>
+          <div class="engage-direct-contact">
+            <span class="engage-direct-label">Direct</span>
+            <a href="mailto:deals@patelcapital.markets" class="engage-direct-email">
+              deals@patelcapital.markets
+            </a>
+          </div>
+          <div style="margin-top:28px;">
+            <div class="engage-direct-label" style="margin-bottom:8px;">Tags</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              ${['New Deals','Sponsors','Capital Partners'].map(t =>
+                `<span style="font-family:var(--font-mono);font-size:8px;letter-spacing:0.28em;padding:5px 10px;border:1px solid rgba(201,169,110,0.18);color:rgba(201,169,110,0.55);text-transform:uppercase;">${t}</span>`
+              ).join('')}
+            </div>
+          </div>
+        </div>
+        <!-- Right: form -->
+        <div class="engage-right-col">
+          <form id="engage-form-v2" class="engage-form-v2" onsubmit="window.submitEngageForm(event)">
+            <div>
+              <label class="engage-field-label" for="eng-name">Name</label>
+              <input id="eng-name" name="name" type="text" class="engage-input-v2"
+                placeholder="Your full name" required autocomplete="name" />
+            </div>
+            <div>
+              <label class="engage-field-label" for="eng-email">Email</label>
+              <input id="eng-email" name="email" type="email" class="engage-input-v2"
+                placeholder="your@email.com" required autocomplete="email" />
+            </div>
+            <div>
+              <label class="engage-field-label" for="eng-deal-type">Deal Type</label>
+              <select id="eng-deal-type" name="dealType" class="engage-input-v2" required>
+                <option value="" disabled selected>Select structure</option>
+                <option value="senior">Senior Debt</option>
+                <option value="bridge">Bridge / Construction</option>
+                <option value="mezz">Mezzanine</option>
+                <option value="preferred">Preferred Equity</option>
+                <option value="jv">Joint-Venture Equity</option>
+                <option value="other">Other / Complex</option>
+              </select>
+            </div>
+            <div>
+              <label class="engage-field-label" for="eng-size">Deal Size</label>
+              <input id="eng-size" name="size" type="text" class="engage-input-v2"
+                placeholder="e.g. $50M" autocomplete="off" />
+            </div>
+            <div>
+              <label class="engage-field-label" for="eng-msg">Message</label>
+              <textarea id="eng-msg" name="message" class="engage-input-v2"
+                placeholder="Sponsor memo, rent roll, or just a thesis..." rows="4"></textarea>
+            </div>
+            <!-- Honeypot -->
+            <input type="text" name="_hp" style="display:none" tabindex="-1" autocomplete="off" />
+            <div style="display:flex;align-items:center;gap:20px;margin-top:4px;">
+              <button type="submit" class="engage-submit-v2" aria-label="Submit your deal">
+                Submit Deal →
+              </button>
+              <div id="engage-status-v2" class="engage-status-v2" aria-live="polite"></div>
+            </div>
+          </form>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(host);
+
+    window._setEngageVisible = function(v) {
+      const h = document.getElementById('engage-cinematic');
+      if (h) h.classList.toggle('visible', v);
+    };
+
+    // Submit handler for new form
+    window.submitEngageForm = async function(e) {
+      e.preventDefault();
+      const form = e.target;
+      const status = document.getElementById('engage-status-v2');
+      const data = Object.fromEntries(new FormData(form));
+      if (data._hp) return; // honeypot triggered
+
+      status.textContent = 'Sending...';
+      status.style.color = 'var(--brass)';
+
+      try {
+        const res = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...data, source: 'engage-form-v2' }),
+        });
+        if (res.ok) {
+          status.textContent = "Received. We'll be in touch within 24 hours.";
+          status.style.color = 'var(--accent-glow)';
+          form.reset();
+        } else {
+          throw new Error();
+        }
+      } catch {
+        status.textContent = 'Email us: deals@patelcapital.markets';
+        status.style.color = 'var(--cream)';
+      }
+    };
+  }
+
+  // ---------------------------------------------------------------------------
+  // 14. Contact Form Submit (legacy scene-copy form)
   // ---------------------------------------------------------------------------
 
   function wireContactForm() {
@@ -4659,13 +5612,25 @@ window.updateCopyContent = updateCopyContent;
 
     window.addEventListener('wheel', (e) => {
       const now = Date.now();
+      const dir = e.deltaY > 0 ? 1 : -1;
+      const curIdx = window.activeIdx || 0;
+
+      // Hybrid scroll: section 6 (Execution) — consume scroll for stage reveals first
+      if (curIdx === 6 && typeof window._execStageReveal === 'function') {
+        const consumed = window._execStageReveal(Math.abs(e.deltaY) * dir);
+        if (consumed) {
+          lastWheelTime = now;
+          window.dismissScrollCue();
+          return; // Don't transition yet
+        }
+      }
+
       if (now - lastWheelTime < WHEEL_COOLDOWN) return;
       lastWheelTime = now;
 
       if (typeof window.goToSection !== 'function') return;
 
-      const dir = e.deltaY > 0 ? 1 : -1;
-      const next = (window.activeIdx || 0) + dir;
+      const next = curIdx + dir;
       if (next >= 0 && next < SECTION_NAMES.length) {
         window.goToSection(next, dir);
         window.dismissScrollCue();
@@ -4685,7 +5650,18 @@ window.updateCopyContent = updateCopyContent;
       if (Math.abs(delta) < 40) return; // swipe threshold
 
       const dir  = delta > 0 ? 1 : -1;
-      const next = (window.activeIdx || 0) + dir;
+      const curIdx = window.activeIdx || 0;
+
+      // Hybrid scroll for execution section
+      if (curIdx === 6 && typeof window._execStageReveal === 'function') {
+        const consumed = window._execStageReveal(Math.abs(delta) * dir);
+        if (consumed) {
+          window.dismissScrollCue();
+          return;
+        }
+      }
+
+      const next = curIdx + dir;
       if (next >= 0 && next < SECTION_NAMES.length && typeof window.goToSection === 'function') {
         window.goToSection(next, dir);
         window.dismissScrollCue();
@@ -4749,6 +5725,40 @@ window.updateCopyContent = updateCopyContent;
 
     // Dismiss scroll cue after the first navigation
     if (idx !== 0) window.dismissScrollCue();
+
+    // Execution stages (idx=6)
+    if (typeof window._setExecVisible === 'function') {
+      window._setExecVisible(idx === 6);
+    }
+
+    // Engage cinematic (idx=9)
+    if (typeof window._setEngageVisible === 'function') {
+      window._setEngageVisible(idx === 9);
+    }
+
+    // Section visual panel (mode sections: 3,4,5,7)
+    if (typeof window._updateVisualPanel === 'function') {
+      window._updateVisualPanel(idx, 0);
+    }
+
+    // Parallax reveal (Firm Overview = idx 1)
+    if (typeof window._updateParallaxReveal === 'function') {
+      window._updateParallaxReveal(idx, 0);
+    }
+
+    // Hide scene-copy for engage and execution stages (they have their own full-screen UIs)
+    const sceneCopy = document.getElementById('scene-copy');
+    if (sceneCopy) {
+      if (idx === 9) {
+        // Engage: hide scene copy (engage-cinematic takes over)
+        sceneCopy.classList.add('hidden');
+        sceneCopy.classList.remove('visible');
+      }
+      if (idx === 6) {
+        // Execution: also managed by execution-stage-host, but keep scene-copy for title reveal
+        // Scene copy fades in from animation loop; leave it
+      }
+    }
   };
 
   // ---------------------------------------------------------------------------
@@ -4785,6 +5795,10 @@ window.updateCopyContent = updateCopyContent;
     buildSectionTriangles();
     buildScrubSwiper();
     buildFooter();
+    buildExecutionStages();
+    buildSectionVisualPanel();
+    buildParallaxReveal();
+    buildEngageCinematic();
 
     // --- Logic / handlers (no DOM insertion) ---
     wireContactForm();
@@ -5062,11 +6076,39 @@ function initOverlays() {
   const landscapeGate = document.createElement('div');
   landscapeGate.innerHTML = `
 <div id="landscape-gate" class="landscape-gate" role="alert" aria-live="assertive">
-  <div style="text-align:center;padding:40px;">
-    <div style="font-family:'Cormorant Garamond';font-size:1.8rem;color:var(--brass);margin-bottom:16px;">Rotate Device</div>
-    <div style="font-family:'Space Grotesk';font-size:14px;color:var(--ink);opacity:0.7;">This experience is designed for landscape orientation.</div>
-    <div style="font-family:'Space Mono';font-size:40px;margin-top:24px;color:var(--brass);">⟳</div>
+  <div class="landscape-gate__svg-wrap" aria-hidden="true">
+    <svg width="140" height="140" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Rotation arc indicators -->
+      <circle class="rotate-arc" cx="70" cy="70" r="58" stroke="rgba(201,169,110,0.2)" stroke-width="1" stroke-dasharray="12 6" />
+      <!-- Rotation arrow arc -->
+      <path class="rotate-arc" d="M 32 55 A 42 42 0 0 1 108 55"
+        stroke="rgba(201,169,110,0.45)" stroke-width="1.5" stroke-linecap="round" fill="none" />
+      <!-- Arrow head on arc end -->
+      <path class="rotate-arc" d="M 104 48 L 108 55 L 100 56"
+        stroke="rgba(201,169,110,0.45)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+      <!-- Phone shape (portrait, centered) -->
+      <g class="phone-svg-group">
+        <rect x="52" y="28" width="36" height="60" rx="5" ry="5"
+          stroke="rgba(201,169,110,0.7)" stroke-width="1.5" fill="rgba(201,169,110,0.06)" />
+        <!-- Screen area -->
+        <rect x="56" y="33" width="28" height="46" rx="2"
+          fill="rgba(201,169,110,0.04)" stroke="rgba(201,169,110,0.15)" stroke-width="0.5" />
+        <!-- Home button indicator -->
+        <circle cx="70" cy="92" r="3" fill="none" stroke="rgba(201,169,110,0.4)" stroke-width="1" />
+        <!-- PCM text on screen -->
+        <text x="70" y="58" text-anchor="middle"
+          style="font-family:serif;font-size:7px;fill:rgba(201,169,110,0.5);letter-spacing:2px;">PCM</text>
+        <!-- Small decorative line on screen -->
+        <line x1="62" y1="65" x2="78" y2="65" stroke="rgba(201,169,110,0.2)" stroke-width="0.5" />
+        <line x1="64" y1="70" x2="76" y2="70" stroke="rgba(201,169,110,0.15)" stroke-width="0.5" />
+      </g>
+      <!-- Direction label -->
+      <text x="70" y="112" text-anchor="middle"
+        style="font-family:monospace;font-size:7px;fill:rgba(201,169,110,0.35);letter-spacing:3px;">ROTATE</text>
+    </svg>
   </div>
+  <div class="landscape-gate__text">Rotate Device</div>
+  <div class="landscape-gate__sub">This experience is optimized for landscape</div>
 </div>`;
   document.body.appendChild(landscapeGate.firstElementChild);
 
@@ -6091,6 +7133,15 @@ _menuObserver.observe(document.body, { attributes: true, attributeFilter: ['clas
 function showSectionCopy(idx) {
   const copy = document.querySelector('.scene-copy');
   if (!copy) return;
+
+  // Section 9 (Engage): engage-cinematic takes over — don't show scene-copy
+  if (idx === 9) {
+    copy.classList.add('hidden');
+    copy.classList.remove('visible');
+    updateCopyContent(idx); // still updates chrome meta
+    return;
+  }
+
   copy.classList.remove('hidden');
   copy.classList.add('visible');
   updateCopyContent(idx);
@@ -6161,11 +7212,21 @@ function handleWheel(e) {
 
   if (isTransitioning) return;
 
+  const dir = e.deltaY > 0 ? 1 : -1;
+
+  // ── HYBRID SCROLL: Section 6 (Execution) consumes scroll for stage reveals ──
+  if (activeIdx === 6 && typeof window._execStageReveal === 'function') {
+    const consumed = window._execStageReveal(Math.abs(e.deltaY) * dir);
+    if (consumed) {
+      scrollAccum = 0;
+      return; // Don't process as section transition yet
+    }
+  }
+
   scrollAccum = Math.max(-1.2, Math.min(1.2, scrollAccum + e.deltaY * 0.0008));
 
   // Fast burst or threshold -> auto-transition
   if (Math.abs(e.deltaY) > 30 || Math.abs(scrollAccum) > 0.7) {
-    const dir = e.deltaY > 0 ? 1 : -1;
     const next = Math.max(0, Math.min(9, activeIdx + dir));
     if (next !== activeIdx) {
       scrollAccum = 0;
@@ -6185,6 +7246,11 @@ window.addEventListener('touchend', e => {
   const dy = touchStartY - e.changedTouches[0].clientY;
   if (Math.abs(dy) > 40) {
     const dir = dy > 0 ? 1 : -1;
+    // Hybrid scroll for execution section
+    if (activeIdx === 6 && typeof window._execStageReveal === 'function') {
+      const consumed = window._execStageReveal(Math.abs(dy) * dir);
+      if (consumed) return;
+    }
     const next = Math.max(0, Math.min(9, activeIdx + dir));
     if (next !== activeIdx) goToSection(next, dir);
   }
