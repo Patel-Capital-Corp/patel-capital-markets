@@ -4434,6 +4434,128 @@ textarea.engage-input-v2 { resize: none; line-height: 1.6; }
   50%       { transform: translateY(3px); opacity: 1; }
 }
 /* ── Per-Section Geometric Accent (v24) ─────────────────── */
+
+/* ═══════════════════════════════════════════════════
+   V24 — CAPITAL STACK VISUALIZATION
+   Fixed right-side panel, sections 3-5
+   ═══════════════════════════════════════════════════ */
+.cap-stack-host {
+  position: fixed;
+  right: 48px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 8;
+  width: 160px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+.cap-stack-host.visible {
+  opacity: 1;
+}
+.cap-stack-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.3em;
+  color: rgba(201,169,110,0.45);
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 16px;
+}
+.cap-stack-layers {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.cap-stack-layer {
+  position: relative;
+  border: 1px solid rgba(201,169,110,0.15);
+  transition: all 0.55s cubic-bezier(0.34,1.56,0.64,1);
+  overflow: hidden;
+}
+.cap-stack-layer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(201,169,110,0.03);
+  transition: background 0.4s ease;
+}
+.cap-stack-layer.active {
+  border-color: rgba(201,169,110,0.6);
+  box-shadow: 0 0 16px rgba(201,169,110,0.15), inset 0 0 12px rgba(201,169,110,0.04);
+}
+.cap-stack-layer.active::before {
+  background: rgba(201,169,110,0.07);
+}
+.cap-stack-layer-inner {
+  padding: 10px 12px 11px;
+  position: relative;
+  z-index: 1;
+}
+.cap-stack-layer-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 7.5px;
+  letter-spacing: 0.24em;
+  color: rgba(232,220,196,0.4);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  transition: color 0.4s ease;
+}
+.cap-stack-layer.active .cap-stack-layer-label {
+  color: rgba(201,169,110,0.85);
+}
+.cap-stack-layer-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  color: rgba(232,220,196,0.45);
+  text-transform: uppercase;
+  line-height: 1.2;
+  transition: color 0.4s ease;
+}
+.cap-stack-layer.active .cap-stack-layer-name {
+  color: var(--brass);
+}
+.cap-stack-layer-pct {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  color: rgba(201,169,110,0.35);
+  margin-top: 5px;
+  transition: color 0.4s ease;
+}
+.cap-stack-layer.active .cap-stack-layer-pct {
+  color: rgba(201,169,110,0.8);
+}
+/* Heights: Senior largest, Sub medium, Equity smallest (from top in visual) */
+.cap-stack-layer[data-layer="equity"]  { min-height: 46px; }
+.cap-stack-layer[data-layer="sub"]     { min-height: 54px; }
+.cap-stack-layer[data-layer="senior"]  { min-height: 66px; }
+/* Active layer gets expanded */
+.cap-stack-layer.active[data-layer="equity"]  { min-height: 74px; }
+.cap-stack-layer.active[data-layer="sub"]     { min-height: 82px; }
+.cap-stack-layer.active[data-layer="senior"]  { min-height: 92px; }
+/* Glow bar at the active layer bottom */
+.cap-stack-layer.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(201,169,110,0.6), transparent);
+}
+.cap-stack-footnote {
+  font-family: 'Space Mono', monospace;
+  font-size: 7px;
+  letter-spacing: 0.2em;
+  color: rgba(232,220,196,0.2);
+  text-align: center;
+  margin-top: 14px;
+  text-transform: uppercase;
+}
+@media (max-width: 900px) {
+  .cap-stack-host { display: none; }
+}
+
 .geo-accent {
   position: fixed;
   z-index: 4;
@@ -9958,6 +10080,72 @@ window.addEventListener('keydown', e => {
   }
 });
 
+
+
+// ═══════════════════════════════════════════════════════════════
+// V24 — CAPITAL STACK VISUALIZATION
+// Shows 3-layer capital stack panel (right side) on sections 3-5
+// ═══════════════════════════════════════════════════════════════
+(function buildCapitalStack() {
+  const host = document.createElement('div');
+  host.id = 'cap-stack-host';
+  host.className = 'cap-stack-host';
+  host.setAttribute('aria-hidden', 'true');
+  host.innerHTML = `
+    <div class="cap-stack-title">Capital Stack</div>
+    <div class="cap-stack-layers">
+      <div class="cap-stack-layer" data-layer="equity">
+        <div class="cap-stack-layer-inner">
+          <div class="cap-stack-layer-label">Layer 03</div>
+          <div class="cap-stack-layer-name">JV Equity</div>
+          <div class="cap-stack-layer-pct">5–15% · 12–20% IRR</div>
+        </div>
+      </div>
+      <div class="cap-stack-layer" data-layer="sub">
+        <div class="cap-stack-layer-inner">
+          <div class="cap-stack-layer-label">Layer 02</div>
+          <div class="cap-stack-layer-name">Sub Capital</div>
+          <div class="cap-stack-layer-pct">65–85% LTV · 10–14%</div>
+        </div>
+      </div>
+      <div class="cap-stack-layer" data-layer="senior">
+        <div class="cap-stack-layer-inner">
+          <div class="cap-stack-layer-label">Layer 01</div>
+          <div class="cap-stack-layer-name">Senior Debt</div>
+          <div class="cap-stack-layer-pct">SOFR + 175–450bps</div>
+        </div>
+      </div>
+    </div>
+    <div class="cap-stack-footnote">PCM · Full Stack</div>
+  `;
+  document.body.appendChild(host);
+
+  // Which layer is active per section
+  const LAYER_MAP = {
+    3: 'senior',
+    4: 'sub',
+    5: 'equity',
+  };
+
+  window._updateCapStack = function(sectionIdx) {
+    const activeLayer = LAYER_MAP[sectionIdx];
+    const shouldShow = activeLayer !== undefined;
+    host.classList.toggle('visible', shouldShow);
+    host.querySelectorAll('.cap-stack-layer').forEach(el => {
+      el.classList.toggle('active', el.dataset.layer === activeLayer);
+    });
+  };
+
+  // Initialize
+  window._updateCapStack(window.activeIdx || 0);
+
+  // Wire to section changes
+  const origOnSectionChange = window.onSectionChange;
+  window.onSectionChange = function(idx, dir) {
+    if (origOnSectionChange) origOnSectionChange(idx, dir);
+    window._updateCapStack(idx);
+  };
+})();
 
   // ═══════ INIT SEQUENCE ═══════════════════════════════════════════
   // Chrome auto-initializes on DOMContentLoaded; if it already fired we call manually.
