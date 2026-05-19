@@ -3754,26 +3754,19 @@ textarea.engage-input-v2 { resize: none; line-height: 1.6; }
 
   <div class="vignette" aria-hidden="true"></div>
 
-  <script type="importmap">
-  {
-    "imports": {
-      "three": "https://esm.sh/three@0.160.0",
-      "three/addons/": "https://esm.sh/three@0.160.0/examples/jsm/",
-      "postprocessing": "https://esm.sh/postprocessing@6.36.4?deps=three@0.160.0",
-      "gsap": "https://esm.sh/gsap@3.12.7"
-    }
-  }
-  </script>
-
   <script type="module">
-  import * as THREE from 'three';
-  import * as POSTPROCESSING from 'postprocessing';
-  import gsap from 'gsap';
-  window.gsap = gsap;
+  /* ── Dynamic imports — no importmap needed, works in all sandboxed iframes ── */
+  const [THREE, POSTPROCESSING, gsapMod] = await Promise.all([
+    import('https://esm.sh/three@0.160.0'),
+    import('https://esm.sh/postprocessing@6.36.4?deps=three@0.160.0'),
+    import('https://esm.sh/gsap@3.12.7'),
+  ]);
+  const gsap = gsapMod.default ?? gsapMod;
 
-  // Expose as globals so the non-module scripts below can find them
+  // Expose as globals so inline script blocks can reach them
   window.THREE = THREE;
   window.POSTPROCESSING = POSTPROCESSING;
+  window.gsap = gsap;
 
   // Shared mutable state used across input.js / animation.js
   window.dragRotXTarget = 0;
