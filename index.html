@@ -945,45 +945,287 @@ body.transitioning .cinema-bar {
 }
 
 /* ------------------------------------------------------------
-   46–47. MENU OVERLAY
+   46–47. MENU OVERLAY (seacat-style dual-column with parallax)
    ------------------------------------------------------------ */
 .menu-overlay {
   position: fixed;
   inset: 0;
   z-index: 50;
-  background: var(--bg);
+  background: rgba(6,9,10,0.98);
   transform: translateX(100%);
   transition: transform 0.7s var(--ease-cinema);
+  overflow: hidden;
+  overscroll-behavior: contain;
 }
+.menu-overlay.open { transform: translateX(0); }
 
-.menu-overlay.open {
-  transform: translateX(0);
-}
-
-/* ------------------------------------------------------------
-   48. MENU OVERLAY INNER
-   ------------------------------------------------------------ */
-.menu-overlay-inner {
-  padding: 80px 80px;
+.menu-layout {
+  display: flex;
   height: 100%;
+  width: 100%;
+}
+.menu-image-col {
+  flex: 0 0 45%;
+  position: relative;
+  overflow: hidden;
+}
+.menu-back-image {
+  position: absolute;
+  inset: -30px;
+  transition: transform 0.1s linear;
+  background: radial-gradient(ellipse 60% 70% at 50% 50%, rgba(45,62,54,0.8) 0%, rgba(6,9,10,0) 70%);
+}
+.menu-front-image {
+  position: absolute;
+  inset: 0;
+  transition: transform 0.1s linear;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.menu-front-image::before {
+  content: '';
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  border: 1px solid rgba(201,169,110,0.2);
+  background: radial-gradient(circle, rgba(45,62,54,0.6) 0%, transparent 70%);
+}
+.menu-img-label {
+  position: absolute;
+  bottom: 40px;
+  left: 40px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.35em;
+  color: rgba(201,169,110,0.3);
+  text-transform: uppercase;
+}
+/* Per-section back-image gradients */
+.menu-back-image[data-section="0"] { background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(26,37,32,0.9) 0%, rgba(6,9,10,0) 70%); }
+.menu-back-image[data-section="1"] { background: radial-gradient(ellipse 80% 60% at 40% 60%, rgba(45,62,54,0.7) 0%, rgba(6,9,10,0) 70%); }
+.menu-back-image[data-section="2"] { background: radial-gradient(ellipse 60% 80% at 60% 40%, rgba(26,37,32,0.8) 0%, rgba(6,9,10,0) 70%); }
+.menu-back-image[data-section="3"] { background: radial-gradient(ellipse 90% 50% at 50% 70%, rgba(15,24,20,0.95) 0%, rgba(45,62,54,0.3) 50%, rgba(6,9,10,0) 100%); }
+.menu-back-image[data-section="4"] { background: radial-gradient(ellipse 70% 70% at 60% 50%, rgba(26,37,32,0.85) 0%, rgba(6,9,10,0) 70%); }
+.menu-back-image[data-section="5"] { background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(201,169,110,0.07) 0%, rgba(26,37,32,0.6) 40%, rgba(6,9,10,0) 80%); }
+.menu-back-image[data-section="6"] { background: radial-gradient(ellipse 60% 90% at 40% 50%, rgba(45,62,54,0.75) 0%, rgba(6,9,10,0) 70%); }
+.menu-back-image[data-section="7"] { background: radial-gradient(ellipse 80% 80% at 50% 50%, rgba(26,37,32,0.9) 0%, rgba(6,9,10,0) 70%); }
+.menu-back-image[data-section="8"] { background: radial-gradient(ellipse 70% 60% at 60% 60%, rgba(15,24,20,0.85) 0%, rgba(6,9,10,0) 70%); }
+.menu-back-image[data-section="9"] { background: radial-gradient(ellipse 80% 70% at 50% 50%, rgba(201,169,110,0.1) 0%, rgba(26,37,32,0.5) 50%, rgba(6,9,10,0) 80%); }
+
+.menu-nav-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px var(--margin, 60px) 60px 50px;
   overflow-y: auto;
+  overscroll-behavior: contain;
 }
-
-/* ------------------------------------------------------------
-   49. MENU OVERLAY — NAV LINKS
-   ------------------------------------------------------------ */
-.menu-overlay nav a {
-  font-family: var(--font-serif);
-  font-size: 5rem;
+.menu-nav { display: flex; flex-direction: column; gap: 2px; }
+.menu-link {
   display: block;
+  padding: 8px 0;
+  text-decoration: none;
+  overflow: hidden;
+}
+.menu-link-inner {
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+  transition: transform 0.5s cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+@media (hover: hover) {
+  .menu-link:hover .menu-link-inner { transform: translateX(12px); }
+  .menu-link:hover .menu-link-num { color: var(--brass); }
+  .menu-link:hover .menu-link-text > span:first-child { opacity: 0; }
+  .menu-link:hover .menu-link-dup { opacity: 0.6; transform: none; }
+}
+.menu-link-num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: rgba(201,169,110,0.3);
+  flex-shrink: 0;
+  transition: color 0.3s ease;
+}
+.menu-link-text {
+  position: relative;
+  overflow: hidden;
+  font-family: var(--font-serif);
+  font-size: clamp(1.8rem, 3.5vw, 3.2rem);
   color: var(--ink);
-  letter-spacing: 0.08em;
-  line-height: 1.15;
-  transition: color 0.3s var(--ease-soft);
+  letter-spacing: 0.05em;
+  line-height: 1.1;
+}
+.menu-link-text > span { display: block; transition: opacity 0.3s, transform 0.5s cubic-bezier(0.215, 0.61, 0.355, 1); }
+.menu-link-dup {
+  position: absolute !important;
+  top: 0; left: 0;
+  opacity: 0.3;
+  color: var(--brass);
+}
+.menu-footer-info {
+  margin-top: 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.menu-tagline {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  color: rgba(201,169,110,0.3);
+  text-transform: uppercase;
+}
+.menu-email {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: rgba(201,169,110,0.5);
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+@media (hover: hover) {
+  .menu-email:hover { color: var(--brass); }
+}
+@media (max-width: 768px) {
+  .menu-layout { flex-direction: column; }
+  .menu-image-col { display: none; }
+  .menu-nav-col { padding: 60px 30px; }
+  .menu-link-text { font-size: 2.2rem; }
 }
 
-.menu-overlay nav a:hover {
+/* ─── CIRCULAR PROGRESS INDICATOR ─── */
+.circular-progress {
+  position: fixed;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 18;
+  pointer-events: none;
+  opacity: 0.6;
+  transition: opacity 0.4s ease;
+}
+.circular-progress:hover { opacity: 1; }
+.circular-progress svg {
+  display: block;
+}
+.circ-static { stroke: rgba(201,169,110,0.12); fill: none; }
+.circ-dashed { stroke: rgba(201,169,110,0.08); fill: none; stroke-dasharray: 1 4; }
+.circ-progress-arc { fill: none; stroke: var(--brass); transition: stroke-dashoffset 1.4s cubic-bezier(0.77,0,0.175,1); }
+.circ-section-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  fill: var(--brass);
+  text-anchor: middle;
+  dominant-baseline: central;
+  letter-spacing: 0.15em;
+}
+
+/* ─── VIDEO SCALE-IN TRANSITION (seacat-style) ─── */
+.section-video {
+  transform: scale(0.85);
+  transition: transform 2.2s cubic-bezier(0.76, 0, 0.24, 1);
+  transition-delay: 0.8s;
+}
+.section-video.active {
+  transform: scale(1);
+}
+/* Section background video elements */
+.section-bg-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.8s ease, transform 2s cubic-bezier(0.76, 0, 0.24, 1);
+  transform: scale(1.05);
+}
+.section-bg-video.active {
+  opacity: 1;
+  transform: scale(1);
+  transition-delay: 0.4s;
+}
+
+/* ─── SECTION BACKGROUND ATMOSPHERE ─── */
+.section-atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.2s var(--ease-cinema);
+}
+.section-atmosphere.visible { opacity: 1; }
+/* Per-section background gradients */
+.section-atm-0 { background: radial-gradient(ellipse 70% 50% at 50% 50%, rgba(26,37,32,0.15) 0%, transparent 70%); }
+.section-atm-1 { background: radial-gradient(ellipse 80% 60% at 40% 60%, rgba(45,62,54,0.12) 0%, transparent 70%); }
+.section-atm-2 { background: radial-gradient(ellipse 60% 70% at 60% 40%, rgba(26,37,32,0.1) 0%, transparent 70%); }
+.section-atm-3 { background: linear-gradient(155deg, rgba(15,24,20,0.2) 0%, rgba(45,62,54,0.08) 50%, transparent 100%); }
+.section-atm-4 { background: linear-gradient(155deg, rgba(6,9,10,0.3) 0%, rgba(26,37,32,0.15) 100%); }
+.section-atm-5 { background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(201,169,110,0.04) 0%, rgba(26,37,32,0.1) 50%, transparent 80%); }
+.section-atm-6 { background: linear-gradient(200deg, rgba(15,24,20,0.25) 0%, transparent 60%); }
+.section-atm-7 { background: radial-gradient(ellipse 90% 70% at 50% 50%, rgba(26,37,32,0.2) 0%, transparent 70%); }
+.section-atm-8 { background: linear-gradient(140deg, rgba(15,24,20,0.18) 0%, transparent 50%); }
+.section-atm-9 { background: radial-gradient(ellipse 70% 80% at 50% 60%, rgba(201,169,110,0.06) 0%, rgba(26,37,32,0.08) 50%, transparent 80%); }
+
+/* ─── HORIZONTAL MODE CAROUSEL (seacat Inside-the-heart style) ─── */
+.modes-carousel {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0;
+  overflow: hidden;
+  position: relative;
+  margin-top: 20px;
+  width: 100%;
+}
+.mode-panel {
+  flex: 0 0 100%;
+  padding: 0 4px;
+  opacity: 0.08;
+  transition: opacity 2.5s ease-out;
+  pointer-events: none;
+}
+.mode-panel.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+.mode-panel-name {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.25em;
   color: var(--brass);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.mode-panel-body {
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.7;
+  color: rgba(227,238,230,0.75);
+}
+/* Step dash indicators (seacat buttons-0-2-55 style) */
+.mode-steps {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.mode-step-dash {
+  width: 40px;
+  height: 2px;
+  background: rgba(201,169,110,0.25);
+  transition: background 0.4s ease, width 0.4s ease;
+  cursor: pointer;
+}
+.mode-step-dash.active {
+  background: var(--brass);
+  box-shadow: 0 0 6px rgba(201,169,110,0.5);
+  width: 56px;
+}
+@media (hover: hover) {
+  .mode-step-dash:hover { background: rgba(201,169,110,0.5); }
 }
 
 /* ------------------------------------------------------------
@@ -2804,7 +3046,26 @@ textarea:focus-visible {
 
   <div id="canvas-host" aria-hidden="true"></div>
 
+  <!-- Per-section atmosphere gradient -->
+  <div id="section-atmosphere" class="section-atmosphere section-atm-0 visible" aria-hidden="true"></div>
+
   <main id="main-content"></main>
+
+  <!-- Circular section progress -->
+  <div class="circular-progress" id="circular-progress" aria-hidden="true">
+    <svg viewBox="0 0 80 80" width="80" height="80">
+      <circle class="circ-static" cx="40" cy="40" r="36" stroke-width="0.8"/>
+      <circle class="circ-dashed" cx="40" cy="40" r="30" stroke-width="0.6"/>
+      <!-- Progress arc: circumference = 2*PI*36 = ~226.2 -->
+      <circle id="circ-arc" class="circ-progress-arc" cx="40" cy="40" r="36"
+        stroke-width="1.2"
+        stroke-dasharray="226.2 226.2"
+        stroke-dashoffset="226.2"
+        stroke-linecap="round"
+        transform="rotate(-90 40 40)"/>
+      <text class="circ-section-num" x="40" y="40" id="circ-num">01</text>
+    </svg>
+  </div>
 
   <div class="vignette" aria-hidden="true"></div>
 
@@ -3639,6 +3900,25 @@ function updateSectionUI(idx) {
       const activeIdx = Array.from(allBtns).indexOf(activeBtn);
       updateModeIndicator(activeIdx >= 0 ? activeIdx : 0);
     }
+  }
+
+  // Circular progress arc
+  const arc = document.getElementById('circ-arc');
+  const circNum = document.getElementById('circ-num');
+  if (arc) {
+    const circumference = 2 * Math.PI * 36; // ~226.2
+    const progress = idx / 9; // 0 to 1
+    const dashoffset = circumference * (1 - progress);
+    arc.style.strokeDashoffset = dashoffset.toFixed(1);
+  }
+  if (circNum) circNum.textContent = String(idx + 1).padStart(2, '0');
+
+  // Section atmosphere
+  const atm = document.getElementById('section-atmosphere');
+  if (atm) {
+    // Remove old atm class
+    for (let i = 0; i < 10; i++) atm.classList.remove(`section-atm-${i}`);
+    atm.classList.add(`section-atm-${idx}`);
   }
 
   window.activeIdx = idx;
@@ -4643,25 +4923,106 @@ function initOverlays() {
   menuOverlay.innerHTML = `
 <div id="menu-overlay" class="menu-overlay" role="dialog" aria-modal="true" aria-label="Site menu">
   <button class="menu-close" onclick="document.getElementById('menu-overlay').classList.remove('open'); document.body.classList.remove('menu-open')" aria-label="Close menu">✕</button>
-  <div class="menu-overlay-inner">
-    <nav>
-      <a href="#" onclick="window.goToSection(0,-1);document.getElementById('menu-overlay').classList.remove('open');return false;">Home</a>
-      <a href="#" onclick="window.goToSection(1,1);document.getElementById('menu-overlay').classList.remove('open');return false;">Firm Overview</a>
-      <a href="#" onclick="window.goToSection(2,1);document.getElementById('menu-overlay').classList.remove('open');return false;">Platform Edge</a>
-      <a href="#" onclick="window.goToSection(3,1);document.getElementById('menu-overlay').classList.remove('open');return false;">Senior Debt</a>
-      <a href="#" onclick="window.goToSection(4,1);document.getElementById('menu-overlay').classList.remove('open');return false;">Subordinate Capital</a>
-      <a href="#" onclick="window.goToSection(5,1);document.getElementById('menu-overlay').classList.remove('open');return false;">Joint-Venture Equity</a>
-      <a href="#" onclick="window.goToSection(6,1);document.getElementById('menu-overlay').classList.remove('open');return false;">Execution</a>
-      <a href="#" onclick="window.goToSection(7,1);document.getElementById('menu-overlay').classList.remove('open');return false;">Underwriting</a>
-      <a href="#" onclick="window.goToSection(8,1);document.getElementById('menu-overlay').classList.remove('open');return false;">Compliance</a>
-      <a href="#" onclick="window.goToSection(9,1);document.getElementById('menu-overlay').classList.remove('open');return false;">Engage</a>
-    </nav>
-    <div class="menu-contact" style="margin-top:60px;font-family:'Space Mono';font-size:11px;color:var(--brass);letter-spacing:0.18em;">
-      deals@patelcapital.markets
+  <div class="menu-layout">
+      <div class="menu-image-col" id="menu-img-col">
+        <div class="menu-back-image" id="menu-back-img"></div>
+        <div class="menu-front-image" id="menu-front-img"></div>
+        <div class="menu-img-label" id="menu-img-label">PATEL CAPITAL MARKETS</div>
+      </div>
+      <div class="menu-nav-col">
+        <nav class="menu-nav" id="menu-nav">
+          <a href="#" class="menu-link" data-idx="0" onclick="window.goToSection(0,-1);document.getElementById('menu-overlay').classList.remove('open');document.body.classList.remove('menu-open');return false;" aria-label="Go to Home section">
+            <span class="menu-link-inner"><span class="menu-link-num">01</span><span class="menu-link-text"><span>Home</span><span class="menu-link-dup" aria-hidden="true">Home</span></span></span>
+          </a>
+          <a href="#" class="menu-link" data-idx="1" onclick="window.goToSection(1,1);document.getElementById('menu-overlay').classList.remove('open');document.body.classList.remove('menu-open');return false;" aria-label="Go to Firm Overview section">
+            <span class="menu-link-inner"><span class="menu-link-num">02</span><span class="menu-link-text"><span>Firm Overview</span><span class="menu-link-dup" aria-hidden="true">Firm Overview</span></span></span>
+          </a>
+          <a href="#" class="menu-link" data-idx="2" onclick="window.goToSection(2,1);document.getElementById('menu-overlay').classList.remove('open');document.body.classList.remove('menu-open');return false;" aria-label="Go to Platform Edge section">
+            <span class="menu-link-inner"><span class="menu-link-num">03</span><span class="menu-link-text"><span>Platform Edge</span><span class="menu-link-dup" aria-hidden="true">Platform Edge</span></span></span>
+          </a>
+          <a href="#" class="menu-link" data-idx="3" onclick="window.goToSection(3,1);document.getElementById('menu-overlay').classList.remove('open');document.body.classList.remove('menu-open');return false;" aria-label="Go to Senior Debt section">
+            <span class="menu-link-inner"><span class="menu-link-num">04</span><span class="menu-link-text"><span>Senior Debt</span><span class="menu-link-dup" aria-hidden="true">Senior Debt</span></span></span>
+          </a>
+          <a href="#" class="menu-link" data-idx="4" onclick="window.goToSection(4,1);document.getElementById('menu-overlay').classList.remove('open');document.body.classList.remove('menu-open');return false;" aria-label="Go to Subordinate Capital section">
+            <span class="menu-link-inner"><span class="menu-link-num">05</span><span class="menu-link-text"><span>Subordinate Capital</span><span class="menu-link-dup" aria-hidden="true">Subordinate Capital</span></span></span>
+          </a>
+          <a href="#" class="menu-link" data-idx="5" onclick="window.goToSection(5,1);document.getElementById('menu-overlay').classList.remove('open');document.body.classList.remove('menu-open');return false;" aria-label="Go to Joint-Venture Equity section">
+            <span class="menu-link-inner"><span class="menu-link-num">06</span><span class="menu-link-text"><span>Joint-Venture Equity</span><span class="menu-link-dup" aria-hidden="true">Joint-Venture Equity</span></span></span>
+          </a>
+          <a href="#" class="menu-link" data-idx="6" onclick="window.goToSection(6,1);document.getElementById('menu-overlay').classList.remove('open');document.body.classList.remove('menu-open');return false;" aria-label="Go to Execution section">
+            <span class="menu-link-inner"><span class="menu-link-num">07</span><span class="menu-link-text"><span>Execution</span><span class="menu-link-dup" aria-hidden="true">Execution</span></span></span>
+          </a>
+          <a href="#" class="menu-link" data-idx="7" onclick="window.goToSection(7,1);document.getElementById('menu-overlay').classList.remove('open');document.body.classList.remove('menu-open');return false;" aria-label="Go to Underwriting section">
+            <span class="menu-link-inner"><span class="menu-link-num">08</span><span class="menu-link-text"><span>Underwriting</span><span class="menu-link-dup" aria-hidden="true">Underwriting</span></span></span>
+          </a>
+          <a href="#" class="menu-link" data-idx="8" onclick="window.goToSection(8,1);document.getElementById('menu-overlay').classList.remove('open');document.body.classList.remove('menu-open');return false;" aria-label="Go to Compliance section">
+            <span class="menu-link-inner"><span class="menu-link-num">09</span><span class="menu-link-text"><span>Compliance</span><span class="menu-link-dup" aria-hidden="true">Compliance</span></span></span>
+          </a>
+          <a href="#" class="menu-link" data-idx="9" onclick="window.goToSection(9,1);document.getElementById('menu-overlay').classList.remove('open');document.body.classList.remove('menu-open');return false;" aria-label="Go to Engage section">
+            <span class="menu-link-inner"><span class="menu-link-num">10</span><span class="menu-link-text"><span>Engage</span><span class="menu-link-dup" aria-hidden="true">Engage</span></span></span>
+          </a>
+        </nav>
+        <div class="menu-footer-info">
+          <span class="menu-tagline">Engineering Creative Finance</span>
+          <a href="mailto:deals@patelcapital.markets" class="menu-email">deals@patelcapital.markets</a>
+        </div>
+      </div>
     </div>
-  </div>
 </div>`;
   document.body.appendChild(menuOverlay.firstElementChild);
+
+  // ── 3b. MENU PARALLAX (seacat dual-image hover effect) ───────────────────────
+  (function() {
+    const overlay = document.getElementById('menu-overlay');
+    if (!overlay) return;
+    const backImg = document.getElementById('menu-back-img');
+    const frontImg = document.getElementById('menu-front-img');
+    const imgLabel = document.getElementById('menu-img-label');
+
+    const SECTION_SUBTITLES = [
+      'Capital Advisory',
+      'Founder-Led Practice',
+      'Structural Creativity',
+      'First-Position Financing',
+      'Mezzanine & Preferred',
+      'Joint-Venture Capital',
+      'Process & Cadence',
+      'Modeled & Defensible',
+      'Institutional By Design',
+      'Contact & Engage'
+    ];
+
+    // Highlight image on hover
+    const links = overlay.querySelectorAll('.menu-link');
+    links.forEach(link => {
+      const idx = parseInt(link.dataset.idx);
+      link.addEventListener('mouseenter', () => {
+        if (backImg) backImg.setAttribute('data-section', idx);
+        if (imgLabel) imgLabel.textContent = SECTION_SUBTITLES[idx] || 'PATEL CAPITAL MARKETS';
+      });
+    });
+
+    // Parallax on mouse move
+    let mouseX = 0, mouseY = 0;
+    let backX = 0, backY = 0, frontX = 0, frontY = 0;
+    overlay.addEventListener('mousemove', e => {
+      const rect = overlay.getBoundingClientRect();
+      mouseX = (e.clientX - rect.width / 2) / rect.width;
+      mouseY = (e.clientY - rect.height / 2) / rect.height;
+    });
+
+    function animateMenu() {
+      if (!overlay.classList.contains('open')) { requestAnimationFrame(animateMenu); return; }
+      backX += (mouseX * 20 - backX) * 0.08;
+      backY += (mouseY * 20 - backY) * 0.08;
+      frontX += (mouseX * 40 - frontX) * 0.08;
+      frontY += (mouseY * 40 - frontY) * 0.08;
+      if (backImg) backImg.style.transform = `translate(${backX}px, ${backY}px)`;
+      if (frontImg) frontImg.style.transform = `translate(${frontX}px, ${frontY}px)`;
+      requestAnimationFrame(animateMenu);
+    }
+    animateMenu();
+  })();
 
   // ── 4. COOKIE NOTICE ─────────────────────────────────────────────────────────
   const cookieNotice = document.createElement('div');
