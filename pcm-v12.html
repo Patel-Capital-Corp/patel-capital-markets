@@ -16529,6 +16529,521 @@ function animateStatPanels() {
   aaO.observe(document.body,{attributes:true,attributeFilter:['data-section']});
 })();
 
+
+/* =====================================================
+   CYCLE 7 — PER-SECTION POSTPROCESSING · HOTPOINT ·
+   BATTERY TOGGLE · KEYBOARD ARROWS · FULL COPY DATA ·
+   DIRECTION AWARE · SCROLL DOLLY CAMERA · STAT PANEL ·
+   CUSTOM CURSOR PERFECT · IE NOTICE · NOSCRIPT ·
+   PRELOAD HOOKS · ANALYTICS · NETWORK INFO ·
+   VIEWPORT HANDLER · LENIS MOMENTUM
+   ===================================================== */
+
+(function CYCLE7_PER_SECTION_PP(){
+  if(window._c7pp)return; window._c7pp=true;
+  // Per-section bloom/vignette/chroma settings
+  var PP=[
+    {bloom:0.85,vignette:0.6,chroma:0.0008},  // 0 Home
+    {bloom:0.55,vignette:0.55,chroma:0.0005},  // 1 Firm
+    {bloom:0.7,vignette:0.58,chroma:0.0007},   // 2 Platform
+    {bloom:1.1,vignette:0.65,chroma:0.0012},   // 3 Senior Debt
+    {bloom:0.95,vignette:0.62,chroma:0.001},   // 4 Sub Cap
+    {bloom:0.8,vignette:0.6,chroma:0.0009},    // 5 Equity
+    {bloom:0.65,vignette:0.55,chroma:0.0006},  // 6 Execution
+    {bloom:1.2,vignette:0.68,chroma:0.0014},   // 7 Underwriting
+    {bloom:0.45,vignette:0.5,chroma:0.0004},   // 8 Compliance
+    {bloom:0.7,vignette:0.58,chroma:0.0008}    // 9 Engage
+  ];
+  function applyPP(idx){
+    var p=PP[idx]||PP[0];
+    // Try to apply via exposed composer effects
+    try{
+      var passes=window.pcmComposer?.passes||[];
+      passes.forEach(function(pass){
+        if(!pass.effects)return;
+        pass.effects.forEach(function(eff){
+          var n=eff.constructor?.name||'';
+          if(n.includes('Bloom')){try{eff.intensity=p.bloom;}catch(e){}}
+          if(n.includes('Vignette')){try{eff.uniforms?.darkness?.value&&(eff.uniforms.darkness.value=p.vignette);}catch(e){}}
+          if(n.includes('Chromatic')){try{eff.offset?.set(p.chroma,p.chroma);}catch(e){}}
+        });
+      });
+    }catch(e){}
+    // Also try window-exposed effects
+    try{if(window.pcmBloom)window.pcmBloom.intensity=p.bloom;}catch(e){}
+    try{if(window.pcmVignette&&window.pcmVignette.uniforms?.darkness)window.pcmVignette.uniforms.darkness.value=p.vignette;}catch(e){}
+    try{if(window.pcmChroma)window.pcmChroma.offset?.set(p.chroma,p.chroma);}catch(e){}
+  }
+  var ppO=new MutationObserver(function(){applyPP(window.activeIdx||0);});
+  ppO.observe(document.body,{attributes:true,attributeFilter:['data-section']});
+  window.addEventListener('pcm:sceneready',function(){setTimeout(function(){applyPP(window.activeIdx||0);},500);},{once:true});
+})();
+
+(function CYCLE7_HOTPOINT(){
+  if(window._c7hp)return; window._c7hp=true;
+  var s=document.createElement('style');
+  s.textContent=`
+  .hot-point{position:fixed!important;z-index:300!important;pointer-events:auto!important;opacity:0!important;transition:opacity .45s ease!important;cursor:pointer!important}
+  .hot-point.visible{opacity:1!important}
+  .hot-point .hp-dot{width:10px!important;height:10px!important;border-radius:50%!important;background:#c9a96e!important;box-shadow:0 0 0 0 rgba(201,169,110,.4)!important;animation:hp-pulse 2.2s ease-in-out infinite!important;position:relative!important}
+  @keyframes hp-pulse{0%,100%{box-shadow:0 0 0 0 rgba(201,169,110,.4)}50%{box-shadow:0 0 0 10px rgba(201,169,110,0)}}
+  .hot-point .hp-label{position:absolute!important;left:18px!important;top:50%!important;transform:translateY(-50%)!important;white-space:nowrap!important;font-family:'Space Mono',monospace!important;font-size:8.5px!important;letter-spacing:.2em!important;color:rgba(201,169,110,.75)!important;text-transform:uppercase!important;background:rgba(6,9,10,.8)!important;padding:3px 8px!important;border:1px solid rgba(201,169,110,.2)!important;pointer-events:none!important}`;
+  document.head.appendChild(s);
+
+  // 4 hot points mapped to 3D parts
+  var HOT_POINTS=[
+    {partId:'person',label:'Sponsor',defaultX:0.62,defaultY:0.28},
+    {partId:'coin',label:'Capital',defaultX:0.3,defaultY:0.48},
+    {partId:'fulcrum',label:'Fulcrum',defaultX:0.5,defaultY:0.6},
+    {partId:'ringOuter',label:'The Stack',defaultX:0.5,defaultY:0.2}
+  ];
+
+  var hpEls=[];
+  HOT_POINTS.forEach(function(hp,i){
+    var el=document.createElement('div'); el.className='hot-point'; el.id='hp-'+i;
+    el.innerHTML='<div class="hp-dot"></div><div class="hp-label">'+hp.label+'</div>';
+    el.style.left=(hp.defaultX*100)+'vw'; el.style.top=(hp.defaultY*100)+'vh';
+    el.addEventListener('click',function(){
+      if(window.openDetailCard)window.openDetailCard(hp.partId,parseFloat(el.style.left),parseFloat(el.style.top));
+    });
+    document.body.appendChild(el);
+    hpEls.push(el);
+  });
+
+  // Show only on section 0
+  var hpO=new MutationObserver(function(){
+    var show=(window.activeIdx||0)===0;
+    hpEls.forEach(function(el){el.classList.toggle('visible',show);});
+  });
+  hpO.observe(document.body,{attributes:true,attributeFilter:['data-section']});
+
+  // Project 3D → 2D if camera/renderer available
+  function projectHotPoints(){
+    if(!window.pcmCamera||!window.pcmRenderer||!window.pcmLogoRoot)return;
+    var THREE=window._THREE;
+    if(!THREE)return;
+    var vw=window.innerWidth,vh=window.innerHeight;
+    var cam=window.pcmCamera;
+    var canvas=window.pcmRenderer.domElement;
+    var W=canvas.clientWidth||vw, H=canvas.clientHeight||vh;
+    HOT_POINTS.forEach(function(hp,i){
+      try{
+        // Find the part in the scene
+        var part=null;
+        window.pcmLogoRoot.traverse(function(o){if(o.userData&&o.userData.partId===hp.partId)part=o;});
+        if(!part)return;
+        var pos=new THREE.Vector3();
+        part.getWorldPosition(pos);
+        pos.project(cam);
+        var x=(pos.x*0.5+0.5)*W;
+        var y=(-pos.y*0.5+0.5)*H;
+        if(x>0&&x<W&&y>0&&y<H){
+          hpEls[i].style.left=x+'px'; hpEls[i].style.top=y+'px';
+        }
+      }catch(e){}
+    });
+    requestAnimationFrame(projectHotPoints);
+  }
+  window.addEventListener('pcm:sceneready',function(){
+    setTimeout(projectHotPoints,800);
+  },{once:true});
+})();
+
+(function CYCLE7_BATTERY_TOGGLE_PERFECT(){
+  if(window._c7bt)return; window._c7bt=true;
+  var s=document.createElement('style');
+  s.textContent=`
+  #battery-toggle{position:fixed!important;bottom:82px!important;left:32px!important;z-index:300!important;display:flex!important;align-items:center!important;gap:6px!important;cursor:pointer!important;opacity:0!important;transition:opacity .4s ease!important;pointer-events:none!important}
+  body[data-section="3"] #battery-toggle,
+  body[data-section="4"] #battery-toggle,
+  body[data-section="5"] #battery-toggle{opacity:1!important;pointer-events:auto!important}
+  #battery-toggle .bt-icon{width:22px!important;height:12px!important;border:1px solid rgba(201,169,110,.4)!important;border-radius:2px!important;position:relative!important}
+  #battery-toggle .bt-icon::after{content:''!important;position:absolute!important;right:-4px!important;top:50%!important;transform:translateY(-50%)!important;width:3px!important;height:6px!important;background:rgba(201,169,110,.4)!important;border-radius:0 1px 1px 0!important}
+  #battery-toggle .bt-fill{position:absolute!important;left:2px!important;top:2px!important;bottom:2px!important;background:#c9a96e!important;border-radius:1px!important;transition:width .6s ease!important}
+  #battery-toggle .bt-lbl{font-family:'Space Mono',monospace!important;font-size:8px!important;letter-spacing:.2em!important;color:rgba(201,169,110,.55)!important;text-transform:uppercase!important}
+  body.low-battery canvas{filter:brightness(.7) saturate(.5)!important}
+  body.low-battery #bottom-menu{opacity:.5!important}`;
+  document.head.appendChild(s);
+
+  var bt=document.getElementById('battery-toggle');
+  if(!bt){bt=document.createElement('div');bt.id='battery-toggle';bt.innerHTML='<div class="bt-icon"><div class="bt-fill" id="bt-fill" style="width:80%"></div></div><span class="bt-lbl" id="bt-lbl">Power</span>';document.body.appendChild(bt);}
+
+  var lowBattery=false;
+  bt.addEventListener('click',function(){
+    lowBattery=!lowBattery;
+    document.body.classList.toggle('low-battery',lowBattery);
+    document.getElementById('bt-lbl').textContent=lowBattery?'Low Power':'Power';
+    document.getElementById('bt-fill').style.width=lowBattery?'18%':'80%';
+  });
+
+  // Real Battery API
+  if(navigator.getBattery){
+    navigator.getBattery().then(function(bat){
+      function upd(){
+        var pct=Math.round(bat.level*100);
+        var fill=document.getElementById('bt-fill');
+        if(fill)fill.style.width=pct+'%';
+        if(bat.level<0.2&&!bat.charging){document.body.classList.add('low-battery');lowBattery=true;}
+      }
+      bat.addEventListener('levelchange',upd);
+      bat.addEventListener('chargingchange',upd);
+      upd();
+    }).catch(function(){});
+  }
+})();
+
+(function CYCLE7_KEYBOARD_ARROWS(){
+  if(window._c7ka)return; window._c7ka=true;
+  document.addEventListener('keydown',function(e){
+    var idx=window.activeIdx||0;
+    if(e.key==='ArrowDown'||e.key==='ArrowRight'){
+      e.preventDefault();
+      if(window.goToSection)window.goToSection(Math.min(9,idx+1),1);
+    } else if(e.key==='ArrowUp'||e.key==='ArrowLeft'){
+      e.preventDefault();
+      if(window.goToSection)window.goToSection(Math.max(0,idx-1),-1);
+    }
+    // Number keys 1-9, 0=10
+    var n=parseInt(e.key);
+    if(!isNaN(n)&&n>=0&&n<=9&&!e.ctrlKey&&!e.metaKey&&!e.altKey){
+      var ti=n===0?9:n-1;
+      if(window.goToSection)window.goToSection(ti,ti>idx?1:-1);
+    }
+    // R = reset home
+    if((e.key==='r'||e.key==='R')&&!e.ctrlKey&&!e.metaKey){
+      if(window.goToSection)window.goToSection(0,-1);
+    }
+  });
+})();
+
+(function CYCLE7_FULL_SECTION_COPY(){
+  if(window._c7fsc)return; window._c7fsc=true;
+  window.pcmSectionCopy=[
+    {preTitle:'Patel Capital Markets',title:'Engineering Creative Finance',subtitle:'Commercial Real Estate Capital Advisory',body:'Capital advisory structuring debt, mezzanine, preferred equity, and joint-venture capital for institutional and entrepreneurial sponsors.',stats:[['$3.4B','Under Advisement'],['126','Closed Transactions']],tags:['Capital Advisory','CRE','Multi-Stack']},
+    {preTitle:'About Us',title:'Control The Leverage',subtitle:'',body:'Founded on the principle that capital structure is the most under-leveraged form of value creation in real estate. We engineer the stack so the asset can perform.',stats:[['2019','Founded'],['18','Investment Professionals']],tags:['Independent','Founder-Led','Pan-Asset-Class']},
+    {preTitle:'Why PCM',title:'Three Things We Do Differently',subtitle:'',body:'Structural creativity that finds optionality others miss. Cross-stack reach from senior to common equity. Institutional access without institutional friction.',stats:[['1','Structural'],['2','Reach'],['3','Access']],tags:['Creativity','Reach','Access']},
+    {preTitle:'Capital Stack · Layer One',title:'Senior Debt',subtitle:'First on the stack, foundational to every deal',body:'Acquisition, refinance, bridge, construction. Bank, life co, agency, debt fund, CMBS execution — sized to the asset, structured to the business plan.',stats:[['$15M–$500M','Deal Size'],['SOFR+175–450','Typical Spread'],['6–10wk','Close']],tags:['Acquisition','Refinance','Bridge','Construction']},
+    {preTitle:'Capital Stack · Layer Two',title:'Subordinate Capital',subtitle:'The risk-tranche layer',body:'Mezzanine, preferred equity, and uni-tranche. The risk-tranche layer that lets common equity stay common while the senior stays cheap.',stats:[['65–85%','Attachment'],['10–14%','Typical Coupon'],['3–7yr','Tenor']],tags:['Mezzanine','Preferred','Uni-Tranche']},
+    {preTitle:'Capital Stack · Layer Three',title:'Joint-Venture Equity',subtitle:'Sponsor-led capital alongside institutional partners',body:'One-off JV, programmatic, and common. Sponsor-led capital alongside institutional partners — family offices, pension funds, sovereign capital.',stats:[['85–95%','LP Position'],['12–20%','Target IRR'],['1.6×–2.4×','Target MOIC']],tags:['One-Off JV','Programmatic','Common Equity']},
+    {preTitle:'How We Work',title:'The Cadence Is The Product',subtitle:'',body:'Discovery → underwriting → structuring → term sheet → close. A repeatable process designed to surface every degree of freedom before we go to market.',stats:[['5','Stages'],['<48hr','Indication Turn']],tags:['Process','Discipline','Speed']},
+    {preTitle:'Diligence',title:'Modeled, Stress-Tested, Defensible',subtitle:'',body:'DSCR, LTC, LTV, and 50+ sensitivity scenarios. We model so our clients can defend — to lenders, to investment committees, to their own capital partners.',stats:[['50+','Scenarios'],['1.20×','Min DSCR Stress']],tags:['DSCR','LTC · LTV','Sensitivity']},
+    {preTitle:'Standards',title:'Institutional By Design',subtitle:'',body:'KYC, AML, accredited verification, and institutional-grade documentation baked into every transaction. Compliance is structure, not paperwork.',stats:[['SOC 2','Type II'],['FINRA','Series 79']],tags:['KYC','AML','Documentation']},
+    {preTitle:'Contact',title:'Bring Us Your Complex Deal',subtitle:'',body:'The deals that don\'t fit anywhere else are the ones we\'re built for. Reach out with the sponsor memo, the rent roll, or just a thesis.',stats:[['deals@patelcapital.markets','Email'],['∞','Possibility']],tags:['New Deals','Sponsors','Capital Partners']}
+  ];
+
+  // Override updateCopyContent to use this data
+  function renderCopy(idx){
+    var d=window.pcmSectionCopy[idx]; if(!d)return;
+    var el=document.querySelector('.scene-copy')||document.getElementById('scene-copy');
+    if(!el){el=document.createElement('div');el.className='scene-copy';el.id='scene-copy';document.body.appendChild(el);}
+    var statsHtml=d.stats?'<div class="copy-stats">'+d.stats.map(function(s){return '<div class="copy-stat-item"><div class="copy-stat-value" data-val="'+s[0]+'">'+s[0]+'</div><div class="copy-stat-label">'+s[1]+'</div></div>';}).join('')+'</div>':'';
+    var tagsHtml=d.tags?'<div class="copy-tags">'+d.tags.map(function(t){return '<div class="copy-tag">'+t+'</div>';}).join('')+'</div>':'';
+    el.innerHTML=(d.preTitle?'<div class="copy-pretitle">'+d.preTitle+'</div>':'')+
+      '<div class="copy-rule"></div>'+
+      (d.title?'<div class="copy-title">'+d.title+'</div>':'')+
+      (d.subtitle?'<div class="copy-subtitle">'+d.subtitle+'</div>':'')+
+      (d.body?'<div class="copy-body">'+d.body+'</div>':'')+
+      statsHtml+tagsHtml;
+    // Stagger reveal
+    setTimeout(function(){
+      el.classList.add('visible');
+      Array.from(el.children).forEach(function(child,i){
+        child.style.opacity='0';
+        child.style.transform='translateY(12px)';
+        setTimeout(function(){
+          child.style.transition='opacity .52s ease,transform .52s cubic-bezier(.16,1,.3,1)';
+          child.style.opacity='1';
+          child.style.transform='translateY(0)';
+        },60+i*85);
+      });
+      // Run countup on stat values
+      el.querySelectorAll('.copy-stat-value[data-val]').forEach(function(sv,si){
+        if(window.pcmCountup)setTimeout(function(){window.pcmCountup(sv,sv.getAttribute('data-val'),1100);},300+si*200);
+      });
+    },820);
+  }
+
+  function hideCopy(){
+    var el=document.querySelector('.scene-copy');
+    if(el){el.classList.remove('visible');Array.from(el.children).forEach(function(c){c.style.opacity='0';});}
+  }
+
+  window.pcmRenderCopy=renderCopy;
+  window.pcmHideCopy=hideCopy;
+
+  var copyO=new MutationObserver(function(){
+    hideCopy();
+    setTimeout(function(){renderCopy(window.activeIdx||0);},200);
+  });
+  copyO.observe(document.body,{attributes:true,attributeFilter:['data-section']});
+  setTimeout(function(){renderCopy(window.activeIdx||0);},1000);
+})();
+
+(function CYCLE7_DIRECTION_AWARE_STRENGTHEN(){
+  if(window._c7da)return; window._c7da=true;
+  // Ensure pcmDirection is always set; patch goToSection to track direction
+  var orig=window.goToSection;
+  if(orig&&!orig._c7da){
+    window.goToSection=function(idx,dir){
+      window.pcmDirection=(dir>=0?1:-1);
+      return orig.apply(this,arguments);
+    };
+    window.goToSection._c7da=true;
+    Object.keys(orig).forEach(function(k){window.goToSection[k]=orig[k];});
+  }
+  if(!window.pcmDirection)window.pcmDirection=1;
+})();
+
+(function CYCLE7_CURSOR_PERFECT(){
+  if(window._c7cur)return; window._c7cur=true;
+  var s=document.createElement('style');
+  s.textContent=`
+  #pcm-cursor{position:fixed!important;pointer-events:none!important;z-index:99990!important;mix-blend-mode:difference!important}
+  #pcm-cursor .cur-ring{width:36px!important;height:36px!important;border:1px solid rgba(201,169,110,.45)!important;border-radius:50%!important;position:absolute!important;top:50%!important;left:50%!important;transform:translate(-50%,-50%)!important;transition:width .28s ease,height .28s ease,border-color .28s ease,background .28s ease!important}
+  #pcm-cursor .cur-dot{width:4px!important;height:4px!important;background:#e3eee6!important;border-radius:50%!important;position:absolute!important;top:50%!important;left:50%!important;transform:translate(-50%,-50%)!important}
+  body.cursor-hot #pcm-cursor .cur-ring{width:64px!important;height:64px!important;border-color:rgba(201,169,110,.8)!important;background:rgba(201,169,110,.06)!important}
+  body.cursor-drag #pcm-cursor .cur-ring{width:20px!important;height:20px!important;background:rgba(201,169,110,.3)!important;border-color:#c9a96e!important}
+  @media(max-width:768px){#pcm-cursor{display:none!important}}`;
+  document.head.appendChild(s);
+
+  var cur=document.getElementById('pcm-cursor');
+  if(!cur){cur=document.createElement('div');cur.id='pcm-cursor';cur.innerHTML='<div class="cur-ring"></div><div class="cur-dot"></div>';document.body.appendChild(cur);}
+
+  var mx=window.innerWidth/2,my=window.innerHeight/2;
+  var cx=mx,cy=my;
+  document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;});
+  (function animCursor(){
+    cx+=(mx-cx)*0.18; cy+=(my-cy)*0.18;
+    cur.style.left=cx+'px'; cur.style.top=cy+'px';
+    requestAnimationFrame(animCursor);
+  })();
+  document.body.style.cursor='none';
+  document.querySelectorAll('button,a,[role=button]').forEach(function(el){
+    el.style.cursor='none';
+    el.addEventListener('mouseenter',function(){document.body.classList.add('cursor-hot');});
+    el.addEventListener('mouseleave',function(){document.body.classList.remove('cursor-hot');});
+  });
+  window.addEventListener('mousedown',function(){document.body.classList.add('cursor-drag');});
+  window.addEventListener('mouseup',function(){document.body.classList.remove('cursor-drag');});
+})();
+
+(function CYCLE7_IE_NOTICE(){
+  if(window._c7ie)return; window._c7ie=true;
+  if(window.MSInputMethodContext&&document.documentMode){
+    var ie=document.createElement('div');
+    ie.style.cssText='position:fixed;top:0;left:0;right:0;z-index:999999;background:#c9a96e;color:#06090a;font-family:monospace;font-size:11px;padding:8px 16px;text-align:center';
+    ie.textContent='Patel Capital Markets requires a modern browser. Please upgrade to Chrome, Firefox, or Edge.';
+    document.body.appendChild(ie);
+  }
+})();
+
+(function CYCLE7_NETWORK_INFO(){
+  if(window._c7ni)return; window._c7ni=true;
+  var conn=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
+  if(conn){
+    function checkConn(){
+      var slow=conn.effectiveType==='2g'||conn.effectiveType==='slow-2g'||conn.saveData;
+      window.pcmSlowNetwork=slow;
+      if(slow){document.body.classList.add('slow-network');}
+      else{document.body.classList.remove('slow-network');}
+    }
+    conn.addEventListener('change',checkConn);
+    checkConn();
+  }
+})();
+
+(function CYCLE7_VIEWPORT(){
+  if(window._c7vp)return; window._c7vp=true;
+  function setVP(){
+    document.documentElement.style.setProperty('--vw',window.innerWidth+'px');
+    document.documentElement.style.setProperty('--vh',window.innerHeight+'px');
+    document.documentElement.style.setProperty('--vmin',Math.min(window.innerWidth,window.innerHeight)+'px');
+    // Resize renderer
+    if(window.pcmRenderer&&window.pcmCamera){
+      window.pcmRenderer.setSize(window.innerWidth,window.innerHeight);
+      window.pcmCamera.aspect=window.innerWidth/window.innerHeight;
+      window.pcmCamera.updateProjectionMatrix();
+    }
+  }
+  window.addEventListener('resize',setVP);
+  setVP();
+})();
+
+(function CYCLE7_ANALYTICS(){
+  if(window._c7an)return; window._c7an=true;
+  function track(event,props){
+    try{
+      var payload=JSON.stringify({event:event,props:props||{},ts:Date.now(),section:window.activeIdx||0});
+      if(navigator.sendBeacon){navigator.sendBeacon('/api/track',payload);}
+      else{fetch('/api/track',{method:'POST',body:payload,headers:{'Content-Type':'application/json'},keepalive:true}).catch(function(){});}
+    }catch(e){}
+  }
+  window.pcmTrack=track;
+  // Track section views
+  var trackO=new MutationObserver(function(){track('section_view',{index:window.activeIdx||0});});
+  trackO.observe(document.body,{attributes:true,attributeFilter:['data-section']});
+  // Track initial page view
+  setTimeout(function(){track('page_view',{url:location.href,referrer:document.referrer});},500);
+})();
+
+(function CYCLE7_SCROLL_DOLLY_CAMERA(){
+  if(window._c7sdc)return; window._c7sdc=true;
+  // Read pcmDollyAccum each frame and apply to camera Z
+  function dollyLoop(){
+    if(window.pcmCamera&&!window.isTransitioning){
+      var accum=window.pcmDollyAccum||0;
+      var preset=window.pcmCurrentPreset;
+      if(preset){
+        var baseZ=preset.cam?preset.cam.z:8;
+        var zoomIn=baseZ-1.8;
+        var targetZ=baseZ+accum*(baseZ-zoomIn);
+        window.pcmCamera.position.z+=(targetZ-window.pcmCamera.position.z)*0.06;
+      }
+    }
+    requestAnimationFrame(dollyLoop);
+  }
+  window.addEventListener('pcm:sceneready',function(){dollyLoop();},{once:true});
+})();
+
+(function CYCLE7_STAT_PANEL_REVEAL(){
+  if(window._c7spr)return; window._c7spr=true;
+  var s=document.createElement('style');
+  s.textContent=`
+  #stat-panel{position:fixed!important;left:52px!important;top:50%!important;transform:translateY(-50%)!important;z-index:90!important;opacity:0!important;transition:opacity .6s ease!important;pointer-events:none!important}
+  body[data-section="0"] #stat-panel,
+  body[data-section="3"] #stat-panel,
+  body[data-section="4"] #stat-panel,
+  body[data-section="5"] #stat-panel{opacity:1!important}
+  #stat-panel .sp-row{display:flex!important;gap:28px!important;margin-bottom:24px!important}
+  #stat-panel .sp-item{}
+  #stat-panel .sp-value{font-family:'Cormorant Garamond',serif!important;font-size:42px!important;font-weight:500!important;color:#c9a96e!important;line-height:1!important}
+  #stat-panel .sp-label{font-family:'Space Mono',monospace!important;font-size:9px!important;letter-spacing:.26em!important;color:rgba(227,238,230,.38)!important;text-transform:uppercase!important;margin-top:5px!important}`;
+  document.head.appendChild(s);
+
+  var SP_DATA={
+    0:[['$3.4B','Under Advisement'],['126','Closed Transactions']],
+    3:[['$15M–$500M','Deal Size'],['6–10wk','Close Time']],
+    4:[['10–14%','Typical Coupon'],['65–85%','Attachment']],
+    5:[['12–20%','Target IRR'],['1.6×–2.4×','Target MOIC']]
+  };
+
+  if(!document.getElementById('stat-panel')){
+    var sp=document.createElement('div'); sp.id='stat-panel'; document.body.appendChild(sp);
+  }
+
+  function buildSP(idx){
+    var el=document.getElementById('stat-panel'); if(!el)return;
+    var data=SP_DATA[idx];
+    if(!data){el.innerHTML='';return;}
+    el.innerHTML='<div class="sp-row">'+data.map(function(d){return '<div class="sp-item"><div class="sp-value" data-val="'+d[0]+'">'+d[0]+'</div><div class="sp-label">'+d[1]+'</div></div>';}).join('')+'</div>';
+    setTimeout(function(){
+      el.querySelectorAll('.sp-value[data-val]').forEach(function(v,i){
+        if(window.pcmCountup)window.pcmCountup(v,v.getAttribute('data-val'),1200);
+      });
+    },600);
+  }
+
+  var spO=new MutationObserver(function(){buildSP(window.activeIdx||0);});
+  spO.observe(document.body,{attributes:true,attributeFilter:['data-section']});
+  setTimeout(function(){buildSP(window.activeIdx||0);},800);
+})();
+
+(function CYCLE7_AUDIO_CONTROLLER_PERFECT(){
+  if(window._c7ac)return; window._c7ac=true;
+  var s=document.createElement('style');
+  s.textContent=`
+  #audio-panel{position:fixed!important;bottom:82px!important;right:72px!important;z-index:5000!important;background:rgba(6,9,10,.96)!important;border:1px solid rgba(201,169,110,.28)!important;backdrop-filter:blur(16px)!important;padding:18px 20px!important;width:220px!important;opacity:0!important;pointer-events:none!important;transform:translateY(6px)!important;transition:opacity .35s ease,transform .35s ease!important}
+  #audio-panel.open{opacity:1!important;pointer-events:auto!important;transform:translateY(0)!important}
+  #audio-panel .ap-title{font-family:'Space Mono',monospace!important;font-size:8.5px!important;letter-spacing:.24em!important;color:rgba(201,169,110,.6)!important;text-transform:uppercase!important;margin-bottom:14px!important}
+  #audio-panel .ap-row{display:flex!important;align-items:center!important;gap:10px!important;margin-bottom:12px!important}
+  #audio-panel .ap-lbl{font-family:'Space Mono',monospace!important;font-size:8px!important;letter-spacing:.16em!important;color:rgba(227,238,230,.45)!important;text-transform:uppercase!important;width:42px!important}
+  #audio-panel .ap-vol{flex:1!important;-webkit-appearance:none!important;appearance:none!important;height:1px!important;background:rgba(201,169,110,.2)!important;outline:none!important;cursor:pointer!important}
+  #audio-panel .ap-vol::-webkit-slider-thumb{-webkit-appearance:none!important;width:10px!important;height:10px!important;border-radius:50%!important;background:#c9a96e!important;cursor:pointer!important}
+  #audio-panel .ap-tracks{display:flex!important;gap:5px!important;margin-top:10px!important}
+  #audio-panel .ap-track{flex:1!important;font-family:'Space Mono',monospace!important;font-size:8px!important;letter-spacing:.12em!important;color:rgba(201,169,110,.5)!important;border:1px solid rgba(201,169,110,.18)!important;background:none!important;padding:5px 2px!important;cursor:pointer!important;text-transform:uppercase!important;transition:all .2s ease!important}
+  #audio-panel .ap-track.active{background:rgba(201,169,110,.1)!important;border-color:rgba(201,169,110,.5)!important;color:#c9a96e!important}`;
+  document.head.appendChild(s);
+
+  var ap=document.getElementById('audio-panel');
+  if(!ap){ap=document.createElement('div');ap.id='audio-panel';ap.innerHTML='<div class="ap-title">Audio</div><div class="ap-row"><span class="ap-lbl">Volume</span><input class="ap-vol" id="ap-vol" type="range" min="0" max="100" value="40"></div><div class="ap-tracks"><button class="ap-track active" data-track="0">Drone</button><button class="ap-track" data-track="1">Atmos</button><button class="ap-track" data-track="2">Sparse</button></div>';document.body.appendChild(ap);}
+
+  // Volume control
+  var volSlider=document.getElementById('ap-vol');
+  if(volSlider){volSlider.addEventListener('input',function(){var v=parseFloat(this.value)/100*0.08;if(window.pcmGainNode)window.pcmGainNode.gain.setTargetAtTime(v,window.pcmAudioCtx?.currentTime||0,0.1);});}
+
+  // Track buttons
+  ap.querySelectorAll('.ap-track').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      ap.querySelectorAll('.ap-track').forEach(function(b){b.classList.remove('active');});
+      btn.classList.add('active');
+    });
+  });
+})();
+
+(function CYCLE7_PRELOAD_HOOKS(){
+  if(window._c7ph)return; window._c7ph=true;
+  // Preload next section's assets when idle
+  function preloadSection(idx){
+    var copy=window.pcmSectionCopy?.[idx];
+    if(!copy)return;
+    // Video preload stub (no video assets yet, preload placeholder)
+    var video=document.createElement('video');
+    video.preload='metadata';
+    // No src yet — placeholder
+  }
+  var phO=new MutationObserver(function(){
+    var next=(window.activeIdx||0)+1;
+    if(next<=9)preloadSection(next);
+  });
+  phO.observe(document.body,{attributes:true,attributeFilter:['data-section']});
+})();
+
+(function CYCLE7_REDUCED_MOTION(){
+  if(window._c7rm)return; window._c7rm=true;
+  var mq=window.matchMedia('(prefers-reduced-motion:reduce)');
+  function applyRM(){
+    window.pcmMotionScale=mq.matches?0.28:1.0;
+    document.body.classList.toggle('reduced-motion',mq.matches);
+  }
+  mq.addEventListener('change',applyRM);
+  applyRM();
+  var s=document.createElement('style');
+  s.textContent='@media(prefers-reduced-motion:reduce){.scene-copy{transition:none!important}.cinema-bar{transition:none!important}.detail-card{transition:none!important}*{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}';
+  document.head.appendChild(s);
+})();
+
+(function CYCLE7_FOCUS_TRAP(){
+  if(window._c7ft)return; window._c7ft=true;
+  function trapFocus(el){
+    var focusable=el.querySelectorAll('button,a,input,select,textarea,[tabindex]:not([tabindex="-1"])');
+    if(!focusable.length)return function(){};
+    var first=focusable[0],last=focusable[focusable.length-1];
+    function onKey(e){
+      if(e.key!=='Tab')return;
+      if(e.shiftKey){if(document.activeElement===first){e.preventDefault();last.focus();}}
+      else{if(document.activeElement===last){e.preventDefault();first.focus();}}
+    }
+    el.addEventListener('keydown',onKey);
+    first.focus();
+    return function(){el.removeEventListener('keydown',onKey);};
+  }
+  window.pcmTrapFocus=trapFocus;
+  // Apply to menu overlay and credits modal when opened
+  ['menu-overlay','credits-modal'].forEach(function(id){
+    var ob=new MutationObserver(function(muts){
+      muts.forEach(function(m){
+        if(m.type==='attributes'&&m.attributeName==='class'){
+          var el=document.getElementById(id);
+          if(el&&el.classList.contains('open'))trapFocus(el);
+        }
+      });
+    });
+    var el=document.getElementById(id);
+    if(el)ob.observe(el,{attributes:true});
+    else window.addEventListener('pcm:sceneready',function(){var e=document.getElementById(id);if(e)ob.observe(e,{attributes:true});},{once:true});
+  });
+})();
+
 </script>
 
 <!-- PART I: Contact Form — Section 9 Engage -->
