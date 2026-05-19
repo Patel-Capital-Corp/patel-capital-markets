@@ -2689,6 +2689,210 @@ body.is-dragging #canvas-host canvas { cursor: grabbing; }
   .menu-overlay nav a:hover { color: var(--brass); }
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   V22.A — BATTERY TOGGLE / LOW-POWER MODE
+   Reduces visual intensity when battery < 20% or user opts in
+   ═══════════════════════════════════════════════════════════════ */
+.low-power-mode #pcm-grain     { opacity: 0.012 !important; }
+.low-power-mode .pcm-ring-1,
+.low-power-mode .pcm-ring-2    { animation: none !important; }
+.low-power-mode .geo-ring-outer { animation: none !important; }
+.low-power-mode .geo-ring-outer::before { animation: none !important; }
+/* Particles will be paused by JS; bloom halved by JS */
+
+/* Battery indicator pill — top-right next to meta */
+.battery-indicator {
+  position: fixed;
+  top: 18px;
+  right: 160px;
+  z-index: 30;
+  display: none;  /* JS shows when needed */
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.22em;
+  color: rgba(201,169,110,0.55);
+  background: rgba(6,9,10,0.85);
+  border: 1px solid rgba(201,169,110,0.18);
+  padding: 4px 8px;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: opacity 0.4s ease;
+  user-select: none;
+}
+.battery-indicator.visible { display: flex; }
+.battery-indicator:hover { color: var(--brass); border-color: rgba(201,169,110,0.4); }
+.battery-icon {
+  display: inline-block;
+  width: 14px;
+  height: 7px;
+  border: 1px solid currentColor;
+  border-radius: 1px;
+  position: relative;
+  vertical-align: middle;
+}
+.battery-icon::after {
+  content: '';
+  position: absolute;
+  right: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 4px;
+  background: currentColor;
+  border-radius: 0 1px 1px 0;
+}
+.battery-fill {
+  position: absolute;
+  left: 1px;
+  top: 1px;
+  bottom: 1px;
+  background: rgba(201,169,110,0.4);
+  border-radius: 1px;
+  transition: width 1s ease;
+}
+.battery-fill.critical { background: rgba(255,80,50,0.6); }
+@media (max-width: 768px) {
+  .battery-indicator { right: 100px; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   V22.B — SUBSTEP NAV (horizontal dash step indicators)
+   Seacat-style 50px × 3px dash indicators for mode sections
+   ═══════════════════════════════════════════════════════════════ */
+.substep-nav {
+  display: none;  /* JS shows when section has modes */
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+  margin-top: -4px;
+}
+.substep-nav.visible { display: flex; }
+.substep-dash {
+  width: 44px;
+  height: 3px;
+  background: rgba(201,169,110,0.14);
+  border-radius: 1px;
+  cursor: pointer;
+  transition: background 0.4s ease, box-shadow 0.4s ease, width 0.3s ease;
+  position: relative;
+  flex-shrink: 0;
+}
+.substep-dash.active {
+  background: var(--brass);
+  box-shadow: 0 0 10px rgba(201,169,110,0.55), 0 0 20px rgba(201,169,110,0.2);
+  width: 56px;
+}
+.substep-dash:hover:not(.active) {
+  background: rgba(201,169,110,0.35);
+}
+@media (prefers-reduced-motion: reduce) {
+  .substep-dash, .substep-dash.active { transition: none; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   V22.C — AUDIO VOLUME PANEL (slide-out controller)
+   Seacat-level: volume slider + section atmosphere label
+   ═══════════════════════════════════════════════════════════════ */
+#btn-audio { position: relative; }
+.audio-vol-panel {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  width: 36px;
+  padding: 12px 0;
+  background: rgba(6,9,10,0.95);
+  border: 1px solid rgba(201,169,110,0.22);
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.28s ease, transform 0.28s cubic-bezier(0.215,0.61,0.355,1);
+  z-index: 100;
+}
+.audio-vol-panel.open {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+.audio-vol-label {
+  font-family: var(--font-mono);
+  font-size: 7px;
+  letter-spacing: 0.22em;
+  color: rgba(201,169,110,0.4);
+  text-transform: uppercase;
+  writing-mode: horizontal-tb;
+  text-align: center;
+}
+.audio-vol-track {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 80px;
+  position: relative;
+}
+/* Vertical range input */
+input[type="range"].audio-vol-range {
+  -webkit-appearance: slider-vertical;
+  appearance: slider-vertical;
+  writing-mode: vertical-lr;
+  direction: rtl;
+  width: 3px;
+  height: 72px;
+  cursor: pointer;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  outline: none;
+  border: none;
+}
+input[type="range"].audio-vol-range::-webkit-slider-runnable-track {
+  width: 2px;
+  background: rgba(201,169,110,0.18);
+  border-radius: 1px;
+}
+input[type="range"].audio-vol-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--brass);
+  box-shadow: 0 0 6px rgba(201,169,110,0.5);
+  margin-top: -4px;
+}
+input[type="range"].audio-vol-range::-moz-range-track {
+  width: 2px;
+  background: rgba(201,169,110,0.18);
+  border-radius: 1px;
+}
+input[type="range"].audio-vol-range::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  border: none;
+  border-radius: 50%;
+  background: var(--brass);
+  box-shadow: 0 0 6px rgba(201,169,110,0.5);
+}
+.audio-mute-micro {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: rgba(201,169,110,0.35);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 2px;
+  transition: color 0.2s;
+  line-height: 1;
+}
+@media (hover: hover) {
+  .audio-mute-micro:hover { color: var(--brass); }
+}
+
 /* ───────────────────────────────────────────────────────────────
    GAP 2 — SVG drag-to-reveal scrubber (Senior Debt section)
    ─────────────────────────────────────────────────────────────── */
@@ -4846,9 +5050,19 @@ function updateCopyContent(idx) {
     // Position drag indicator after layout
     requestAnimationFrame(() => {
       if (typeof window.updateModeIndicator === 'function') window.updateModeIndicator(0);
+      // V22.B — SubStepNav: initialize dashes for this section's mode count
+      if (typeof window.updateSubStepNav === 'function') {
+        window.updateSubStepNav(s.modes.length, 0);
+      }
     });
   } else if (modesEl) {
     modesEl.style.display = 'none';
+    // No modes — hide substep nav
+    const substepNav = document.getElementById('substep-nav');
+    if (substepNav) {
+      substepNav.classList.remove('visible');
+      substepNav.innerHTML = '';
+    }
   }
 
   // Contact form (legacy scene-copy form — hide when engage-cinematic takes over)
@@ -5409,6 +5623,17 @@ window.updateCopyContent = updateCopyContent;
         <span id="meta-caption" class="meta-cap">Patel Capital Markets</span>
       </div>
     `);
+    // V22.A — Battery indicator
+    insertHTML('beforeend', `
+      <div class="battery-indicator" id="battery-indicator"
+           role="status" aria-live="polite" aria-label="Low battery — power saver mode active"
+           title="Power Saver Mode — Click to toggle">
+        <span class="battery-icon" aria-hidden="true">
+          <span class="battery-fill" id="battery-fill" style="width:20%"></span>
+        </span>
+        <span id="battery-label">POWER SAVER</span>
+      </div>
+    `);
   }
 
   // ---------------------------------------------------------------------------
@@ -5456,6 +5681,7 @@ window.updateCopyContent = updateCopyContent;
           <div id="copy-tags" class="tag-row"></div>
           <div id="copy-long" class="long-block" style="display:none"></div>
           <div id="copy-poetic" class="poetic-block" style="display:none"></div>
+          <div id="substep-nav" class="substep-nav" aria-label="Step indicators"></div>
           <div id="copy-modes" class="modes-row" style="display:none"></div>
           <div id="mode-body" class="mode-body"></div>
           <div id="mode-stats" class="mode-stats" style="display:none"></div>
@@ -5544,6 +5770,21 @@ window.updateCopyContent = updateCopyContent;
               fill="none" stroke="currentColor" stroke-width="1.2"
               stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
+          <!-- V22.C — Volume control panel -->
+          <div class="audio-vol-panel" id="audio-vol-panel" aria-label="Volume control">
+            <span class="audio-vol-label">VOL</span>
+            <div class="audio-vol-track">
+              <input type="range" class="audio-vol-range" id="audio-vol-slider"
+                min="0" max="100" value="72" step="1"
+                aria-label="Volume level" aria-orientation="vertical"
+                oninput="window.pcmSetVolume&&window.pcmSetVolume(this.value/100)">
+            </div>
+            <button class="audio-mute-micro" id="audio-mute-micro"
+              aria-label="Mute audio" title="Mute"
+              onclick="event.stopPropagation();window.audioEngine&&window.audioEngine.toggle()">
+              ×
+            </button>
+          </div>
         </button>
         <button id="btn-explode" class="ctrl-btn" aria-label="Toggle exploded view" aria-pressed="false" title="Explode (E)">⊕</button>
         <button id="btn-wire" class="ctrl-btn" aria-label="Toggle wireframe view" aria-pressed="false" title="Wireframe (W)">▦</button>
@@ -8162,6 +8403,204 @@ const _menuObserver = new MutationObserver(() => {
   if (btn) btn.setAttribute('aria-expanded', String(isOpen));
 });
 _menuObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+
+
+// ═══════════════════════════════════════════════════════════════════════════
+// V22.A — BATTERY TOGGLE (Battery Status API + manual override)
+// Detects low battery (<20%) and activates low-power mode, which reduces
+// grain, disables ring animations, and halves bloom intensity.
+// ═══════════════════════════════════════════════════════════════════════════
+(function initBatteryToggle() {
+  let lowPowerActive = false;
+
+  function activateLowPower(level) {
+    if (lowPowerActive) return;
+    lowPowerActive = true;
+    document.body.classList.add('low-power-mode');
+    window.lowPowerMode = true;
+
+    // Halve bloom intensity
+    if (window.bloom) {
+      window.bloom.intensity = Math.min(window.bloom.intensity, 0.45);
+    }
+
+    // Update battery fill visual
+    const fill = document.getElementById('battery-fill');
+    if (fill) {
+      const pct = Math.round((level || 0.18) * 100);
+      fill.style.width = pct + '%';
+      if (pct <= 10) fill.classList.add('critical');
+    }
+
+    // Show indicator
+    const ind = document.getElementById('battery-indicator');
+    if (ind) {
+      ind.classList.add('visible');
+      const lbl = document.getElementById('battery-label');
+      if (lbl) lbl.textContent = 'POWER SAVER';
+    }
+  }
+
+  function deactivateLowPower() {
+    if (!lowPowerActive) return;
+    lowPowerActive = false;
+    document.body.classList.remove('low-power-mode');
+    window.lowPowerMode = false;
+
+    // Restore bloom
+    if (window.bloom) window.bloom.intensity = 0.85;
+
+    // Hide indicator
+    const ind = document.getElementById('battery-indicator');
+    if (ind) ind.classList.remove('visible');
+  }
+
+  // Battery Status API
+  if ('getBattery' in navigator) {
+    navigator.getBattery().then(battery => {
+      function check() {
+        if (battery.level <= 0.20 && !battery.charging) {
+          activateLowPower(battery.level);
+        } else if (battery.charging || battery.level > 0.25) {
+          deactivateLowPower();
+        }
+        // Update fill without activating mode (for indicator only)
+        const fill = document.getElementById('battery-fill');
+        if (fill && lowPowerActive) {
+          fill.style.width = Math.round(battery.level * 100) + '%';
+          fill.classList.toggle('critical', battery.level <= 0.10);
+        }
+      }
+      check();
+      battery.addEventListener('levelchange',  check);
+      battery.addEventListener('chargingchange', check);
+    }).catch(() => {});
+  }
+
+  // Manual toggle via battery-indicator click
+  const ind = document.getElementById('battery-indicator');
+  if (ind) {
+    ind.addEventListener('click', () => {
+      if (lowPowerActive) deactivateLowPower();
+      else activateLowPower(0.15);
+    });
+  }
+
+  // Expose for keyboard shortcut if desired
+  window.pcmToggleLowPower = () => lowPowerActive ? deactivateLowPower() : activateLowPower(0.15);
+})();
+
+
+// ═══════════════════════════════════════════════════════════════════════════
+// V22.B — SUBSTEP NAV (horizontal dash step indicators)
+// Syncs with mode buttons to show seacat-style 50px × 3px dashes
+// ═══════════════════════════════════════════════════════════════════════════
+(function initSubStepNav() {
+  // Called every time the section copy is updated with new mode data
+  window.updateSubStepNav = function(count, activeIdx) {
+    const nav = document.getElementById('substep-nav');
+    if (!nav) return;
+
+    if (!count || count <= 1) {
+      nav.classList.remove('visible');
+      nav.innerHTML = '';
+      return;
+    }
+
+    // Build dashes if count changed
+    if (nav.children.length !== count) {
+      nav.innerHTML = Array.from({ length: count }, (_, i) => `
+        <button class="substep-dash${i === activeIdx ? ' active' : ''}"
+          aria-label="Go to step ${i + 1}" data-step="${i}"
+          onclick="window.setMode&&window.setMode(${i})">
+        </button>
+      `).join('');
+    }
+    nav.classList.add('visible');
+    nav.querySelectorAll('.substep-dash').forEach((d, i) => {
+      d.classList.toggle('active', i === activeIdx);
+    });
+  };
+
+  // Patch setMode to also update substep nav
+  const _origSetMode = window.setMode;
+  window.setMode = function(idx) {
+    if (_origSetMode) _origSetMode(idx);
+    // Count dashes from current mode buttons
+    const btns = document.querySelectorAll('.mode-btn');
+    window.updateSubStepNav(btns.length, idx);
+  };
+})();
+
+
+// ═══════════════════════════════════════════════════════════════════════════
+// V22.C — AUDIO VOLUME PANEL (slide-out volume controller)
+// Long-press or right-click audio button to open; slider controls masterGain
+// ═══════════════════════════════════════════════════════════════════════════
+(function initAudioVolPanel() {
+  const btn  = document.getElementById('btn-audio');
+  const panel = document.getElementById('audio-vol-panel');
+  const slider = document.getElementById('audio-vol-slider');
+  if (!btn || !panel || !slider) return;
+
+  let panelOpen = false;
+  let holdTimer = null;
+  const HOLD_MS = 400;
+
+  function openPanel() {
+    panelOpen = true;
+    panel.classList.add('open');
+    panel.setAttribute('aria-hidden', 'false');
+  }
+
+  function closePanel() {
+    panelOpen = false;
+    panel.classList.remove('open');
+    panel.setAttribute('aria-hidden', 'true');
+  }
+
+  // Long-press to reveal volume panel (toggle on short click handled by existing audio toggle)
+  btn.addEventListener('pointerdown', (e) => {
+    holdTimer = setTimeout(() => {
+      holdTimer = null;
+      if (panelOpen) closePanel(); else openPanel();
+    }, HOLD_MS);
+  });
+  btn.addEventListener('pointerup', () => {
+    if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; }
+  });
+  btn.addEventListener('pointercancel', () => {
+    if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; }
+  });
+
+  // Close when clicking outside
+  document.addEventListener('pointerdown', (e) => {
+    if (panelOpen && !btn.contains(e.target)) closePanel();
+  }, { passive: true });
+
+  // Keyboard: Escape closes
+  document.addEventListener('keydown', (e) => {
+    if (panelOpen && e.key === 'Escape') closePanel();
+  });
+
+  // Volume slider → audio engine master gain
+  window.pcmSetVolume = function(val) {
+    // val is 0..1
+    const v = Math.max(0, Math.min(1, val));
+    if (window.audioEngine && window.audioEngine.ctx && window.audioEngine.masterGain) {
+      const now = window.audioEngine.ctx.currentTime;
+      window.audioEngine.masterGain.gain.setTargetAtTime(v * 0.72, now, 0.08);
+    }
+    // Update slider if called externally
+    if (slider) slider.value = Math.round(v * 100);
+  };
+
+  // Stop short click from propagating to btn toggle when coming from panel
+  panel.addEventListener('click', (e) => e.stopPropagation());
+
+  // Mark initial state
+  panel.setAttribute('aria-hidden', 'true');
+})();
 
 
 // ---------------------------------------------------------------------------
