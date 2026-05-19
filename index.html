@@ -4434,6 +4434,20 @@ textarea.engage-input-v2 { resize: none; line-height: 1.6; }
   window.POSTPROCESSING = POSTPROCESSING;
   window.gsap = gsap;
 
+  // Global error trap — shows any fatal runtime error on screen
+  window.addEventListener('error', e => {
+    const el = document.createElement('div');
+    el.style.cssText = 'position:fixed;top:0;left:0;right:0;padding:16px 24px;background:#1a0000;color:#ff6666;font:13px/1.5 monospace;z-index:99999;white-space:pre-wrap;border-bottom:1px solid #ff3333;';
+    el.textContent = '[PCM ERROR] ' + e.message + '\n' + (e.filename ? e.filename + ':' + e.lineno : '');
+    document.body.appendChild(el);
+  });
+  window.addEventListener('unhandledrejection', e => {
+    const el = document.createElement('div');
+    el.style.cssText = 'position:fixed;top:40px;left:0;right:0;padding:16px 24px;background:#1a0000;color:#ff9966;font:13px/1.5 monospace;z-index:99999;white-space:pre-wrap;border-bottom:1px solid #ff6600;';
+    el.textContent = '[PCM REJECT] ' + String(e.reason);
+    document.body.appendChild(el);
+  });
+
   // Shared mutable state used across input.js / animation.js
   window.dragRotXTarget = 0;
   window.dragRotYTarget = 0;
@@ -9666,15 +9680,36 @@ window.addEventListener('keydown', e => {
   }
 
   // Overlays
-  try { initOverlays(); } catch(err) { console.error('initOverlays', err); }
+  try { initOverlays(); } catch(err) {
+    console.error('initOverlays', err);
+    const d=document.createElement('div');
+    d.style.cssText='position:fixed;top:0;left:0;right:0;padding:12px 20px;background:#1a0000;color:#ff6666;font:12px monospace;z-index:99999;';
+    d.textContent='[PCM] initOverlays error: '+err.message; document.body.appendChild(d);
+  }
 
   // Scene
-  const { scene, camera, renderer, composer } = initScene();
+  let scene, camera, renderer, composer;
+  try {
+    const s = initScene();
+    scene=s.scene; camera=s.camera; renderer=s.renderer; composer=s.composer;
+  } catch(err) {
+    console.error('initScene', err);
+    const d=document.createElement('div');
+    d.style.cssText='position:fixed;top:0;left:0;right:0;padding:12px 20px;background:#1a0000;color:#ff6666;font:12px monospace;z-index:99999;';
+    d.textContent='[PCM] initScene error: '+err.message+' — '+err.stack?.split('\n')[1]; document.body.appendChild(d);
+  }
 
   // Logo
-  const logoRefs = buildPCMLogo(THREE);
-  scene.add(logoRefs.root);
-  window.pcmRoot          = logoRefs.root;
+  let logoRefs;
+  try { logoRefs = buildPCMLogo(THREE); } catch(err) {
+    console.error('buildPCMLogo', err);
+    const d=document.createElement('div');
+    d.style.cssText='position:fixed;top:40px;left:0;right:0;padding:12px 20px;background:#1a0800;color:#ffaa66;font:12px monospace;z-index:99999;';
+    d.textContent='[PCM] buildPCMLogo error: '+err.message; document.body.appendChild(d);
+  }
+  if (scene && logoRefs) {
+    scene.add(logoRefs.root);
+    window.pcmRoot          = logoRefs.root;
   window.leverGroup       = logoRefs.leverGroup;
   window.refreshGroup     = logoRefs.refreshGroup;
   window.orbitalDots      = logoRefs.orbitalDots;
@@ -9685,6 +9720,7 @@ window.addEventListener('keydown', e => {
   window.tickGroup        = logoRefs.tickGroup;
   window.fulcrumGlowRing  = logoRefs.glowRing;
   window.bgPlane          = logoRefs.bgPlane;
+  } // end if(scene && logoRefs)
 
   // Make leverGroup and friends accessible as bare names where animation.js expects them
   // (the script is concatenated so its top-level `let` declarations are in module scope —
