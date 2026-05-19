@@ -1023,19 +1023,13 @@ body.transitioning .cinema-bar {
 .menu-front-image {
   position: absolute;
   inset: 0;
-  transition: transform 0.1s linear;
+  transition: transform 0.1s linear, opacity 0.15s ease;
   display: flex;
   align-items: center;
   justify-content: center;
+  pointer-events: none;
 }
-.menu-front-image::before {
-  content: '';
-  width: 180px;
-  height: 180px;
-  border-radius: 50%;
-  border: 1px solid rgba(201,169,110,0.2);
-  background: radial-gradient(circle, rgba(45,62,54,0.6) 0%, transparent 70%);
-}
+/* menu-front-image content is injected as inline SVG per section */
 .menu-img-label {
   position: absolute;
   bottom: 40px;
@@ -1081,10 +1075,11 @@ body.transitioning .cinema-bar {
   transition: transform 0.5s cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 @media (hover: hover) {
-  .menu-link:hover .menu-link-inner { transform: translateX(12px); }
+  .menu-link:hover .menu-link-inner { transform: translateX(10px); }
   .menu-link:hover .menu-link-num { color: var(--brass); }
-  .menu-link:hover .menu-link-text > span:first-child { opacity: 0; }
-  .menu-link:hover .menu-link-dup { opacity: 0.6; transform: none; }
+  /* Belt-conveyor: first text exits left, dup slides in from right */
+  .menu-link:hover .menu-link-text > span:first-child { transform: translateX(-100%); opacity: 0; }
+  .menu-link:hover .menu-link-dup { transform: translateX(-100%); }
 }
 .menu-link-num {
   font-family: var(--font-mono);
@@ -1097,18 +1092,29 @@ body.transitioning .cinema-bar {
 .menu-link-text {
   position: relative;
   overflow: hidden;
+  display: inline-block;     /* fits the text width for correct overflow clip */
   font-family: var(--font-serif);
   font-size: clamp(1.8rem, 3.5vw, 3.2rem);
   color: var(--ink);
   letter-spacing: 0.05em;
   line-height: 1.1;
+  vertical-align: middle;
 }
-.menu-link-text > span { display: block; transition: opacity 0.3s, transform 0.5s cubic-bezier(0.215, 0.61, 0.355, 1); }
+.menu-link-text > span {
+  display: block;
+  white-space: nowrap;
+  transition: transform 0.52s cubic-bezier(0.215, 0.61, 0.355, 1),
+              opacity  0.28s ease;
+}
 .menu-link-dup {
   position: absolute !important;
-  top: 0; left: 0;
-  opacity: 0.3;
+  top: 0; left: 100%;          /* starts to the RIGHT, outside the overflow:hidden */
+  width: 100%;
+  white-space: nowrap;
+  opacity: 0.55;
   color: var(--brass);
+  transform: translateX(0);   /* starts at left:100% (off-screen right) */
+  transition: transform 0.52s cubic-bezier(0.215, 0.61, 0.355, 1) !important;
 }
 .menu-footer-info {
   margin-top: 48px;
@@ -2240,7 +2246,9 @@ body:has(.pcm-cursor) {
   display: block;
   width: 100% !important;
   height: 100% !important;
+  cursor: grab;
 }
+body.is-dragging #canvas-host canvas { cursor: grabbing; }
 
 /* ─────────────────────────────────────────────
    18. DETAIL CARD TRANSITIONS
@@ -2315,14 +2323,17 @@ body:has(.pcm-cursor) {
 }
 .intro-loader__bar-fill {
   height: 1px;
-  width: 0%;
+  width: 100%;                  /* seacat: always full-width, scaleX animates it */
+  transform: scaleX(0);
+  transform-origin: 0 0;
   background: linear-gradient(90deg,
-    transparent 0%,
-    rgba(201, 169, 110, 0.6) 20%,
-    #c9a96e 50%,
-    #d9b97a 75%,
-    transparent 100%);
-  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    rgba(6,9,10,0) 0%,
+    rgba(201, 169, 110, 0.5) 15%,
+    #c9a96e 45%,
+    #d9b97a 65%,
+    rgba(201, 169, 110, 0.5) 85%,
+    rgba(6,9,10,0) 100%);
+  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
 }
 .intro-loader__bar-fill::after {
@@ -4256,7 +4267,11 @@ function buildPCMLogo(THREE) {
   const bgPlane = new THREE.Mesh(
     new THREE.PlaneGeometry(60, 40),
     new THREE.ShaderMaterial({
-      uniforms: { time: { value: 0 } },
+      uniforms: {
+        time:        { value: 0 },
+        uSectionTint:{ value: new THREE.Vector3(0.0, 0.0, 0.0) }, // per-section color lift
+        uTintStrength: { value: 0.0 }
+      },
       vertexShader: `
         varying vec2 vUv;
         void main() {
@@ -4267,6 +4282,8 @@ function buildPCMLogo(THREE) {
       fragmentShader: `
         varying vec2 vUv;
         uniform float time;
+        uniform vec3 uSectionTint;
+        uniform float uTintStrength;
         void main() {
           vec3 top = vec3(0.04, 0.07, 0.06);
           vec3 mid = vec3(0.06, 0.10, 0.09);
@@ -4274,6 +4291,10 @@ function buildPCMLogo(THREE) {
           vec3 col = mix(bot, mid, vUv.y * 1.5);
           col = mix(col, top, max(0.0, vUv.y - 0.5) * 2.0);
           col += 0.005 * sin(time * 0.3 + vUv.x * 8.0);
+          // Section-specific atmospheric tint (very subtle, max 0.018)
+          float radDist = length(vUv - vec2(0.5)) * 1.4;
+          float vignetted = 1.0 - clamp(radDist, 0.0, 1.0);
+          col += uSectionTint * uTintStrength * vignetted * 0.018;
           gl_FragColor = vec4(col, 1.0);
         }
       `,
@@ -4841,7 +4862,7 @@ window.updateCopyContent = updateCopyContent;
     function advanceLoader() {
       if (pctIdx >= pctSteps.length) return;
       const pct = pctSteps[pctIdx];
-      if (loaderBar) loaderBar.style.width = pct + '%';
+      if (loaderBar) loaderBar.style.transform = `scaleX(${pct / 100})`;
       if (loaderPct) loaderPct.textContent = pct + '%';
       if (loaderTextEl && pctLabels[pctIdx] !== undefined && pctLabels[pctIdx] !== '') {
         loaderTextEl.textContent = pctLabels[pctIdx];
@@ -5607,23 +5628,54 @@ window.updateCopyContent = updateCopyContent;
       if (sceneCopy) sceneCopy.classList.add('split-layout');
 
       // Mode dots
-      const modes = window.SECTIONS && window.SECTIONS[sectionIdx] && window.SECTIONS[sectionIdx].modes;
+      const section = window.SECTIONS && window.SECTIONS[sectionIdx];
+      const modes = section && section.modes;
       const dotsEl = document.getElementById('vp-mode-dots');
       if (dotsEl && modes) {
-        dotsEl.innerHTML = modes.map((_, i) =>
-          `<div class="vp-mode-dot ${i === (modeIdx||0) ? 'active' : ''}"></div>`
+        dotsEl.innerHTML = modes.map((m, i) =>
+          `<div class="vp-mode-dot ${i === (modeIdx||0) ? 'active' : ''}" title="${m.name}"></div>`
         ).join('');
+      } else if (dotsEl) {
+        dotsEl.innerHTML = '';
       }
 
-      // Stats
+      // Stats: prefer mode-specific stats when the active mode has them
       const statsEl = document.getElementById('vp-stats');
-      if (statsEl && data.stats) {
-        statsEl.innerHTML = data.stats.map(([val, lbl]) => `
-          <div class="visual-panel-large-stat">
-            <div class="vp-stat-val">${val}</div>
-            <div class="vp-stat-label">${lbl}</div>
-          </div>
-        `).join('<div class="vp-divider" style="width:24px;height:1px;background:rgba(201,169,110,0.15);margin:0 auto;"></div>');
+      if (statsEl) {
+        // Try mode-specific stats first
+        const activeMode = modes && modes[modeIdx || 0];
+        const modeStats = activeMode && activeMode.stats;
+        const statsToShow = modeStats && modeStats.length ? modeStats : data.stats;
+        if (statsToShow) {
+          // Fade out → update → fade in for smooth transition
+          statsEl.style.opacity = '0';
+          statsEl.style.transition = 'opacity 0.3s ease';
+          setTimeout(() => {
+            statsEl.innerHTML = statsToShow.map(([val, lbl]) => `
+              <div class="visual-panel-large-stat">
+                <div class="vp-stat-val">${val}</div>
+                <div class="vp-stat-label">${lbl}</div>
+              </div>
+            `).join('<div class="vp-divider" style="width:20px;height:1px;background:rgba(201,169,110,0.12);margin:4px auto;"></div>');
+            statsEl.style.opacity = '1';
+          }, 160);
+        }
+        // Also show mode name label
+        let modeLbl = statsEl.parentElement && statsEl.parentElement.querySelector('.vp-mode-name-lbl');
+        if (!modeLbl) {
+          modeLbl = document.createElement('div');
+          modeLbl.className = 'vp-mode-name-lbl';
+          modeLbl.style.cssText = 'font-family:var(--font-mono);font-size:8px;letter-spacing:0.28em;color:rgba(201,169,110,0.4);text-transform:uppercase;margin-bottom:8px;text-align:center;';
+          const vpInner = document.getElementById('vp-inner');
+          if (vpInner) vpInner.insertBefore(modeLbl, statsEl);
+        }
+        if (activeMode && activeMode.name) {
+          modeLbl.textContent = activeMode.name;
+          modeLbl.style.opacity = '1';
+        } else {
+          modeLbl.textContent = data.label || '';
+          modeLbl.style.opacity = '0.6';
+        }
       }
     };
   }
@@ -6235,6 +6287,132 @@ function initOverlays() {
       'Contact & Engage'
     ];
 
+    // ─── Per-section bespoke SVG diagrams ─────────────────────────────────────
+    // Each section gets a unique abstract capital-structure diagram
+    // (scale/balance, stack layers, node chains, etc.) — no generic AI assets
+    const SECTION_SVGS = [
+      // 0: Home — balance scale (the PCM lever concept)
+      `<svg viewBox="0 0 200 200" width="160" height="160" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="100" cy="100" r="70" stroke="rgba(201,169,110,0.15)" stroke-width="1" stroke-dasharray="3,6"/>
+        <line x1="40" y1="100" x2="160" y2="100" stroke="rgba(201,169,110,0.6)" stroke-width="1.5"/>
+        <circle cx="40" cy="100" r="12" fill="rgba(217,185,122,0.2)" stroke="#c9a96e" stroke-width="1"/>
+        <text x="40" y="104" text-anchor="middle" fill="#c9a96e" font-family="serif" font-size="10">$</text>
+        <circle cx="160" cy="100" r="10" fill="rgba(45,62,54,0.5)" stroke="rgba(201,169,110,0.5)" stroke-width="1"/>
+        <line x1="100" y1="100" x2="100" y2="130" stroke="rgba(201,169,110,0.4)" stroke-width="1.5"/>
+        <polygon points="96,130 104,130 100,140" fill="rgba(201,169,110,0.4)"/>
+        <text x="100" y="158" text-anchor="middle" fill="rgba(201,169,110,0.3)" font-family="monospace" font-size="7" letter-spacing="2">PATEL CAPITAL</text>
+      </svg>`,
+      // 1: Firm Overview — founder-led concentric rings
+      `<svg viewBox="0 0 200 200" width="160" height="160" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="100" cy="100" r="72" stroke="rgba(201,169,110,0.1)" stroke-width="1"/>
+        <circle cx="100" cy="100" r="52" stroke="rgba(201,169,110,0.2)" stroke-width="1" stroke-dasharray="4,4"/>
+        <circle cx="100" cy="100" r="32" stroke="rgba(201,169,110,0.35)" stroke-width="1.5"/>
+        <circle cx="100" cy="100" r="8"  fill="rgba(201,169,110,0.6)"/>
+        <line x1="100" y1="44" x2="100" y2="68" stroke="rgba(201,169,110,0.25)" stroke-width="1"/>
+        <line x1="100" y1="132" x2="100" y2="156" stroke="rgba(201,169,110,0.25)" stroke-width="1"/>
+        <line x1="44" y1="100" x2="68" y2="100" stroke="rgba(201,169,110,0.25)" stroke-width="1"/>
+        <line x1="132" y1="100" x2="156" y2="100" stroke="rgba(201,169,110,0.25)" stroke-width="1"/>
+        <text x="100" y="175" text-anchor="middle" fill="rgba(201,169,110,0.25)" font-family="monospace" font-size="7" letter-spacing="2">FOUNDED 2019</text>
+      </svg>`,
+      // 2: Platform Edge — three pillars
+      `<svg viewBox="0 0 200 200" width="160" height="160" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="42" y="60" width="24" height="90" fill="rgba(26,37,32,0.6)" stroke="rgba(201,169,110,0.4)" stroke-width="1"/>
+        <rect x="88" y="40" width="24" height="110" fill="rgba(26,37,32,0.6)" stroke="rgba(201,169,110,0.6)" stroke-width="1.5"/>
+        <rect x="134" y="70" width="24" height="80" fill="rgba(26,37,32,0.6)" stroke="rgba(201,169,110,0.4)" stroke-width="1"/>
+        <line x1="30" y1="150" x2="170" y2="150" stroke="rgba(201,169,110,0.3)" stroke-width="1"/>
+        <text x="54" y="175" text-anchor="middle" fill="rgba(201,169,110,0.3)" font-family="monospace" font-size="6">I</text>
+        <text x="100" y="175" text-anchor="middle" fill="rgba(201,169,110,0.5)" font-family="monospace" font-size="6">II</text>
+        <text x="146" y="175" text-anchor="middle" fill="rgba(201,169,110,0.3)" font-family="monospace" font-size="6">III</text>
+      </svg>`,
+      // 3: Senior Debt — capital stack horizontal bars
+      `<svg viewBox="0 0 200 200" width="160" height="160" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="30" y="50" width="140" height="22" fill="rgba(201,169,110,0.25)" stroke="rgba(201,169,110,0.6)" stroke-width="1.5"/>
+        <rect x="30" y="78" width="110" height="18" fill="rgba(45,62,54,0.5)" stroke="rgba(201,169,110,0.25)" stroke-width="1"/>
+        <rect x="30" y="102" width="80" height="16" fill="rgba(45,62,54,0.3)" stroke="rgba(201,169,110,0.2)" stroke-width="1"/>
+        <rect x="30" y="124" width="52" height="14" fill="rgba(45,62,54,0.15)" stroke="rgba(201,169,110,0.15)" stroke-width="1"/>
+        <text x="100" y="65" text-anchor="middle" fill="rgba(201,169,110,0.8)" font-family="monospace" font-size="7" letter-spacing="1">SENIOR · FIRST-LIEN</text>
+        <text x="85" y="92" text-anchor="middle" fill="rgba(201,169,110,0.45)" font-family="monospace" font-size="6" letter-spacing="1">MEZZANINE</text>
+        <text x="70" y="114" text-anchor="middle" fill="rgba(201,169,110,0.35)" font-family="monospace" font-size="6">PREFERRED</text>
+        <text x="56" y="135" text-anchor="middle" fill="rgba(201,169,110,0.25)" font-family="monospace" font-size="6">COMMON</text>
+      </svg>`,
+      // 4: Sub Capital — V-shaped layer (mezzanine wedge)
+      `<svg viewBox="0 0 200 200" width="160" height="160" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="100,50 150,140 50,140" fill="rgba(26,37,32,0.4)" stroke="rgba(201,169,110,0.5)" stroke-width="1.5" stroke-linejoin="round"/>
+        <line x1="65" y1="115" x2="135" y2="115" stroke="rgba(201,169,110,0.3)" stroke-width="1" stroke-dasharray="2,4"/>
+        <line x1="78" y1="128" x2="122" y2="128" stroke="rgba(201,169,110,0.2)" stroke-width="1" stroke-dasharray="2,4"/>
+        <circle cx="100" cy="80" r="5" fill="rgba(201,169,110,0.6)"/>
+        <text x="100" y="160" text-anchor="middle" fill="rgba(201,169,110,0.35)" font-family="monospace" font-size="7" letter-spacing="1">MEZZ · PREF · UNI</text>
+      </svg>`,
+      // 5: Equity — JV equity Y-junction
+      `<svg viewBox="0 0 200 200" width="160" height="160" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="100" cy="60" r="14" fill="rgba(26,37,32,0.6)" stroke="rgba(201,169,110,0.5)" stroke-width="1.5"/>
+        <text x="100" y="64" text-anchor="middle" fill="rgba(201,169,110,0.7)" font-family="serif" font-size="10">LP</text>
+        <line x1="100" y1="74" x2="100" y2="100" stroke="rgba(201,169,110,0.4)" stroke-width="1.5"/>
+        <line x1="100" y1="100" x2="60" y2="132" stroke="rgba(201,169,110,0.35)" stroke-width="1.5"/>
+        <line x1="100" y1="100" x2="140" y2="132" stroke="rgba(201,169,110,0.35)" stroke-width="1.5"/>
+        <circle cx="60" cy="145" r="12" fill="rgba(26,37,32,0.6)" stroke="rgba(201,169,110,0.4)" stroke-width="1"/>
+        <circle cx="140" cy="145" r="12" fill="rgba(26,37,32,0.6)" stroke="rgba(201,169,110,0.4)" stroke-width="1"/>
+        <text x="60" y="149" text-anchor="middle" fill="rgba(201,169,110,0.5)" font-family="monospace" font-size="7">SP</text>
+        <text x="140" y="149" text-anchor="middle" fill="rgba(201,169,110,0.5)" font-family="monospace" font-size="7">GP</text>
+        <text x="100" y="175" text-anchor="middle" fill="rgba(201,169,110,0.25)" font-family="monospace" font-size="7" letter-spacing="2">JV EQUITY</text>
+      </svg>`,
+      // 6: Execution — five connected stage nodes
+      `<svg viewBox="0 0 200 200" width="160" height="160" fill="none" xmlns="http://www.w3.org/2000/svg">
+        ${[0,1,2,3,4].map(i => {
+          const x = 30 + i * 35;
+          const active = i < 2;
+          return `
+            <circle cx="${x}" cy="100" r="10"
+              fill="${active ? 'rgba(201,169,110,0.3)' : 'rgba(26,37,32,0.6)'}"
+              stroke="${active ? '#c9a96e' : 'rgba(201,169,110,0.25)'}"
+              stroke-width="${active ? '1.5' : '1'}"/>
+            <text x="${x}" y="104" text-anchor="middle" fill="${active ? 'rgba(201,169,110,0.9)' : 'rgba(201,169,110,0.3)'}"
+              font-family="monospace" font-size="7">${String(i+1).padStart(2,'0')}</text>
+            ${i < 4 ? `<line x1="${x+10}" y1="100" x2="${x+25}" y2="100" stroke="${active && i<1 ? 'rgba(201,169,110,0.5)' : 'rgba(201,169,110,0.2)'}" stroke-width="1" stroke-dasharray="${active ? 'none' : '2,3'}"/>` : ''}
+          `;
+        }).join('')}
+        <text x="30" y="125" fill="rgba(201,169,110,0.3)" font-family="monospace" font-size="5">DISC</text>
+        <text x="62" y="125" fill="rgba(201,169,110,0.3)" font-family="monospace" font-size="5">UW</text>
+        <text x="94" y="125" fill="rgba(201,169,110,0.3)" font-family="monospace" font-size="5">STR</text>
+        <text x="124" y="125" fill="rgba(201,169,110,0.3)" font-family="monospace" font-size="5">TS</text>
+        <text x="154" y="125" fill="rgba(201,169,110,0.3)" font-family="monospace" font-size="5">CLOSE</text>
+      </svg>`,
+      // 7: Underwriting — stress-test grid (50+ scenarios)
+      `<svg viewBox="0 0 200 200" width="160" height="160" fill="none" xmlns="http://www.w3.org/2000/svg">
+        ${Array.from({length:7}, (_,row) => Array.from({length:7}, (_,col) => {
+          const x = 38 + col * 18; const y = 40 + row * 18;
+          const highlight = (row + col) % 5 === 0;
+          return `<circle cx="${x}" cy="${y}" r="3"
+            fill="${highlight ? 'rgba(201,169,110,0.7)' : 'rgba(45,62,54,0.6)'}"
+            stroke="${highlight ? 'rgba(201,169,110,0.6)' : 'rgba(201,169,110,0.15)'}"
+            stroke-width="0.8"/>`;
+        }).join('')).join('')}
+        <text x="100" y="172" text-anchor="middle" fill="rgba(201,169,110,0.3)" font-family="monospace" font-size="7" letter-spacing="1">50+ SCENARIOS</text>
+      </svg>`,
+      // 8: Compliance — institutional seal circle
+      `<svg viewBox="0 0 200 200" width="160" height="160" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="100" cy="100" r="65" stroke="rgba(201,169,110,0.25)" stroke-width="1" stroke-dasharray="3,5"/>
+        <circle cx="100" cy="100" r="50" stroke="rgba(201,169,110,0.4)" stroke-width="1.5"/>
+        <circle cx="100" cy="100" r="38" fill="rgba(26,37,32,0.4)" stroke="rgba(201,169,110,0.2)" stroke-width="1"/>
+        <path d="M 100,78 L 106,92 L 122,94 L 110,104 L 114,120 L 100,112 L 86,120 L 90,104 L 78,94 L 94,92 Z"
+          fill="none" stroke="rgba(201,169,110,0.5)" stroke-width="1.2" stroke-linejoin="round"/>
+        <text x="100" y="155" text-anchor="middle" fill="rgba(201,169,110,0.3)" font-family="monospace" font-size="7" letter-spacing="2">INSTITUTIONAL</text>
+      </svg>`,
+      // 9: Engage — message/arrow icon
+      `<svg viewBox="0 0 200 200" width="160" height="160" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="40" y="70" width="120" height="80" rx="4" fill="rgba(26,37,32,0.5)" stroke="rgba(201,169,110,0.4)" stroke-width="1.5"/>
+        <polyline points="40,74 100,118 160,74" fill="none" stroke="rgba(201,169,110,0.4)" stroke-width="1.5"/>
+        <line x1="40" y1="150" x2="80" y2="120" stroke="rgba(201,169,110,0.2)" stroke-width="1"/>
+        <line x1="160" y1="150" x2="120" y2="120" stroke="rgba(201,169,110,0.2)" stroke-width="1"/>
+        <line x1="128" y1="160" x2="158" y2="160" stroke="rgba(201,169,110,0.5)" stroke-width="1.5"/>
+        <polygon points="154,155 165,160 154,165" fill="rgba(201,169,110,0.5)"/>
+        <text x="100" y="178" text-anchor="middle" fill="rgba(201,169,110,0.3)" font-family="monospace" font-size="7" letter-spacing="2">DEALS@PCM</text>
+      </svg>`,
+    ];
+
+    // Inject initial SVG and update on hover
+    if (frontImg) frontImg.innerHTML = SECTION_SVGS[0] || '';
+
     // Highlight image on hover
     const links = overlay.querySelectorAll('.menu-link');
     links.forEach(link => {
@@ -6242,6 +6420,13 @@ function initOverlays() {
       link.addEventListener('mouseenter', () => {
         if (backImg) backImg.setAttribute('data-section', idx);
         if (imgLabel) imgLabel.textContent = SECTION_SUBTITLES[idx] || 'PATEL CAPITAL MARKETS';
+        if (frontImg && SECTION_SVGS[idx]) {
+          frontImg.style.opacity = '0';
+          setTimeout(() => {
+            frontImg.innerHTML = SECTION_SVGS[idx];
+            frontImg.style.opacity = '1';
+          }, 120);
+        }
       });
     });
 
@@ -6563,6 +6748,7 @@ document.addEventListener('pointerdown', e => {
   dragStartX = e.clientX;
   dragStartY = e.clientY;
   document.body.style.cursor = 'none';
+  document.body.classList.add('is-dragging');
   cursor?.classList.add('cursor-drag');
 });
 
@@ -6578,6 +6764,7 @@ document.addEventListener('pointermove', e => {
 
 document.addEventListener('pointerup', () => {
   isDragging = false;
+  document.body.classList.remove('is-dragging');
   cursor?.classList.remove('cursor-drag');
 });
 
@@ -7039,9 +7226,31 @@ function animate() {
     window.centerSpotLight.intensity = 1.8 + Math.sin(t * 1.4) * 0.15;
   }
 
-  // BG shader time
+  // BG shader time + per-section tint
   if (window.bgPlane) {
     window.bgPlane.material.uniforms.time.value = t;
+
+    // Per-section tint targets [r, g, b] — subtle atmospheric color temperature
+    const SECTION_TINTS = [
+      [0.2, 0.6, 0.4],   // 0 Home        — cool green
+      [0.4, 0.6, 0.3],   // 1 Firm        — warm green
+      [0.2, 0.4, 0.8],   // 2 Platform    — blue hint
+      [0.8, 0.6, 0.2],   // 3 Senior Debt — gold/brass
+      [0.6, 0.4, 0.2],   // 4 Sub Cap     — amber
+      [0.8, 0.7, 0.3],   // 5 Equity      — warm gold
+      [0.3, 0.7, 0.5],   // 6 Execution   — teal
+      [0.5, 0.4, 0.7],   // 7 Underwriting— deep indigo hint
+      [0.3, 0.5, 0.3],   // 8 Compliance  — neutral green
+      [0.7, 0.5, 0.2],   // 9 Engage      — brass warm
+    ];
+    const idx = window.activeIdx || 0;
+    const tgt = SECTION_TINTS[idx] || [0.2, 0.6, 0.4];
+    const unif = window.bgPlane.material.uniforms;
+    const cur = unif.uSectionTint.value;
+    cur.x += (tgt[0] - cur.x) * 0.018;
+    cur.y += (tgt[1] - cur.y) * 0.018;
+    cur.z += (tgt[2] - cur.z) * 0.018;
+    unif.uTintStrength.value += (1.0 - unif.uTintStrength.value) * 0.02;
   }
 
   // Particles drift
