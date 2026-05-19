@@ -356,6 +356,51 @@ body.transitioning .cinema-bar {
   pointer-events: auto;
 }
 
+/* Split-layout: scene-copy shifts to left column when right visual panel is visible */
+.scene-copy.split-layout {
+  left: 26%;
+  max-width: 42vw;
+  text-align: left;
+  transition: opacity 0.8s var(--ease-soft),
+              transform 0.8s var(--ease-soft),
+              left 0.9s var(--ease-cinema),
+              max-width 0.9s var(--ease-cinema);
+}
+.scene-copy.split-layout.hidden {
+  transform: translateX(-50%) translateY(-55%);
+  opacity: 0;
+  pointer-events: none;
+}
+.scene-copy.split-layout.visible {
+  transform: translateX(-50%) translateY(-50%);
+  opacity: 1;
+  pointer-events: auto;
+}
+/* Center text alignment overrides for split */
+.scene-copy.split-layout .stat-row,
+.scene-copy.split-layout .tag-row,
+.scene-copy.split-layout .modes-row {
+  justify-content: flex-start;
+}
+.scene-copy.split-layout .title-rule {
+  margin-left: 0;
+}
+@media (max-width: 900px) {
+  .scene-copy.split-layout {
+    left: 50%;
+    max-width: 90vw;
+    text-align: center;
+  }
+  .scene-copy.split-layout .stat-row,
+  .scene-copy.split-layout .tag-row,
+  .scene-copy.split-layout .modes-row {
+    justify-content: center;
+  }
+  .scene-copy.split-layout .title-rule {
+    margin: 1rem auto;
+  }
+}
+
 /* ------------------------------------------------------------
    11. SCENE COPY — PRE-TITLE
    ------------------------------------------------------------ */
@@ -3178,6 +3223,38 @@ textarea:focus-visible {
   height: 100%;
 }
 
+/* ─────────────────────────────────────────────
+   CONNECTOR SVG — traveling brass trace
+   ───────────────────────────────────────────── */
+#exec-connector-svg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  z-index: 3;
+  overflow: visible;
+}
+/* Glow dot pulse */
+@keyframes cvDotBreath {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.72; }
+}
+#exec-cv-dot-group circle {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: cvDotBreath 2.4s ease-in-out infinite;
+}
+/* Pulse ring expand */
+@keyframes cvRingExpand {
+  0%   { transform: scale(1);   opacity: 0.45; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+.cv-pulse-ring {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: cvRingExpand 2s ease-out infinite;
+}
+
 /* ───────────────────────────────────────────────────────────────
    GAP 22 — SPLIT PANEL: Right-column visual for mode sections
    ─────────────────────────────────────────────────────────────── */
@@ -4456,17 +4533,12 @@ function updateCopyContent(idx) {
     if (sceneCopy) sceneCopy.style.bottom = '';
   }
 
-  // Section 6 (Execution): show a compact header in scene-copy,
-  // full stage list is in execution-stage-host
+  // Section 6 (Execution): execution-stage-host shows everything; hide scene-copy
   if (idx === 6) {
-    if (el('copy-body')) el('copy-body').textContent = '';
-    if (el('copy-stats') && s.stats) {
-      el('copy-stats').innerHTML = s.stats.map(([val, label]) =>
-        `<div class="stat-item"><span class="stat-val">${val}</span><span class="stat-label">${label}</span></div>`
-      ).join('');
-    }
-    if (el('copy-poetic')) {
-      el('copy-poetic').style.display = 'none';
+    const sceneCopy6 = document.querySelector('.scene-copy');
+    if (sceneCopy6) {
+      sceneCopy6.classList.add('hidden');
+      sceneCopy6.classList.remove('visible');
     }
   }
 
@@ -5225,7 +5297,11 @@ window.updateCopyContent = updateCopyContent;
       { num: '05', title: 'Close', desc: 'The proof. We run the process from term sheet to funded in the time we promised. That is the product.' },
     ];
     host.innerHTML = `
-      <div class="exec-stages-title">How We Work</div>
+      <div style="margin-bottom:20px;text-align:center;">
+        <div class="exec-stages-title">How We Work</div>
+        <div style="font-family:var(--font-serif);font-size:clamp(1.4rem,2.5vw,2.2rem);font-weight:300;color:var(--ink);letter-spacing:0.1em;line-height:1.3;margin-top:6px;">The Cadence Is The Product</div>
+        <div style="width:28px;height:1px;background:var(--brass);margin:14px auto 0;box-shadow:0 0 8px rgba(201,169,110,0.4);"></div>
+      </div>
       <div class="exec-stage-list" id="exec-stage-list">
         ${EXEC_STAGES.map((s, i) => `
           <div class="exec-stage-row" id="exec-stage-${i}" data-idx="${i}">
@@ -5245,6 +5321,7 @@ window.updateCopyContent = updateCopyContent;
     let execScrollAccum = 0;
     let activeStage = -1;
     let execVisible = false;
+    let svgBuilt = false;
 
     window._execStageReveal = function(scrollDelta) {
       if (!execVisible) return false;
@@ -5272,21 +5349,225 @@ window.updateCopyContent = updateCopyContent;
           }
         }
         activeStage = newStage;
+        // Drive the SVG connector trace
+        if (typeof window._updateConnectorSVG === 'function') window._updateConnectorSVG(newStage);
       }
 
       // Consume scroll until all 5 stages revealed + small buffer; then pass through
       return execScrollAccum < (stageThreshold * 5 + 80);
     };
 
+    // ---- SVG connector builder (called on first section show, post-layout) ----
+    function _buildConnectorSVG() {
+      const list = document.getElementById('exec-stage-list');
+      if (!list) return;
+      list.style.position = 'relative';
+
+      const listRect = list.getBoundingClientRect();
+      const badgeEls = Array.from(list.querySelectorAll('.exec-stage-num-badge'));
+      if (badgeEls.length < 2) return;
+
+      const positions = badgeEls.map(b => {
+        const r = b.getBoundingClientRect();
+        return {
+          cx: r.left + r.width * 0.5 - listRect.left,
+          cy: r.top  + r.height * 0.5 - listRect.top,
+        };
+      });
+
+      const cx     = positions[0].cx;
+      const startY = positions[0].cy;
+      const endY   = positions[positions.length - 1].cy;
+      const svgW   = Math.ceil(cx * 2 + 10);
+      const svgH   = Math.ceil(listRect.height);
+      const pathD  = `M ${cx.toFixed(1)} ${startY.toFixed(1)} L ${cx.toFixed(1)} ${endY.toFixed(1)}`;
+
+      const NS  = 'http://www.w3.org/2000/svg';
+      const svg = document.createElementNS(NS, 'svg');
+      svg.id = 'exec-connector-svg';
+      svg.setAttribute('width',   svgW);
+      svg.setAttribute('height',  svgH);
+      svg.setAttribute('viewBox', `0 0 ${svgW} ${svgH}`);
+
+      // Defs — glow filters
+      const defs = document.createElementNS(NS, 'defs');
+      defs.innerHTML = `
+        <filter id="cvGlow" x="-600%" y="-120%" width="1300%" height="340%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="2.8" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="cvNodeGlow" x="-400%" y="-400%" width="900%" height="900%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="3.5" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      `;
+      svg.appendChild(defs);
+
+      // Dashed dim track
+      const track = document.createElementNS(NS, 'path');
+      track.setAttribute('d', pathD);
+      track.setAttribute('stroke', 'rgba(201,169,110,0.1)');
+      track.setAttribute('stroke-width', '1');
+      track.setAttribute('fill', 'none');
+      track.setAttribute('stroke-dasharray', '3 6');
+      svg.appendChild(track);
+
+      // Brass fill trace — draws downward via stroke-dashoffset
+      const fill = document.createElementNS(NS, 'path');
+      fill.id = 'exec-cv-fill';
+      fill.setAttribute('d', pathD);
+      fill.setAttribute('stroke', '#c9a96e');
+      fill.setAttribute('stroke-width', '1.5');
+      fill.setAttribute('fill', 'none');
+      fill.setAttribute('stroke-linecap', 'round');
+      fill.setAttribute('filter', 'url(#cvGlow)');
+      svg.appendChild(fill);
+      list.appendChild(svg); // Must be in DOM before getTotalLength
+
+      const totalLen = fill.getTotalLength ? fill.getTotalLength() : Math.abs(endY - startY);
+      fill.setAttribute('stroke-dasharray',  String(totalLen));
+      fill.setAttribute('stroke-dashoffset', String(totalLen));
+      fill.style.transition = 'stroke-dashoffset 0.8s cubic-bezier(0.16,1,0.3,1)';
+
+      // Stage node circles
+      positions.forEach((pos, i) => {
+        const n = document.createElementNS(NS, 'circle');
+        n.id = `exec-cv-node-${i}`;
+        n.setAttribute('cx', cx);
+        n.setAttribute('cy', pos.cy);
+        n.setAttribute('r',  '3.5');
+        n.setAttribute('fill',         'rgba(201,169,110,0.07)');
+        n.setAttribute('stroke',       'rgba(201,169,110,0.18)');
+        n.setAttribute('stroke-width', '1');
+        n.style.transition = 'fill 0.5s, stroke 0.5s';
+        svg.appendChild(n);
+      });
+
+      // Traveling glow dot — wrapped in <g> so CSS transform works cross-browser
+      const dotG = document.createElementNS(NS, 'g');
+      dotG.id = 'exec-cv-dot-group';
+      dotG.style.cssText = `transform:translateY(${startY.toFixed(1)}px);
+        transition:transform 0.8s cubic-bezier(0.16,1,0.3,1),opacity 0.45s;
+        opacity:0;`;
+      const dot = document.createElementNS(NS, 'circle');
+      dot.setAttribute('cx', cx);
+      dot.setAttribute('cy', '0');
+      dot.setAttribute('r',  '5');
+      dot.setAttribute('fill',   '#c9a96e');
+      dot.setAttribute('filter', 'url(#cvNodeGlow)');
+      dotG.appendChild(dot);
+      svg.appendChild(dotG);
+
+      // Pulse ring — also in group for transform
+      const pulseG = document.createElementNS(NS, 'g');
+      pulseG.id = 'exec-cv-pulse-group';
+      pulseG.style.cssText = `transform:translateY(${startY.toFixed(1)}px);
+        transition:transform 0.8s cubic-bezier(0.16,1,0.3,1),opacity 0.45s;
+        opacity:0;`;
+      const ring = document.createElementNS(NS, 'circle');
+      ring.setAttribute('cx', cx);
+      ring.setAttribute('cy', '0');
+      ring.setAttribute('r',  '8');
+      ring.setAttribute('fill',         'none');
+      ring.setAttribute('stroke',       'rgba(201,169,110,0.4)');
+      ring.setAttribute('stroke-width', '1');
+      ring.setAttribute('class',        'cv-pulse-ring');
+      pulseG.appendChild(ring);
+      svg.appendChild(pulseG);
+
+      // Hide CSS pseudo-element connectors — SVG takes ownership of the trace
+      list.querySelectorAll('.exec-stage-connector').forEach(c => {
+        c.style.display = 'none';
+      });
+
+      // Stash measurement data on the SVG element itself
+      svg._positions = positions;
+      svg._totalLen  = totalLen;
+      svg._startY    = startY;
+      svg._endY      = endY;
+      svg._cx        = cx;
+
+      // ---- Update function: drives all SVG elements ----
+      window._updateConnectorSVG = function(stageIdx) {
+        const sv = document.getElementById('exec-connector-svg');
+        if (!sv) return;
+        const pos = sv._positions, tl = sv._totalLen;
+        const sy  = sv._startY,   ey = sv._endY;
+        if (!pos || !tl) return;
+
+        const fp  = document.getElementById('exec-cv-fill');
+        const dg  = document.getElementById('exec-cv-dot-group');
+        const pg  = document.getElementById('exec-cv-pulse-group');
+
+        if (stageIdx < 0) {
+          // Full reset — no transition on dashoffset to snap back
+          if (fp) {
+            fp.style.transition = 'none';
+            fp.setAttribute('stroke-dashoffset', String(tl));
+            requestAnimationFrame(() => {
+              fp.style.transition = 'stroke-dashoffset 0.8s cubic-bezier(0.16,1,0.3,1)';
+            });
+          }
+          if (dg) { dg.style.opacity = '0'; dg.style.transform = `translateY(${sy.toFixed(1)}px)`; }
+          if (pg) { pg.style.opacity = '0'; pg.style.transform = `translateY(${sy.toFixed(1)}px)`; }
+          pos.forEach((_, i) => {
+            const n = document.getElementById(`exec-cv-node-${i}`);
+            if (n) { n.setAttribute('fill', 'rgba(201,169,110,0.07)'); n.setAttribute('stroke', 'rgba(201,169,110,0.18)'); n.setAttribute('r', '3.5'); }
+          });
+          return;
+        }
+
+        // Stroke-dashoffset: reveal down to stageIdx position
+        // Path is a straight vertical line so length = y-span
+        const activeCY = pos[stageIdx].cy;
+        const lineLen  = activeCY - sy;                     // portion traced
+        const offset   = Math.max(0, tl - lineLen);
+        if (fp) fp.setAttribute('stroke-dashoffset', String(offset));
+
+        // Move glow dot and pulse ring
+        const ty = activeCY.toFixed(1);
+        if (dg) { dg.style.opacity = '1'; dg.style.transform = `translateY(${ty}px)`; }
+        if (pg) { pg.style.opacity = '1'; pg.style.transform = `translateY(${ty}px)`; }
+
+        // Node states
+        pos.forEach((_, i) => {
+          const n = document.getElementById(`exec-cv-node-${i}`);
+          if (!n) return;
+          if (i < stageIdx) {
+            n.setAttribute('fill',   'rgba(201,169,110,0.38)');
+            n.setAttribute('stroke', 'rgba(201,169,110,0.55)');
+            n.setAttribute('r', '3.5');
+          } else if (i === stageIdx) {
+            n.setAttribute('fill',   '#c9a96e');
+            n.setAttribute('stroke', '#dfc08a');
+            n.setAttribute('r', '2');           // dot hides behind glowDot
+          } else {
+            n.setAttribute('fill',   'rgba(201,169,110,0.07)');
+            n.setAttribute('stroke', 'rgba(201,169,110,0.18)');
+            n.setAttribute('r', '3.5');
+          }
+        });
+      };
+    }
+    // -------------------------------------------------------------------------
+
     window._setExecVisible = function(v) {
       execVisible = v;
       const h = document.getElementById('execution-stage-host');
       if (h) h.classList.toggle('visible', v);
+      if (v && !svgBuilt) {
+        // Two rAF delays guarantee layout is fully painted before we measure
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          _buildConnectorSVG();
+          svgBuilt = true;
+        }));
+      }
       if (!v) {
         // Reset when leaving
         execScrollAccum = 0;
         activeStage = -1;
         document.querySelectorAll('.exec-stage-row').forEach(r => r.classList.remove('revealed','active','passed'));
+        if (typeof window._updateConnectorSVG === 'function') window._updateConnectorSVG(-1);
       }
     };
   }
@@ -5321,11 +5602,16 @@ window.updateCopyContent = updateCopyContent;
       const p = document.getElementById('section-visual-panel');
       if (!p) return;
 
+      // Toggle split-layout on scene-copy so it moves to left column
+      const sceneCopy = document.querySelector('.scene-copy');
+
       if (!data) {
         p.classList.remove('visible');
+        if (sceneCopy) sceneCopy.classList.remove('split-layout');
         return;
       }
       p.classList.add('visible');
+      if (sceneCopy) sceneCopy.classList.add('split-layout');
 
       // Mode dots
       const modes = window.SECTIONS && window.SECTIONS[sectionIdx] && window.SECTIONS[sectionIdx].modes;
@@ -5611,62 +5897,15 @@ window.updateCopyContent = updateCopyContent;
     const WHEEL_COOLDOWN = 900; // ms between section jumps
 
     window.addEventListener('wheel', (e) => {
-      const now = Date.now();
-      const dir = e.deltaY > 0 ? 1 : -1;
-      const curIdx = window.activeIdx || 0;
-
-      // Hybrid scroll: section 6 (Execution) — consume scroll for stage reveals first
-      if (curIdx === 6 && typeof window._execStageReveal === 'function') {
-        const consumed = window._execStageReveal(Math.abs(e.deltaY) * dir);
-        if (consumed) {
-          lastWheelTime = now;
-          window.dismissScrollCue();
-          return; // Don't transition yet
-        }
-      }
-
-      if (now - lastWheelTime < WHEEL_COOLDOWN) return;
-      lastWheelTime = now;
-
-      if (typeof window.goToSection !== 'function') return;
-
-      const next = curIdx + dir;
-      if (next >= 0 && next < SECTION_NAMES.length) {
-        window.goToSection(next, dir);
-        window.dismissScrollCue();
-      }
+      // NOTE: animation.js registers the authoritative non-passive wheel handler
+      // which calls _execStageReveal() and goToSection(). This passive handler
+      // only dismisses the scroll cue — it does NOT duplicate section transitions
+      // or exec-stage accumulation (that causes double-counting).
+      window.dismissScrollCue && window.dismissScrollCue();
     }, { passive: true });
 
-    // Touch swipe
-    let touchStartY = null;
-    window.addEventListener('touchstart', (e) => {
-      touchStartY = e.touches[0].clientY;
-    }, { passive: true });
-
-    window.addEventListener('touchend', (e) => {
-      if (touchStartY === null) return;
-      const delta = touchStartY - e.changedTouches[0].clientY;
-      touchStartY = null;
-      if (Math.abs(delta) < 40) return; // swipe threshold
-
-      const dir  = delta > 0 ? 1 : -1;
-      const curIdx = window.activeIdx || 0;
-
-      // Hybrid scroll for execution section
-      if (curIdx === 6 && typeof window._execStageReveal === 'function') {
-        const consumed = window._execStageReveal(Math.abs(delta) * dir);
-        if (consumed) {
-          window.dismissScrollCue();
-          return;
-        }
-      }
-
-      const next = curIdx + dir;
-      if (next >= 0 && next < SECTION_NAMES.length && typeof window.goToSection === 'function') {
-        window.goToSection(next, dir);
-        window.dismissScrollCue();
-      }
-    }, { passive: true });
+    // Touch swipe — animation.js handles the authoritative touchend logic.
+    // This chrome.js touch listener is a no-op to avoid duplication.
   }
 
   // ---------------------------------------------------------------------------
@@ -5749,14 +5988,11 @@ window.updateCopyContent = updateCopyContent;
     // Hide scene-copy for engage and execution stages (they have their own full-screen UIs)
     const sceneCopy = document.getElementById('scene-copy');
     if (sceneCopy) {
-      if (idx === 9) {
-        // Engage: hide scene copy (engage-cinematic takes over)
+      if (idx === 9 || idx === 6) {
+        // Engage (idx=9): engage-cinematic takes over — hide scene-copy
+        // Execution (idx=6): execution-stage-host takes over — hide scene-copy
         sceneCopy.classList.add('hidden');
         sceneCopy.classList.remove('visible');
-      }
-      if (idx === 6) {
-        // Execution: also managed by execution-stage-host, but keep scene-copy for title reveal
-        // Scene copy fades in from animation loop; leave it
       }
     }
   };
@@ -7135,7 +7371,8 @@ function showSectionCopy(idx) {
   if (!copy) return;
 
   // Section 9 (Engage): engage-cinematic takes over — don't show scene-copy
-  if (idx === 9) {
+  // Section 6 (Execution): execution-stage-host takes over — don't show scene-copy
+  if (idx === 9 || idx === 6) {
     copy.classList.add('hidden');
     copy.classList.remove('visible');
     updateCopyContent(idx); // still updates chrome meta
@@ -7925,6 +8162,8 @@ document.getElementById('btn-audio')?.addEventListener('click', () => audioEngin
 /* Section change hook — called by scroll observer in main.js */
 window.onSectionChange = function(idx) {
   audioEngine.setSection(idx);
+  // Sync all chrome state (exec stages, engage, visual panel, parallax, etc.)
+  if (typeof window.updateChrome === 'function') window.updateChrome(idx);
 };
 
 /* Keyboard shortcut: M */
