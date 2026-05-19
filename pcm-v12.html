@@ -5753,6 +5753,22 @@ body.menu-open .menu-hamburger-line:nth-child(3) { transform: translateY(-3.25px
 .detail-card__close { position:absolute;top:10px;right:10px;width:22px;height:22px;background:none;border:none;cursor:pointer;color:rgba(201,169,110,0.48);font-size:16px;line-height:1;display:flex;align-items:center;justify-content:center;transition:color 0.2s ease; }
 .detail-card__close:hover { color:#c9a96e; }
 
+
+/* ── PART I: Bottom menu strengthen ── */
+#bottom-menu .section-btn,
+.bottom-menu .section-btn {
+  position: relative;
+  transition: opacity 0.22s ease;
+}
+#bottom-menu .section-btn:hover .section-btn__label,
+.bottom-menu .section-btn:hover .section-btn__label {
+  color: rgba(201,169,110,0.72) !important;
+}
+/* ── PART I: Hint cluster ── */
+#hint-cluster {
+  opacity: 1;
+}
+
 </style>
 </head>
 <body class="pcm-body" data-section="0">
@@ -13186,6 +13202,898 @@ function animateStatPanels() {
   };
 
   window.pcmSectionCopy = SECTION_COPY;
+})();
+
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: Per-section center spotlight flicker + intensity
+// ═══════════════════════════════════════════════════════════════
+(function strengthenLighting() {
+  const SECTION_LIGHT = {
+    0: { intensity: 1.8, color: 0xffe0a0 },
+    1: { intensity: 1.4, color: 0xffd580 },
+    2: { intensity: 2.0, color: 0xffe8b0 },
+    3: { intensity: 1.9, color: 0xffe0a0 },
+    4: { intensity: 2.1, color: 0xffe8c0 },
+    5: { intensity: 1.6, color: 0xffd890 },
+    6: { intensity: 2.2, color: 0xffecb0 },
+    7: { intensity: 1.9, color: 0xffe0a0 },
+    8: { intensity: 1.5, color: 0xffe0a0 },
+    9: { intensity: 1.3, color: 0xffcc88 },
+  };
+
+  const lightObserver = new MutationObserver(() => {
+    const cur = parseInt(document.body.getAttribute('data-section') || '0', 10);
+    const cfg = SECTION_LIGHT[cur] || SECTION_LIGHT[0];
+    window.pcmTargetSpotIntensity = cfg.intensity;
+    // Color update if centerSpot exposed
+    if (window.pcmCenterSpot) {
+      window.pcmCenterSpot.color.setHex(cfg.color);
+    }
+  });
+  lightObserver.observe(document.body, { attributes: true, attributeFilter: ['data-section'] });
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: Refresh icon direction-aware spin
+// ═══════════════════════════════════════════════════════════════
+(function strengthenRefreshIcon() {
+  // The refresh icon (refreshGroup) should spin at rate direction-controlled
+  // This is a window-level signal the animate loop already reads
+  // Ensure it exists and expose the target
+  if (!window.pcmRefreshTargetSpeed) {
+    window.pcmRefreshTargetSpeed = 0.5; // radians/second
+  }
+
+  // Accelerate on transition
+  const orig = window.goToSection;
+  if (typeof orig === 'function') {
+    const patched = function(idx, dir) {
+      window.pcmRefreshTargetSpeed = 2.5; // Spin fast on transition
+      setTimeout(() => { window.pcmRefreshTargetSpeed = 0.5; }, 800);
+      return orig(idx, dir);
+    };
+    // Only patch once
+    if (!window.pcmRefreshPatched) {
+      window.goToSection = patched;
+      window.pcmRefreshPatched = true;
+    }
+  }
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: Custom cursor morphing strengthen
+// ═══════════════════════════════════════════════════════════════
+(function strengthenCursor() {
+  const cursor = document.getElementById('pcm-cursor') || document.querySelector('.cursor') || document.querySelector('[id*="cursor"]');
+  if (!cursor) {
+    // Create cursor if missing
+    const cur = document.createElement('div');
+    cur.id = 'pcm-cursor';
+    cur.innerHTML = '<div id="pcm-cursor-ring"></div><div id="pcm-cursor-dot"></div>';
+    cur.style.cssText = 'position:fixed;top:0;left:0;pointer-events:none;z-index:9998;';
+    document.body.appendChild(cur);
+
+    const ring = cur.querySelector('#pcm-cursor-ring');
+    const dot = cur.querySelector('#pcm-cursor-dot');
+
+    const style = document.createElement('style');
+    style.textContent = `
+      #pcm-cursor-ring {
+        position: absolute;
+        width: 36px; height: 36px;
+        border: 1px solid rgba(227,238,230,0.45);
+        border-radius: 50%;
+        transform: translate(-50%,-50%);
+        transition: width 0.22s ease, height 0.22s ease, border-color 0.22s ease, background 0.22s ease;
+        pointer-events: none;
+      }
+      #pcm-cursor-dot {
+        position: absolute;
+        width: 4px; height: 4px;
+        background: rgba(227,238,230,0.9);
+        border-radius: 50%;
+        transform: translate(-50%,-50%);
+        pointer-events: none;
+      }
+      body.cursor-hot #pcm-cursor-ring {
+        width: 64px; height: 64px;
+        border-color: #c9a96e;
+        background: rgba(201,169,110,0.08);
+      }
+      body.cursor-drag #pcm-cursor-ring {
+        width: 20px; height: 20px;
+        background: #c9a96e;
+        border-color: #c9a96e;
+      }
+      @media (hover: none) {
+        #pcm-cursor { display: none; }
+      }
+    `;
+    document.head.appendChild(style);
+
+    let cx = -100, cy = -100;
+    let tx = -100, ty = -100;
+    const LERP_C = 0.18;
+
+    document.addEventListener('mousemove', e => { tx = e.clientX; ty = e.clientY; });
+    document.addEventListener('mousedown', () => document.body.classList.add('cursor-drag'));
+    document.addEventListener('mouseup', () => document.body.classList.remove('cursor-drag'));
+
+    // Hot zone detection
+    document.addEventListener('mouseover', e => {
+      const el = e.target;
+      const isHot = el.matches('button,a,[data-hot],canvas,.hot-point,.section-btn,.mode-tab,.detail-card__close') ||
+                    el.closest('button,a,[data-hot],.hot-point,.mode-tab') !== null;
+      document.body.classList.toggle('cursor-hot', isHot);
+    });
+
+    function animCursor() {
+      cx += (tx - cx) * LERP_C;
+      cy += (ty - cy) * LERP_C;
+      cur.style.left = cx + 'px';
+      cur.style.top = cy + 'px';
+      requestAnimationFrame(animCursor);
+    }
+    requestAnimationFrame(animCursor);
+  }
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: Reduced motion — respect prefers-reduced-motion
+// ═══════════════════════════════════════════════════════════════
+(function initReducedMotion() {
+  const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function applyReducedMotion(reduced) {
+    window.pcmMotionScale = reduced ? 0.3 : 1.0;
+    document.body.classList.toggle('reduced-motion', reduced);
+    // Shorten transition durations
+    const style = document.getElementById('pcm-reduced-motion-style') || document.createElement('style');
+    style.id = 'pcm-reduced-motion-style';
+    if (reduced) {
+      style.textContent = `
+        body.reduced-motion * { transition-duration: 0.2s !important; animation-duration: 0.2s !important; }
+        body.reduced-motion .cinema-bar { transition-duration: 0.2s !important; }
+      `;
+    } else {
+      style.textContent = '';
+    }
+    if (!style.parentNode) document.head.appendChild(style);
+  }
+  applyReducedMotion(mq.matches);
+  mq.addEventListener('change', e => applyReducedMotion(e.matches));
+  window.pcmMotionScale = mq.matches ? 0.3 : 1.0;
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: Network info — degrade visuals on slow connection
+// ═══════════════════════════════════════════════════════════════
+(function initNetworkInfo() {
+  if (!navigator.connection) return;
+  const conn = navigator.connection;
+  function onConnectionChange() {
+    const slow = conn.effectiveType === '2g' || conn.effectiveType === 'slow-2g' || conn.saveData;
+    document.body.classList.toggle('slow-network', slow);
+    if (slow) {
+      // Disable video backgrounds, reduce particle count signal
+      window.pcmSlowNetwork = true;
+      const vids = document.querySelectorAll('.chained-video-wrap');
+      vids.forEach(v => v.style.display = 'none');
+    }
+  }
+  onConnectionChange();
+  conn.addEventListener('change', onConnectionChange);
+})();
+
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: usePreloadVideos — prefetch next section video
+// ═══════════════════════════════════════════════════════════════
+(function initPreloadHooks() {
+  // Preload next section's video when current section is stable
+  function preloadNext(currentIdx) {
+    const nextIdx = currentIdx + 1;
+    if (nextIdx > 9) return;
+    // Signal to ChainedVideo to prefetch
+    if (window.pcmChainedVideoSetSection) {
+      // Don't actually switch — just preload
+      const vid = document.createElement('video');
+      vid.muted = true;
+      vid.preload = 'metadata';
+      // vid.src = SECTION_VIDEOS[nextIdx]; // placeholder — no actual src yet
+    }
+  }
+
+  const preloadObserver = new MutationObserver(() => {
+    const cur = parseInt(document.body.getAttribute('data-section') || '0', 10);
+    setTimeout(() => preloadNext(cur), 1500);
+  });
+  preloadObserver.observe(document.body, { attributes: true, attributeFilter: ['data-section'] });
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: useViewport — responsive canvas and overlay sizing
+// ═══════════════════════════════════════════════════════════════
+(function initViewport() {
+  let vw = window.innerWidth, vh = window.innerHeight;
+
+  function onResize() {
+    vw = window.innerWidth;
+    vh = window.innerHeight;
+    window.pcmVW = vw;
+    window.pcmVH = vh;
+    document.documentElement.style.setProperty('--vw', vw + 'px');
+    document.documentElement.style.setProperty('--vh', vh + 'px');
+
+    // Mobile branch
+    const isMobile = vw < 768;
+    document.body.classList.toggle('is-mobile', isMobile);
+
+    // iOS Safari fixed-position fix
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    if (isIOS) {
+      document.body.classList.add('is-ios');
+      document.documentElement.style.setProperty('--ios-vh', (vh * 0.01) + 'px');
+    }
+
+    // Update renderer if available
+    if (window.pcmRenderer && window.pcmCamera) {
+      window.pcmRenderer.setSize(vw, vh);
+      window.pcmCamera.aspect = vw / vh;
+      window.pcmCamera.updateProjectionMatrix();
+    }
+  }
+
+  window.addEventListener('resize', onResize, { passive: true });
+  onResize();
+  window.pcmVW = vw;
+  window.pcmVH = vh;
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: Analytics tracker — POST to /api/track
+// ═══════════════════════════════════════════════════════════════
+(function initAnalytics() {
+  function track(event, props) {
+    try {
+      const payload = { event, props: props || {}, ts: Date.now() };
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon('/api/track', JSON.stringify(payload));
+      } else {
+        fetch('/api/track', { method: 'POST', body: JSON.stringify(payload), headers: { 'Content-Type': 'application/json' }, keepalive: true }).catch(() => {});
+      }
+    } catch(e) { /* silently fail */ }
+  }
+
+  // Track section changes
+  const trackObserver = new MutationObserver(() => {
+    const cur = parseInt(document.body.getAttribute('data-section') || '0', 10);
+    track('section_view', { section: cur, ts: Date.now() });
+  });
+  trackObserver.observe(document.body, { attributes: true, attributeFilter: ['data-section'] });
+
+  // Track page load
+  track('page_view', { url: window.location.href, referrer: document.referrer });
+
+  // Track part picks
+  const origPick = window.pcmPickPart;
+  window.pcmPickPart = function(partId) {
+    track('part_pick', { partId });
+    if (origPick) origPick(partId);
+  };
+
+  window.pcmTrack = track;
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: useFocusTrap — for all modal-style overlays
+// ═══════════════════════════════════════════════════════════════
+(function initFocusTrap() {
+  function trapFocus(el) {
+    const focusable = el.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (!first) return () => {};
+
+    const handler = e => {
+      if (e.key !== 'Tab') return;
+      if (e.shiftKey) {
+        if (document.activeElement === first) { e.preventDefault(); last?.focus(); }
+      } else {
+        if (document.activeElement === last) { e.preventDefault(); first?.focus(); }
+      }
+    };
+    el.addEventListener('keydown', handler);
+    first.focus();
+    return () => el.removeEventListener('keydown', handler);
+  }
+
+  window.pcmTrapFocus = trapFocus;
+
+  // Wire focus traps for menu overlay and credits modal
+  const menuOverlay = document.getElementById('menu-overlay');
+  const creditsModal = document.getElementById('credits-modal');
+  let menuTrapRelease = null;
+  let creditsTrapRelease = null;
+
+  if (menuOverlay) {
+    const observer = new MutationObserver(() => {
+      if (menuOverlay.classList.contains('open')) {
+        if (!menuTrapRelease) menuTrapRelease = trapFocus(menuOverlay);
+      } else {
+        if (menuTrapRelease) { menuTrapRelease(); menuTrapRelease = null; }
+      }
+    });
+    observer.observe(menuOverlay, { attributes: true, attributeFilter: ['class'] });
+  }
+
+  if (creditsModal) {
+    const observer2 = new MutationObserver(() => {
+      if (creditsModal.classList.contains('open')) {
+        if (!creditsTrapRelease) creditsTrapRelease = trapFocus(creditsModal);
+      } else {
+        if (creditsTrapRelease) { creditsTrapRelease(); creditsTrapRelease = null; }
+      }
+    });
+    observer2.observe(creditsModal, { attributes: true, attributeFilter: ['class'] });
+  }
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: Error recovery — if Three.js fails, show brand fallback
+// ═══════════════════════════════════════════════════════════════
+(function initErrorRecovery() {
+  window.addEventListener('error', e => {
+    console.error('[PCM] Uncaught error:', e.message);
+  });
+  window.addEventListener('unhandledrejection', e => {
+    console.error('[PCM] Unhandled rejection:', e.reason);
+    // If the canvas never mounted (Three.js failed), show a degraded brand page
+    setTimeout(() => {
+      const canvas = document.querySelector('canvas');
+      if (!canvas || canvas.width === 0) {
+        document.body.style.background = 'radial-gradient(ellipse at center, #1a2520 0%, #06090a 100%)';
+        const fallback = document.getElementById('noscript-fallback') || document.createElement('div');
+        fallback.style.cssText = 'position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#c9a96e;font-family:Cormorant Garamond,serif;text-align:center;z-index:50;';
+        fallback.innerHTML = '<div style="font-size:clamp(32px,5vw,64px);font-weight:500;letter-spacing:0.1em;margin-bottom:12px;">Patel Capital Markets</div><div style="font-family:Space Mono,monospace;font-size:11px;letter-spacing:0.32em;color:rgba(201,169,110,0.62);text-transform:uppercase;margin-bottom:28px;">Engineering Creative Finance</div><div style="font-family:Space Grotesk,sans-serif;font-size:14px;color:rgba(227,238,230,0.55);">Commercial Real Estate Capital Advisory</div>';
+        if (!fallback.parentNode) document.body.appendChild(fallback);
+      }
+    }, 8000);
+  });
+})();
+
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: Lenis smooth scroll — integrate if available
+// ═══════════════════════════════════════════════════════════════
+(function initLenis() {
+  // Lenis is loaded via the React build — for the standalone HTML
+  // we simulate Lenis-like smooth momentum with our own implementation
+  if (window.pcmLenisInitialized) return;
+  window.pcmLenisInitialized = true;
+
+  let lastWheelTime = 0;
+  let velocity = 0;
+  const VELOCITY_DECAY = 0.92;
+  const VELOCITY_THRESH = 0.1;
+
+  window.addEventListener('wheel', e => {
+    const now = performance.now();
+    const dt = now - lastWheelTime;
+    lastWheelTime = now;
+    // Feed into scrollAccum (already handled by main wheel listener)
+    // Track velocity for momentum
+    velocity += e.deltaY * 0.3;
+    velocity = Math.max(-80, Math.min(80, velocity));
+  }, { passive: true });
+
+  // Momentum decay loop
+  function lenisLoop() {
+    if (Math.abs(velocity) > VELOCITY_THRESH) {
+      velocity *= VELOCITY_DECAY;
+    } else {
+      velocity = 0;
+    }
+    window.pcmScrollVelocity = velocity;
+    requestAnimationFrame(lenisLoop);
+  }
+  requestAnimationFrame(lenisLoop);
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: Top progress hairline — strengthen with glow
+// ═══════════════════════════════════════════════════════════════
+(function strengthenProgressBar() {
+  let pb = document.getElementById('progress-bar') || document.getElementById('top-progress') || document.querySelector('.progress-bar') || document.querySelector('[class*="progress"]');
+
+  if (!pb) {
+    pb = document.createElement('div');
+    pb.id = 'pcm-top-progress';
+    pb.style.cssText = 'position:fixed;top:0;left:0;height:1.5px;background:#c9a96e;z-index:999;pointer-events:none;transition:width 1.4s cubic-bezier(0.16,1,0.3,1);box-shadow:0 0 8px rgba(201,169,110,0.7),0 0 16px rgba(201,169,110,0.4);width:0%;';
+    document.body.appendChild(pb);
+  }
+
+  const pbObserver = new MutationObserver(() => {
+    const cur = parseInt(document.body.getAttribute('data-section') || '0', 10);
+    const pct = (cur / 9) * 100;
+    pb.style.width = pct + '%';
+    pb.style.boxShadow = `0 0 ${8 + pct * 0.1}px rgba(201,169,110,0.7), 0 0 ${16 + pct * 0.2}px rgba(201,169,110,0.35)`;
+  });
+  pbObserver.observe(document.body, { attributes: true, attributeFilter: ['data-section'] });
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: Side nav dots — strengthen with tooltips and brass glow
+// ═══════════════════════════════════════════════════════════════
+(function strengthenSideNav() {
+  let sideNav = document.getElementById('side-nav') || document.querySelector('.side-nav');
+  if (!sideNav) {
+    sideNav = document.createElement('nav');
+    sideNav.id = 'side-nav';
+    sideNav.setAttribute('aria-label', 'Section navigation');
+    sideNav.style.cssText = 'position:fixed;right:22px;top:50%;transform:translateY(-50%);z-index:300;display:flex;flex-direction:column;gap:10px;pointer-events:auto;';
+
+    const SECTION_LABELS = ['Home','Firm','Edge','Senior Debt','Sub Cap','Equity','Execution','Underwriting','Compliance','Engage'];
+    SECTION_LABELS.forEach((label, i) => {
+      const dot = document.createElement('button');
+      dot.className = 'side-nav-dot';
+      dot.dataset.goto = i;
+      dot.setAttribute('aria-label', `Go to ${label}`);
+      dot.title = label;
+      dot.style.cssText = 'width:7px;height:7px;border-radius:50%;background:rgba(227,238,230,0.22);border:none;cursor:pointer;padding:0;transition:all 0.28s ease;position:relative;';
+      dot.addEventListener('click', () => {
+        if (typeof goToSection === 'function') {
+          const cur = window.activeIdx || 0;
+          goToSection(i, i > cur ? 1 : -1);
+        }
+      });
+      sideNav.appendChild(dot);
+    });
+
+    document.body.appendChild(sideNav);
+
+    // Tooltip style
+    const style = document.createElement('style');
+    style.textContent = `
+      .side-nav-dot::after {
+        content: attr(title);
+        position: absolute;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        white-space: nowrap;
+        font-family: 'Space Mono', monospace;
+        font-size: 8.5px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: rgba(227,238,230,0.58);
+        background: rgba(6,9,10,0.82);
+        border: 1px solid rgba(201,169,110,0.18);
+        padding: 3px 8px;
+        border-radius: 2px;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+      }
+      .side-nav-dot:hover::after { opacity: 1; }
+      .side-nav-dot.active {
+        background: #c9a96e !important;
+        transform: scale(1.5);
+        box-shadow: 0 0 6px rgba(201,169,110,0.65);
+      }
+      .side-nav-dot:hover {
+        background: rgba(201,169,110,0.55) !important;
+        transform: scale(1.25);
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  // Update active dot on section change
+  const snObserver = new MutationObserver(() => {
+    const cur = parseInt(document.body.getAttribute('data-section') || '0', 10);
+    sideNav.querySelectorAll('.side-nav-dot').forEach((dot, i) => {
+      dot.classList.toggle('active', i === cur);
+    });
+  });
+  snObserver.observe(document.body, { attributes: true, attributeFilter: ['data-section'] });
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: Top nav (header) — strengthen
+// ═══════════════════════════════════════════════════════════════
+(function strengthenTopNav() {
+  let topNav = document.getElementById('top-nav') || document.querySelector('.top-nav');
+  if (!topNav) {
+    topNav = document.createElement('header');
+    topNav.id = 'top-nav';
+    topNav.setAttribute('role', 'banner');
+    topNav.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:500;display:flex;align-items:flex-start;justify-content:space-between;padding:22px 28px 0;pointer-events:none;';
+
+    topNav.innerHTML = `
+      <div class="top-nav-brand" style="pointer-events:auto;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(14px,1.8vw,18px);font-weight:500;color:rgba(227,238,230,0.88);letter-spacing:0.12em;text-transform:uppercase;line-height:1;">Patel Capital Markets</div>
+        <div style="font-family:'Space Mono',monospace;font-size:8.5px;letter-spacing:0.28em;color:rgba(201,169,110,0.55);text-transform:uppercase;margin-top:3px;">Engineering Creative Finance</div>
+      </div>
+      <div class="top-nav-meta" id="top-nav-meta" style="text-align:right;pointer-events:none;">
+        <div id="top-nav-counter" style="font-family:'Cormorant Garamond',serif;font-size:clamp(13px,1.4vw,16px);color:rgba(227,238,230,0.42);letter-spacing:0.06em;">01 / 10</div>
+        <div id="top-nav-section-name" style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:0.28em;color:rgba(201,169,110,0.38);text-transform:uppercase;margin-top:2px;">Home</div>
+      </div>
+    `;
+
+    document.body.appendChild(topNav);
+  }
+
+  const SECTION_NAMES_SHORT = ['Home','Firm Overview','Platform Edge','Senior Debt','Sub Cap','Equity','Execution','Underwriting','Compliance','Engage'];
+
+  const tnObserver = new MutationObserver(() => {
+    const cur = parseInt(document.body.getAttribute('data-section') || '0', 10);
+    const counter = document.getElementById('top-nav-counter');
+    const name = document.getElementById('top-nav-section-name');
+    if (counter) counter.textContent = `${String(cur + 1).padStart(2, '0')} / 10`;
+    if (name) name.textContent = SECTION_NAMES_SHORT[cur] || '';
+  });
+  tnObserver.observe(document.body, { attributes: true, attributeFilter: ['data-section'] });
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: Status console — strengthen with WebGL info
+// ═══════════════════════════════════════════════════════════════
+(function strengthenStatusConsole() {
+  let console_el = document.getElementById('status-console') || document.querySelector('.status-console');
+  if (!console_el) {
+    console_el = document.createElement('div');
+    console_el.id = 'status-console';
+    console_el.style.cssText = 'position:fixed;top:70px;left:22px;z-index:450;font-family:Space Mono,monospace;font-size:8.5px;letter-spacing:0.18em;color:rgba(201,169,110,0.45);line-height:1.6;pointer-events:none;opacity:1;transition:opacity 2s ease 3s;';
+    document.body.appendChild(console_el);
+  }
+
+  const lines = [
+    '[PCM] Three.js r160 initializing...',
+    '[PCM] Postprocessing 6.36.4 — ACES + Bloom + ChromAb + Vignette',
+    '[PCM] PMREMGenerator — RoomEnvironment HDRI',
+    '[PCM] 7-light rig active',
+    '[PCM] 240+ particle motes',
+    '[PCM] 10 section camera presets',
+    '[PCM] WebGL renderer ready',
+  ];
+
+  let lineIdx = 0;
+  function addLine() {
+    if (lineIdx >= lines.length) {
+      setTimeout(() => { console_el.style.opacity = '0'; }, 1500);
+      return;
+    }
+    const div = document.createElement('div');
+    div.textContent = lines[lineIdx++];
+    console_el.appendChild(div);
+    setTimeout(addLine, 280);
+  }
+  addLine();
+
+  // Also expose for external log messages
+  window.pcmLog = msg => {
+    const div = document.createElement('div');
+    div.textContent = '[PCM] ' + msg;
+    console_el.style.opacity = '1';
+    console_el.appendChild(div);
+    while (console_el.children.length > 8) console_el.removeChild(console_el.firstChild);
+    clearTimeout(window.pcmLogTimer);
+    window.pcmLogTimer = setTimeout(() => { console_el.style.opacity = '0'; }, 3000);
+  };
+})();
+
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: Controls cluster — Audio, Explode, Wireframe, Help
+// ═══════════════════════════════════════════════════════════════
+(function strengthenControlsCluster() {
+  let cluster = document.getElementById('controls-cluster') || document.querySelector('.controls-cluster');
+  if (!cluster) {
+    cluster = document.createElement('div');
+    cluster.id = 'controls-cluster';
+    cluster.setAttribute('role', 'toolbar');
+    cluster.setAttribute('aria-label', 'Scene controls');
+    cluster.style.cssText = 'position:fixed;bottom:76px;right:24px;z-index:350;display:flex;flex-direction:column;gap:8px;pointer-events:auto;';
+
+    const BTNS = [
+      { id: 'audio-toggle', label: 'Toggle audio', icon: '♪', key: 'M' },
+      { id: 'explode-toggle', label: 'Toggle explode mode', icon: '+', key: 'E' },
+      { id: 'wireframe-toggle', label: 'Toggle wireframe mode', icon: '▦', key: 'W' },
+      { id: 'help-toggle', label: 'Show keyboard help', icon: '?', key: 'H' },
+    ];
+
+    const btnStyle = `width:38px;height:38px;border-radius:50%;background:rgba(15,24,20,0.82);border:1px solid rgba(201,169,110,0.22);cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:16px;color:rgba(201,169,110,0.62);transition:all 0.22s ease;pointer-events:auto;`;
+
+    BTNS.forEach(b => {
+      const existing = document.getElementById(b.id);
+      if (existing) { cluster.appendChild(existing); return; }
+      const btn = document.createElement('button');
+      btn.id = b.id;
+      btn.style.cssText = btnStyle;
+      btn.setAttribute('aria-label', b.label);
+      btn.title = `${b.label} (${b.key})`;
+      btn.textContent = b.icon;
+      btn.addEventListener('mouseenter', () => { btn.style.borderColor = 'rgba(201,169,110,0.65)'; btn.style.color = '#c9a96e'; btn.style.transform = 'scale(1.1)'; });
+      btn.addEventListener('mouseleave', () => { btn.style.borderColor = 'rgba(201,169,110,0.22)'; btn.style.color = 'rgba(201,169,110,0.62)'; btn.style.transform = ''; });
+      cluster.appendChild(btn);
+    });
+
+    document.body.appendChild(cluster);
+  }
+
+  // Wire buttons to functions
+  // Audio toggle
+  const audioBtn = document.getElementById('audio-toggle');
+  if (audioBtn) {
+    let audioOn = false;
+    audioBtn.addEventListener('click', () => {
+      audioOn = !audioOn;
+      audioBtn.style.background = audioOn ? 'rgba(201,169,110,0.22)' : 'rgba(15,24,20,0.82)';
+      audioBtn.setAttribute('aria-pressed', String(audioOn));
+
+      // Initialize Web Audio API if first time
+      if (audioOn && !window.pcmAudioCtx) {
+        try {
+          const ctx = new (window.AudioContext || window.webkitAudioContext)();
+          window.pcmAudioCtx = ctx;
+          const gainNode = ctx.createGain();
+          gainNode.gain.setValueAtTime(0, ctx.currentTime);
+          gainNode.connect(ctx.destination);
+          window.pcmAudioGain = gainNode;
+
+          // Two-oscillator drone
+          const osc1 = ctx.createOscillator();
+          const osc2 = ctx.createOscillator();
+          osc1.type = 'sine'; osc1.frequency.value = 65;
+          osc2.type = 'sine'; osc2.frequency.value = 97;
+          osc1.connect(gainNode); osc2.connect(gainNode);
+          osc1.start(); osc2.start();
+          window.pcmOsc1 = osc1; window.pcmOsc2 = osc2;
+
+          gainNode.gain.setTargetAtTime(0.04, ctx.currentTime, 1.5);
+          document.addEventListener('visibilitychange', () => {
+            if (document.hidden) gainNode.gain.setTargetAtTime(0, ctx.currentTime, 0.5);
+            else if (audioOn) gainNode.gain.setTargetAtTime(0.04, ctx.currentTime, 0.5);
+          });
+        } catch(e) { console.warn('[PCM] Web Audio not available:', e); }
+      } else if (window.pcmAudioCtx && window.pcmAudioGain) {
+        const gain = audioOn ? 0.04 : 0;
+        window.pcmAudioGain.gain.setTargetAtTime(gain, window.pcmAudioCtx.currentTime, 1.5);
+      }
+    });
+  }
+
+  // Explode toggle
+  const explodeBtn = document.getElementById('explode-toggle');
+  if (explodeBtn) {
+    let exploded = false;
+    explodeBtn.addEventListener('click', () => {
+      exploded = !exploded;
+      window.pcmExploded = exploded;
+      explodeBtn.style.background = exploded ? 'rgba(201,169,110,0.22)' : 'rgba(15,24,20,0.82)';
+      explodeBtn.setAttribute('aria-pressed', String(exploded));
+      if (window.pcmLog) window.pcmLog(exploded ? 'Explode mode ON' : 'Explode mode OFF');
+    });
+  }
+
+  // Wireframe toggle
+  const wireBtn = document.getElementById('wireframe-toggle');
+  if (wireBtn) {
+    let wireframe = false;
+    wireBtn.addEventListener('click', () => {
+      wireframe = !wireframe;
+      window.pcmWireframe = wireframe;
+      wireBtn.style.background = wireframe ? 'rgba(201,169,110,0.22)' : 'rgba(15,24,20,0.82)';
+      wireBtn.setAttribute('aria-pressed', String(wireframe));
+      // Apply to all scene materials
+      if (window.pcmScene) {
+        window.pcmScene.traverse(obj => {
+          if (obj.material) {
+            const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+            mats.forEach(m => { m.wireframe = wireframe; });
+          }
+        });
+      }
+      if (window.pcmLog) window.pcmLog(wireframe ? 'Wireframe mode ON' : 'Wireframe mode OFF');
+    });
+  }
+
+  // Help toggle
+  const helpBtn = document.getElementById('help-toggle');
+  if (helpBtn) {
+    helpBtn.addEventListener('click', () => {
+      const overlay = document.getElementById('kbd-help') || document.querySelector('.kbd-help');
+      if (overlay) overlay.classList.toggle('open');
+      else if (window.pcmShowHelp) window.pcmShowHelp();
+    });
+  }
+
+  // Keyboard shortcuts cluster
+  document.addEventListener('keydown', e => {
+    if (document.activeElement?.tagName === 'INPUT' || document.activeElement?.tagName === 'TEXTAREA') return;
+    if (e.key === 'e' || e.key === 'E') { explodeBtn?.click(); }
+    if (e.key === 'w' || e.key === 'W') { wireBtn?.click(); }
+    if (e.key === 'h' || e.key === 'H') { helpBtn?.click(); }
+    if (e.key === 'r' || e.key === 'R') {
+      if (typeof goToSection === 'function') goToSection(0, -1);
+      if (window.pcmLog) window.pcmLog('Reset to Home');
+    }
+  });
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: Keyboard help overlay — full implementation
+// ═══════════════════════════════════════════════════════════════
+(function initKbdHelp() {
+  let kbd = document.getElementById('kbd-help');
+  if (!kbd) {
+    kbd = document.createElement('div');
+    kbd.id = 'kbd-help';
+    kbd.setAttribute('role', 'dialog');
+    kbd.setAttribute('aria-modal', 'true');
+    kbd.setAttribute('aria-label', 'Keyboard shortcuts');
+    kbd.style.cssText = 'position:fixed;inset:0;z-index:950;background:rgba(6,9,10,0.92);backdrop-filter:blur(18px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.38s ease;';
+
+    kbd.innerHTML = `
+      <div style="max-width:420px;width:88%;background:rgba(15,24,20,0.88);border:1px solid rgba(201,169,110,0.26);border-radius:4px;padding:36px 40px;position:relative;">
+        <button id="kbd-help-close" aria-label="Close" style="position:absolute;top:14px;right:14px;background:none;border:none;cursor:pointer;color:rgba(201,169,110,0.5);font-size:18px;">✕</button>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:#c9a96e;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:4px;">Controls</div>
+        <div style="width:36px;height:1px;background:linear-gradient(90deg,#c9a96e,transparent);margin-bottom:20px;"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;">
+          ${[
+            ['Scroll / Swipe', 'Navigate sections'],
+            ['1–9, 0', 'Jump to section'],
+            ['← →', 'Prev / Next section'],
+            ['Drag', 'Rotate 3D logo'],
+            ['Click part', 'Inspect detail'],
+            ['E', 'Explode mode'],
+            ['W', 'Wireframe mode'],
+            ['M', 'Toggle audio'],
+            ['R', 'Reset to Home'],
+            ['H', 'This overlay'],
+          ].map(([k, v]) => `
+            <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.18em;color:rgba(201,169,110,0.72);">${k}</div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:11px;color:rgba(227,238,230,0.55);">${v}</div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+    document.body.appendChild(kbd);
+
+    const closeBtn = kbd.querySelector('#kbd-help-close');
+    if (closeBtn) closeBtn.addEventListener('click', () => kbd.classList.remove('open'));
+    kbd.addEventListener('click', e => { if (e.target === kbd) kbd.classList.remove('open'); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && kbd.classList.contains('open')) kbd.classList.remove('open'); });
+
+    // Open/close via class
+    const style = document.createElement('style');
+    style.textContent = '#kbd-help.open { opacity:1 !important; pointer-events:auto !important; }';
+    document.head.appendChild(style);
+  }
+
+  window.pcmShowHelp = () => kbd.classList.toggle('open');
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: Scroll cue — pulsing "Scroll ↓ to begin" on first load
+// ═══════════════════════════════════════════════════════════════
+(function initScrollCue() {
+  let cue = document.getElementById('scroll-cue');
+  if (!cue) {
+    cue = document.createElement('div');
+    cue.id = 'scroll-cue';
+    cue.setAttribute('aria-hidden', 'true');
+    cue.style.cssText = 'position:fixed;bottom:130px;left:50%;transform:translateX(-50%);z-index:200;text-align:center;pointer-events:none;opacity:0;animation:scroll-cue-fade 2.2s ease 2s forwards;';
+    cue.innerHTML = `<div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.34em;text-transform:uppercase;color:rgba(201,169,110,0.48);animation:scroll-cue-pulse 1.8s ease-in-out infinite;">Scroll ↓ to begin</div>`;
+    document.body.appendChild(cue);
+
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes scroll-cue-fade { 0% { opacity:0; } 30% { opacity:1; } 80% { opacity:1; } 100% { opacity:0; } }
+      @keyframes scroll-cue-pulse { 0%,100% { opacity:0.48; transform:translateY(0); } 50% { opacity:0.82; transform:translateY(4px); } }
+    `;
+    document.head.appendChild(style);
+
+    // Hide after first scroll
+    const hideCue = () => {
+      cue.style.animation = 'none';
+      cue.style.opacity = '0';
+      window.removeEventListener('wheel', hideCue);
+      window.removeEventListener('touchmove', hideCue);
+    };
+    setTimeout(() => {
+      window.addEventListener('wheel', hideCue, { once: true, passive: true });
+      window.addEventListener('touchmove', hideCue, { once: true, passive: true });
+    }, 3000);
+  }
+})();
+
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: Bottom-left hint cluster + keyboard shortcut strip
+// ═══════════════════════════════════════════════════════════════
+(function initHintCluster() {
+  let hint = document.getElementById('hint-cluster');
+  if (!hint) {
+    hint = document.createElement('div');
+    hint.id = 'hint-cluster';
+    hint.setAttribute('aria-hidden', 'true');
+    hint.style.cssText = 'position:fixed;bottom:76px;left:24px;z-index:300;display:flex;flex-direction:column;gap:3px;pointer-events:none;';
+    hint.innerHTML = `
+      <div style="font-family:'Space Mono',monospace;font-size:7.5px;letter-spacing:0.28em;color:rgba(201,169,110,0.28);text-transform:uppercase;">Drag to rotate</div>
+      <div style="font-family:'Space Mono',monospace;font-size:7.5px;letter-spacing:0.28em;color:rgba(201,169,110,0.28);text-transform:uppercase;">Click parts to inspect</div>
+      <div style="font-family:'Space Mono',monospace;font-size:7.5px;letter-spacing:0.28em;color:rgba(201,169,110,0.28);text-transform:uppercase;">H for shortcuts</div>
+    `;
+    document.body.appendChild(hint);
+
+    // Fade out after 8 seconds
+    setTimeout(() => {
+      hint.style.transition = 'opacity 2s ease';
+      hint.style.opacity = '0';
+    }, 8000);
+  }
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: Bottom menu section names — inject if not present
+// ═══════════════════════════════════════════════════════════════
+(function strengthenBottomMenu() {
+  // Check if bottom menu exists
+  let menu = document.getElementById('bottom-menu') || document.querySelector('.bottom-menu');
+  if (!menu) {
+    menu = document.createElement('nav');
+    menu.id = 'bottom-menu';
+    menu.setAttribute('role', 'navigation');
+    menu.setAttribute('aria-label', 'Section navigation');
+
+    const SECTIONS = ['Home','Firm Overview','Platform Edge','Senior Debt','Sub Cap','Equity','Execution','Underwriting','Compliance','Engage'];
+
+    menu.innerHTML = SECTIONS.map((name, i) => `
+      <button class="section-btn" data-goto="${i}" aria-label="Go to ${name}" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;pointer-events:auto;padding:8px 6px;">
+        <span class="section-btn__num" style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.22em;color:rgba(201,169,110,0.35);text-transform:uppercase;">${String(i+1).padStart(2,'0')}</span>
+        <span class="section-btn__label" style="font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:500;color:rgba(227,238,230,0.42);letter-spacing:0.18em;text-transform:uppercase;white-space:nowrap;">${name}</span>
+      </button>
+    `).join('');
+
+    menu.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:160;display:flex;align-items:center;justify-content:center;gap:0;padding:8px 16px 14px;background:linear-gradient(to top, rgba(6,9,10,0.88) 0%, transparent 100%);pointer-events:auto;';
+
+    document.body.appendChild(menu);
+
+    menu.addEventListener('click', e => {
+      const btn = e.target.closest('[data-goto]');
+      if (btn && typeof goToSection === 'function') {
+        const idx = parseInt(btn.dataset.goto, 10);
+        const cur = window.activeIdx || 0;
+        goToSection(idx, idx > cur ? 1 : -1);
+      }
+    });
+  }
+
+  // Active state update via MutationObserver
+  const bmObserver = new MutationObserver(() => {
+    const cur = parseInt(document.body.getAttribute('data-section') || '0', 10);
+    const btns = document.querySelectorAll('#bottom-menu .section-btn, .bottom-menu .section-btn');
+    btns.forEach((btn, i) => {
+      const label = btn.querySelector('.section-btn__label');
+      const isActive = i === cur;
+      btn.setAttribute('aria-current', isActive ? 'page' : 'false');
+      if (label) {
+        label.style.color = isActive ? '#c9a96e' : 'rgba(227,238,230,0.42)';
+        label.style.textShadow = isActive ? '0 0 12px rgba(201,169,110,0.35)' : 'none';
+      }
+      const underline = btn.querySelector('.section-btn__underline');
+      if (underline) {
+        underline.style.opacity = isActive ? '1' : '0';
+      } else if (isActive && !btn.querySelector('.section-btn__underline')) {
+        const ul = document.createElement('span');
+        ul.className = 'section-btn__underline';
+        ul.style.cssText = 'display:block;height:1px;background:linear-gradient(90deg,transparent,#c9a96e,transparent);width:100%;box-shadow:0 0 6px rgba(201,169,110,0.55);margin-top:2px;';
+        btn.appendChild(ul);
+      }
+    });
+  });
+  bmObserver.observe(document.body, { attributes: true, attributeFilter: ['data-section'] });
 })();
 
 </script>
