@@ -14964,6 +14964,190 @@ function animateStatPanels() {
   });
 })();
 
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: Cinematic auto-glide — post-init strengthen
+// Ensure scroll threshold triggers auto-transition properly
+// ═══════════════════════════════════════════════════════════════
+(function strengthenAutoGlide() {
+  // If goToSection is available and scrollAccum-based transition isn't in place,
+  // add a wheel accumulator that triggers section change at threshold
+  if (window.pcmAutoGlideInstalled) return;
+  window.pcmAutoGlideInstalled = true;
+
+  let accum = 0;
+  let glideTimer = null;
+  const THRESHOLD = 0.68;
+
+  window.addEventListener('wheel', e => {
+    if (window.isTransitioning) return;
+    accum += e.deltaY * 0.0008;
+    accum = Math.max(-1.3, Math.min(1.3, accum));
+
+    clearTimeout(glideTimer);
+
+    if (Math.abs(accum) >= THRESHOLD || Math.abs(e.deltaY) > 32) {
+      const dir = accum > 0 ? 1 : -1;
+      const cur = window.activeIdx || 0;
+      const next = Math.max(0, Math.min(9, cur + dir));
+      if (next !== cur && typeof goToSection === 'function') {
+        accum = 0;
+        goToSection(next, dir);
+      }
+    } else {
+      // Decay when idle
+      glideTimer = setTimeout(() => {
+        function decay() {
+          accum *= 0.88;
+          if (Math.abs(accum) > 0.01) requestAnimationFrame(decay);
+          else accum = 0;
+        }
+        requestAnimationFrame(decay);
+      }, 180);
+    }
+  }, { passive: true });
+
+  // Fast burst threshold (e.g. trackpad)
+  let lastDeltaY = 0, burstAccum = 0;
+  window.addEventListener('wheel', e => {
+    if (window.isTransitioning) return;
+    if (Math.abs(e.deltaY) > 30 && Math.sign(e.deltaY) === Math.sign(lastDeltaY)) {
+      burstAccum += e.deltaY;
+      if (Math.abs(burstAccum) > 120) {
+        const dir = burstAccum > 0 ? 1 : -1;
+        const cur = window.activeIdx || 0;
+        const next = Math.max(0, Math.min(9, cur + dir));
+        if (next !== cur && typeof goToSection === 'function') {
+          burstAccum = 0;
+          goToSection(next, dir);
+        }
+      }
+    } else {
+      burstAccum = 0;
+    }
+    lastDeltaY = e.deltaY;
+  }, { passive: true });
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: isTransitioning — lock all scroll during transition
+// ═══════════════════════════════════════════════════════════════
+(function lockScrollDuringTransition() {
+  // Prevent wheel during transition using non-passive listener
+  let wheelLocked = false;
+
+  // Hook into goToSection to set wheel lock
+  const tryHook = () => {
+    if (typeof window.goToSection !== 'function') return;
+    const orig = window.goToSection;
+    if (orig._transitionLocked) return;
+    const patched = function(idx, dir) {
+      wheelLocked = true;
+      setTimeout(() => { wheelLocked = false; }, 1700);
+      return orig(idx, dir);
+    };
+    patched._transitionLocked = true;
+    window.goToSection = patched;
+  };
+
+  let hookAttempts = 0;
+  const hookInterval = setInterval(() => {
+    tryHook();
+    if (window.goToSection?._transitionLocked || ++hookAttempts > 200) clearInterval(hookInterval);
+  }, 100);
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: Section camera presets — add zoomIn values
+// ═══════════════════════════════════════════════════════════════
+(function addZoomInToPresets() {
+  // Expose zoom-in distances that the camera dolly reads
+  // These are per-section — how far the camera pulls in when user scrolls
+  window.pcmZoomInDistances = {
+    0: 3.5, 1: 4.0, 2: 3.8, 3: 4.2, 4: 4.0,
+    5: 3.6, 6: 3.8, 7: 4.0, 8: 3.5, 9: 3.2
+  };
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: Section end indicator — smart show logic
+// Show when user has been on section > 3s AND section < 9
+// ═══════════════════════════════════════════════════════════════
+(function smartSectionEndIndicator() {
+  const ind = document.getElementById('section-end-indicator');
+  if (!ind) return;
+
+  let sectionTimer = null;
+
+  const seiObserver2 = new MutationObserver(() => {
+    const cur = parseInt(document.body.getAttribute('data-section') || '0', 10);
+    ind.style.opacity = '0';
+    clearTimeout(sectionTimer);
+
+    if (cur < 9) {
+      sectionTimer = setTimeout(() => {
+        ind.style.opacity = '1';
+        ind.style.transition = 'opacity 0.5s ease';
+      }, 3200);
+    }
+  });
+  seiObserver2.observe(document.body, { attributes: true, attributeFilter: ['data-section'] });
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: Section bg overlay — strengthen with gradient accuracy
+// ═══════════════════════════════════════════════════════════════
+(function strengthenSectionBgOverlay() {
+  const overlay = document.querySelector('.section-bg-overlay');
+  if (!overlay) return;
+
+  const GRADIENTS = {
+    0: 'radial-gradient(ellipse at 35% 55%, rgba(26,37,32,0.35) 0%, rgba(6,9,10,0.0) 65%)',
+    1: 'radial-gradient(ellipse at 65% 45%, rgba(29,43,35,0.40) 0%, rgba(6,9,10,0.0) 65%)',
+    2: 'radial-gradient(ellipse at 50% 50%, rgba(32,48,38,0.38) 0%, rgba(6,9,10,0.0) 65%)',
+    3: 'radial-gradient(ellipse at 30% 60%, rgba(24,34,28,0.42) 0%, rgba(6,9,10,0.0) 65%)',
+    4: 'radial-gradient(ellipse at 70% 40%, rgba(20,30,24,0.45) 0%, rgba(6,9,10,0.0) 65%)',
+    5: 'radial-gradient(ellipse at 50% 35%, rgba(35,52,42,0.38) 0%, rgba(6,9,10,0.0) 65%)',
+    6: 'radial-gradient(ellipse at 45% 55%, rgba(28,40,32,0.40) 0%, rgba(6,9,10,0.0) 65%)',
+    7: 'radial-gradient(ellipse at 55% 50%, rgba(22,33,26,0.44) 0%, rgba(6,9,10,0.0) 65%)',
+    8: 'radial-gradient(ellipse at 50% 60%, rgba(25,36,29,0.38) 0%, rgba(6,9,10,0.0) 65%)',
+    9: 'radial-gradient(ellipse at 60% 45%, rgba(30,45,36,0.36) 0%, rgba(6,9,10,0.0) 65%)',
+  };
+
+  const bgObs = new MutationObserver(() => {
+    const cur = parseInt(document.body.getAttribute('data-section') || '0', 10);
+    overlay.style.background = GRADIENTS[cur] || GRADIENTS[0];
+    overlay.style.transition = 'background 1.2s ease';
+  });
+  bgObs.observe(document.body, { attributes: true, attributeFilter: ['data-section'] });
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: MaskLayer — per-section transition opacity
+// ═══════════════════════════════════════════════════════════════
+(function strengthenMaskLayerTransition() {
+  const mask = document.getElementById('mask-layer');
+  if (!mask) return;
+
+  // During transitions, briefly increase mask opacity for cinematic feel
+  const origGoto = window.goToSection;
+  if (typeof origGoto === 'function' && !window.pcmMaskPatched) {
+    window.pcmMaskPatched = true;
+    const patched = function(idx, dir) {
+      mask.style.opacity = '1.8';
+      mask.style.filter = 'brightness(0.7)';
+      mask.style.transition = 'opacity 0.3s ease, filter 0.3s ease';
+      setTimeout(() => {
+        mask.style.opacity = '1';
+        mask.style.filter = '';
+        mask.style.transition = 'opacity 0.9s ease, filter 0.9s ease';
+      }, 500);
+      return origGoto(idx, dir);
+    };
+    window.goToSection = patched;
+  }
+})();
+
 </script>
 
 <!-- PART I: Contact Form — Section 9 Engage -->
