@@ -2,6 +2,12 @@
 publish = "."
 
 [[redirects]]
+from = "/api/sitemap"
+to = "https://patelcapital.markets/api/sitemap"
+status = 200
+force = true
+
+[[redirects]]
 from = "/*"
 to = "/index.html"
 status = 200
