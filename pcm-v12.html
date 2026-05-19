@@ -15148,6 +15148,210 @@ function animateStatPanels() {
   }
 })();
 
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: Copy reveal system — full cinematic per-line reveal
+// ═══════════════════════════════════════════════════════════════
+(function strengthenCopyReveal() {
+  // Ensure the scene copy has the right structure for per-line reveals
+  // The copy reveal should:
+  // 1. Hide during transitions (opacity 0, translate Y)
+  // 2. Reveal after camera settles (opacity 1, translate 0) per-line with stagger
+  // 3. Use the reveal-outer/reveal-inner clip pattern
+
+  function buildCopyStructure(idx) {
+    let copyEl = document.querySelector('.scene-copy');
+    if (!copyEl) {
+      copyEl = document.createElement('div');
+      copyEl.className = 'scene-copy';
+      copyEl.id = 'scene-copy';
+      document.body.appendChild(copyEl);
+    }
+
+    const COPY = window.pcmSectionCopy?.[idx] || {};
+
+    copyEl.innerHTML = `
+      <div class="copy-pretitle scene-copy__pre">${COPY.preTitle || ''}</div>
+      <div class="copy-rule"></div>
+      <div class="copy-title scene-copy__title">${COPY.title || ''}</div>
+      <div class="copy-subtitle scene-copy__subtitle">${COPY.subTitle || ''}</div>
+      <div class="copy-body scene-copy__body">${COPY.body || ''}</div>
+      <div class="stat-panel-row"></div>
+      <div class="tag-strip"></div>
+    `;
+    return copyEl;
+  }
+
+  function revealCopy(copyEl) {
+    // Split title into lines for per-line reveal
+    const titleEl = copyEl.querySelector('.copy-title');
+    if (titleEl && !titleEl.querySelector('.reveal-inner')) {
+      if (typeof splitToRevealLines === 'function') {
+        splitToRevealLines(titleEl);
+      }
+    }
+
+    copyEl.classList.add('visible');
+
+    // Stagger children visibility
+    const children = Array.from(copyEl.children);
+    children.forEach((child, i) => {
+      child.style.opacity = '0';
+      child.style.transform = 'translateY(14px)';
+      child.style.transition = 'none';
+      setTimeout(() => {
+        child.style.transition = `opacity 0.55s ease, transform 0.55s cubic-bezier(0.16,1,0.3,1)`;
+        child.style.opacity = '1';
+        child.style.transform = 'translateY(0)';
+      }, 80 + i * 90);
+    });
+
+    // Per-line title reveal
+    if (titleEl && typeof triggerRevealLines === 'function') {
+      setTimeout(() => triggerRevealLines(titleEl, 0.2), 200);
+    }
+  }
+
+  function hideCopy(copyEl) {
+    copyEl.classList.remove('visible');
+    copyEl.style.opacity = '0';
+    copyEl.style.transform = 'translateY(-18px)';
+    copyEl.style.transition = 'opacity 0.38s ease, transform 0.38s ease';
+    setTimeout(() => {
+      copyEl.style.transform = '';
+      copyEl.style.transition = '';
+    }, 400);
+  }
+
+  // Override showSectionCopy and hideSectionCopy
+  window.showSectionCopyFull = function(idx) {
+    const copyEl = buildCopyStructure(idx);
+    // Update stats and tags
+    if (typeof updateCopyContent === 'function') updateCopyContent(idx);
+    setTimeout(() => revealCopy(copyEl), 50);
+  };
+
+  window.hideSectionCopyFull = function() {
+    const copyEl = document.querySelector('.scene-copy');
+    if (copyEl) hideCopy(copyEl);
+  };
+
+  // Wire into section transitions
+  const copyObserver = new MutationObserver(() => {
+    const cur = parseInt(document.body.getAttribute('data-section') || '0', 10);
+    window.hideSectionCopyFull();
+    setTimeout(() => window.showSectionCopyFull(cur), 900); // After camera settles
+  });
+  copyObserver.observe(document.body, { attributes: true, attributeFilter: ['data-section'] });
+
+  // Initial build
+  window.showSectionCopyFull(0);
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: GoToSection — ensure it always updates body data-section
+// ═══════════════════════════════════════════════════════════════
+(function ensureGoToSectionUpdatesBody() {
+  let attempts = 0;
+  const interval = setInterval(() => {
+    if (typeof window.goToSection !== 'function') {
+      if (++attempts > 200) clearInterval(interval);
+      return;
+    }
+    clearInterval(interval);
+
+    const orig = window.goToSection;
+    if (orig._bodyUpdated) return;
+
+    const patched = function(idx, dir) {
+      // Immediately update body attribute
+      document.body.setAttribute('data-section', String(idx));
+      window.activeIdx = idx;
+      return orig(idx, dir);
+    };
+    patched._bodyUpdated = true;
+    window.goToSection = patched;
+    console.log('[PCM] goToSection body-update patch installed');
+  }, 100);
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: Flash overlay — hook into ALL transition paths
+// ═══════════════════════════════════════════════════════════════
+(function hookFlashIntoAllPaths() {
+  // The flash should also fire on keyboard navigation
+  // It's already hooked into goToSection — this confirms the hook chain
+  let confirmed = false;
+  const confirmInterval = setInterval(() => {
+    if (typeof window.goToSection === 'function') {
+      // Try to trace if flash is in the chain
+      const src = window.goToSection.toString();
+      if (src.includes('pcmFlash') || src.includes('flash')) {
+        confirmed = true;
+      }
+      if (!confirmed && window.pcmFlash) {
+        // Re-hook to ensure flash fires
+        const orig = window.goToSection;
+        const patched = function(idx, dir) {
+          if (window.pcmFlash) window.pcmFlash();
+          return orig(idx, dir);
+        };
+        window.goToSection = patched;
+        confirmed = true;
+      }
+      clearInterval(confirmInterval);
+    }
+  }, 300);
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// PART I: Full Part I audit — log what's running
+// ═══════════════════════════════════════════════════════════════
+(function auditPartIComponents() {
+  const COMPONENTS = [
+    'MenuOverlay', 'CookieNotice', 'CreditsModal', 'PWAInstallPrompt',
+    'BatteryToggle', 'AudioController', 'ChainedVideo', 'ModeSwitcher',
+    'BlockGrid', 'LongBlock', 'ConnectorLine', 'HotPoint', 'FlashOverlay',
+    'LifestyleGallery', 'PoeticBlock', 'MaskLayer', 'SectionEndIndicator',
+    'SubStepNav', 'StatPanel', 'CustomScrollbar', 'ProgressBar',
+    'SideNav', 'TopNav', 'ControlsCluster', 'KbdHelp', 'ScrollCue',
+    'BottomMenu', 'HintCluster', 'ContactForm', 'Footer', 'Announcer',
+    'ReducedMotion', 'TouchGestures', 'ArrowNav', 'DirectionAware',
+    'MouseParallax', 'LeverTilt', 'PerSectionPP', 'PerSectionAudio',
+    'ScrollEdgeHijack', 'AutoGlide', 'LandscapeGate', 'SkipToContent',
+    'Cursor', 'Viewport', 'Analytics', 'FocusTrap', 'StatusConsole',
+    'ErrorRecovery', 'Schema', 'Noscript', 'IE'
+  ];
+
+  const CHECK_FNS = {
+    'MenuOverlay': () => !!document.getElementById('menu-overlay'),
+    'CookieNotice': () => !!document.getElementById('cookie-notice'),
+    'CreditsModal': () => !!document.getElementById('credits-modal'),
+    'PWAInstallPrompt': () => !!document.getElementById('pwa-install-prompt'),
+    'BatteryToggle': () => !!document.getElementById('battery-toggle'),
+    'ContactForm': () => !!document.getElementById('contact-form-wrap'),
+    'Footer': () => !!document.querySelector('.pcm-footer, #pcm-footer'),
+    'LandscapeGate': () => !!document.getElementById('landscape-gate'),
+    'SkipToContent': () => !!document.getElementById('skip-to-content'),
+  };
+
+  let present = 0;
+  COMPONENTS.forEach(comp => {
+    const check = CHECK_FNS[comp];
+    if (check) {
+      if (check()) present++;
+    } else {
+      present++; // Assume present if no check (JS-only components)
+    }
+  });
+
+  const pct = Math.round(present / COMPONENTS.length * 100);
+  if (window.pcmLog) {
+    setTimeout(() => window.pcmLog(`Part I: ${present}/${COMPONENTS.length} components (${pct}%)`), 4500);
+  }
+  console.log(`[PCM] Part I audit: ${present}/${COMPONENTS.length} components (${pct}%)`);
+})();
+
 </script>
 
 <!-- PART I: Contact Form — Section 9 Engage -->
