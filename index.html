@@ -12,11 +12,26 @@
   <meta property="og:title" content="Patel Capital Markets — Engineering Creative Finance" />
   <meta property="og:description" content="Commercial real estate capital advisory structuring debt, mezzanine, preferred equity, and joint-venture capital." />
   <meta property="og:site_name" content="Patel Capital Markets" />
+  <meta property="og:image" content="https://patelcapital.markets/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Patel Capital Markets — Engineering Creative Finance" />
+  <meta property="og:url" content="https://patelcapital.markets/" />
+  <meta property="og:locale" content="en_US" />
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Patel Capital Markets — Engineering Creative Finance" />
   <meta name="twitter:description" content="Commercial real estate capital advisory structuring debt, mezzanine, preferred equity, and joint-venture capital." />
+  <meta name="twitter:image" content="https://patelcapital.markets/og-image.jpg" />
+  <meta name="twitter:image:alt" content="Patel Capital Markets — Engineering Creative Finance" />
+  <meta name="twitter:site" content="@patelcapital" />
+  <meta name="twitter:creator" content="@patelcapital" />
+
+  <!-- Additional SEO -->
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="format-detection" content="telephone=no" />
+  <meta name="author" content="Patel Capital Markets" />
 
   <link rel="canonical" href="https://patelcapital.markets/" />
 
@@ -30,9 +45,35 @@
     "description": "Commercial real estate capital advisory structuring debt, mezzanine, preferred equity, and joint-venture capital.",
     "url": "https://patelcapital.markets/",
     "email": "deals@patelcapital.markets",
+    "logo": "https://patelcapital.markets/og-image.jpg",
+    "image": "https://patelcapital.markets/og-image.jpg",
     "serviceType": ["Senior Debt Advisory", "Mezzanine Financing", "Preferred Equity", "Joint-Venture Equity", "Capital Markets Advisory"],
     "areaServed": "United States",
-    "slogan": "Engineering Creative Finance"
+    "slogan": "Engineering Creative Finance",
+    "sameAs": [
+      "https://www.linkedin.com/company/patel-capital-markets",
+      "https://twitter.com/patelcapital"
+    ],
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "US",
+      "addressRegion": "NY"
+    },
+    "contactPoint": [{
+      "@type": "ContactPoint",
+      "email": "deals@patelcapital.markets",
+      "contactType": "sales",
+      "availableLanguage": ["English"]
+    }],
+    "knowsAbout": [
+      "Commercial Real Estate",
+      "Senior Debt",
+      "Mezzanine Financing",
+      "Preferred Equity",
+      "Joint Venture Equity",
+      "Capital Structure",
+      "Underwriting"
+    ]
   }
   </script>
 
@@ -71,6 +112,23 @@
 
   --ease-cinema: cubic-bezier(0.77, 0, 0.175, 1);
   --ease-soft:   cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Foundational layout vars — match seacat reference */
+  --margin: 60px;
+  --vh: 1vh;
+  --chrome-z: 20;
+  --overlay-z: 50;
+  --cursor-z: 9999;
+}
+
+@media (max-width: 1024px) {
+  :root { --margin: 40px; }
+}
+@media (max-width: 768px) {
+  :root { --margin: 30px; }
+}
+@media (max-width: 480px) {
+  :root { --margin: 20px; }
 }
 
 /* ------------------------------------------------------------
@@ -323,6 +381,21 @@ body.transitioning .cinema-bar {
   line-height: 1.1;
 }
 
+/* ─── REVEAL TEXT (seacat-style line reveal) ─── */
+.reveal-wrap {
+  overflow: hidden;
+  display: block;
+}
+.reveal-inner {
+  display: block;
+  transform: translateY(105%);
+  transition: transform 0s; /* GSAP handles this */
+}
+.scene-copy .main-title .reveal-wrap,
+.scene-copy .main-title .reveal-inner {
+  display: inline-block;
+}
+
 /* ------------------------------------------------------------
    13. SCENE COPY — TITLE RULE
    ------------------------------------------------------------ */
@@ -478,43 +551,53 @@ body.transitioning .cinema-bar {
 }
 
 /* ------------------------------------------------------------
-   20–22. SIDE NAV DOTS
+   20–22. SIDE NAV DOTS (seacat-style ring progress)
    ------------------------------------------------------------ */
 .side-nav-dot {
   position: relative;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  border: 1px solid rgba(201, 169, 110, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: transparent;
-  cursor: none;
-  transition: background 0.3s var(--ease-soft),
-              transform 0.3s var(--ease-soft),
-              box-shadow 0.3s var(--ease-soft),
-              border-color 0.3s var(--ease-soft);
+  border: none;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
   flex-shrink: 0;
 }
-
-.side-nav-dot.active {
-  background: var(--brass);
-  transform: scale(1.5);
-  box-shadow: 0 0 12px var(--brass);
-  border-color: var(--brass);
+.nav-ring { position: absolute; top: 0; left: 0; }
+.nav-ring-fill { transition: stroke-dashoffset 0.8s cubic-bezier(0.4,0,0.2,1); }
+.nav-num {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  color: rgba(227,238,230,0.3);
+  letter-spacing: 0.05em;
+  z-index: 1;
+  transition: color 0.3s;
 }
-
-.side-nav-dot:hover::after {
-  content: attr(data-label);
+.side-nav-dot.active .nav-num { color: var(--brass); }
+.side-nav-dot.active .nav-ring-fill { stroke-dashoffset: 0; }
+.side-nav-dot:hover .nav-num { color: var(--ink); }
+/* Tooltip */
+.side-nav-dot::after {
+  content: attr(data-tooltip);
   position: absolute;
-  right: 20px;
+  right: calc(100% + 12px);
   top: 50%;
   transform: translateY(-50%);
-  font-family: var(--font-mono);
-  font-size: 10px;
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.12em;
   color: var(--brass);
   white-space: nowrap;
-  letter-spacing: 0.12em;
+  opacity: 0;
   pointer-events: none;
+  transition: opacity 0.2s;
+  background: rgba(6,9,10,0.85);
+  padding: 3px 8px;
+  border: 1px solid rgba(201,169,110,0.2);
 }
+.side-nav-dot:hover::after { opacity: 1; }
 
 /* ------------------------------------------------------------
    23. BOTTOM MENU
@@ -588,6 +671,24 @@ body.transitioning .cinema-bar {
   opacity: 1;
   border-bottom: 2px solid var(--brass);
   box-shadow: 0 0 12px rgba(201, 169, 110, 0.4);
+}
+
+.section-btn { position: relative; overflow: hidden; }
+
+.section-btn::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--brass);
+  box-shadow: 0 0 10px var(--brass);
+  transition: width 0.3s ease;
+}
+.section-btn:hover::after,
+.section-btn.active::after {
+  width: 100%;
 }
 
 /* ------------------------------------------------------------
@@ -720,7 +821,22 @@ body.transitioning .cinema-bar {
   max-width: 320px;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  overflow-y: auto;
+  max-height: 320px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(201,169,110,0.4) transparent;
 }
+.detail-card::-webkit-scrollbar { width: 3px; }
+.detail-card::-webkit-scrollbar-track { background: transparent; }
+.detail-card::-webkit-scrollbar-thumb { background: rgba(201,169,110,0.4); border-radius: 2px; }
+.detail-card::-webkit-scrollbar-thumb:hover { background: rgba(201,169,110,0.8); }
+
+/* ─── BURGER MENU ICON (seacat-style animated burger) ─── */
+.pcm-burger .burger-svg { display: block; }
+.pcm-burger .burger-line { transition: transform 0.3s ease, opacity 0.3s ease; transform-origin: center; }
+.menu-open .pcm-burger .line1 { transform: rotate(45deg) translate(4px, 4px); }
+.menu-open .pcm-burger .line2 { opacity: 0; transform: scaleX(0); }
+.menu-open .pcm-burger .line3 { transform: rotate(-45deg) translate(4px, -4px); }
 
 .detail-card .card-label {
   font-family: var(--font-mono);
@@ -1260,6 +1376,18 @@ body.transitioning .cinema-bar {
   gap: 8px;
   flex-wrap: wrap;
   margin: 16px 0;
+  position: relative;
+  user-select: none;
+  touch-action: pan-x;
+}
+.mode-drag-indicator {
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  height: 1px;
+  background: var(--brass);
+  box-shadow: 0 0 8px var(--brass);
+  transition: left 0.3s ease, width 0.3s ease;
 }
 
 .mode-btn {
@@ -1878,6 +2006,789 @@ body:has(.pcm-cursor) {
 
 /* === Fixes for late-inserted overlays === */
 .hidden { display: none !important; }
+
+/* ============================================================
+   ═══════════════════════════════════════════════════════════════
+   PCM v13 — SEACAT FEATURE-PARITY ADDITIONS
+   Gap implementations for: loader, audio wave, menu rings,
+   triangles, scrubber, belt-conveyor, drawer, footer, etc.
+   ═══════════════════════════════════════════════════════════════
+   ============================================================ */
+
+/* ───────────────────────────────────────────────────────────────
+   GAP 13 — Gradient progress loading bar (replaces spinner)
+   ─────────────────────────────────────────────────────────────── */
+.intro-loader__bar-wrap {
+  width: 240px;
+  height: 1px;
+  background: rgba(201, 169, 110, 0.15);
+  position: relative;
+  overflow: visible;
+  margin: 0 auto;
+}
+.intro-loader__bar-fill {
+  height: 1px;
+  width: 0%;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(201, 169, 110, 0.6) 20%,
+    #c9a96e 50%,
+    #d9b97a 75%,
+    transparent 100%);
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+.intro-loader__bar-fill::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: -2px;
+  width: 4px;
+  height: 5px;
+  background: var(--brass);
+  box-shadow: 0 0 8px 2px var(--brass), 0 0 14px 4px rgba(201, 169, 110, 0.4);
+}
+.intro-loader__bar-fill::before {
+  content: '';
+  position: absolute;
+  left: -20px;
+  top: -1px;
+  height: 3px;
+  width: 20px;
+  background: linear-gradient(90deg, transparent 0%, rgba(201, 169, 110, 0.4) 100%);
+  filter: blur(1px);
+}
+.intro-loader__pct {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.32em;
+  color: var(--brass);
+  opacity: 0.5;
+  margin-top: 12px;
+  text-align: center;
+}
+.intro-loader__wordmark-loader {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  letter-spacing: 0.32em;
+  color: var(--ink);
+  text-transform: uppercase;
+  opacity: 0.85;
+  margin-bottom: 28px;
+  text-align: center;
+}
+.intro-loader__hairline {
+  width: 28px;
+  height: 1px;
+  background: var(--brass);
+  margin: 6px auto 14px;
+  opacity: 0.6;
+}
+
+/* ───────────────────────────────────────────────────────────────
+   GAP 6 — SVG waveform audio button
+   ─────────────────────────────────────────────────────────────── */
+.audio-wave { display: block; overflow: visible; }
+.audio-wave polyline {
+  transition: stroke 0.3s ease, filter 0.3s ease;
+}
+#btn-audio { padding: 0; }
+#btn-audio.active .audio-wave polyline {
+  stroke: var(--brass);
+  filter: drop-shadow(0 0 4px rgba(201, 169, 110, 0.6));
+}
+#btn-audio .audio-wave polyline {
+  stroke: currentColor;
+}
+
+/* ───────────────────────────────────────────────────────────────
+   GAP 8 — Rotating two-layer menu ring button
+   ─────────────────────────────────────────────────────────────── */
+@keyframes pcm-ring-cw  { from { transform: rotate(0deg); }   to { transform: rotate(360deg); } }
+@keyframes pcm-ring-ccw { from { transform: rotate(0deg); }   to { transform: rotate(-360deg); } }
+
+#btn-menu {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  overflow: visible;
+  background: transparent;
+  border: none;
+}
+@media (hover: hover) {
+  #btn-menu:hover .pcm-ring-1 { animation-duration: 2.4s; }
+  #btn-menu:hover .pcm-ring-2 { animation-duration: 1.8s; }
+  #btn-menu:hover .pcm-menu-plus { color: var(--brass); }
+}
+.pcm-menu-rings {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pcm-ring {
+  position: absolute;
+  inset: 0;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  transform-origin: center;
+}
+.pcm-ring-1 { animation: pcm-ring-cw  4s linear infinite; }
+.pcm-ring-2 { animation: pcm-ring-ccw 3s linear infinite; }
+.pcm-menu-plus {
+  position: absolute;
+  color: var(--ink);
+  transition: transform 0.4s var(--ease-cinema), color 0.3s ease;
+  pointer-events: none;
+}
+.pcm-menu-plus .plus-v,
+.pcm-menu-plus .plus-h {
+  transform-origin: center;
+  transition: transform 0.4s var(--ease-cinema);
+}
+.menu-open .pcm-menu-plus { transform: rotate(135deg); color: var(--brass); }
+.menu-open .pcm-menu-plus .plus-v { transform: rotate(45deg); }
+.menu-open .pcm-menu-plus .plus-h { transform: rotate(45deg); }
+@media (prefers-reduced-motion: reduce) {
+  .pcm-ring-1, .pcm-ring-2 { animation: none; }
+}
+
+/* ───────────────────────────────────────────────────────────────
+   GAP 11 — Triangular SVG corner masks
+   ─────────────────────────────────────────────────────────────── */
+.section-triangles {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s var(--ease-cinema);
+  mix-blend-mode: normal;
+}
+.section-triangles.visible { opacity: 1; }
+.section-triangles polygon {
+  transition: opacity 0.6s var(--ease-cinema), points 0.6s var(--ease-cinema);
+}
+
+/* ───────────────────────────────────────────────────────────────
+   GAP 7 — Belt-conveyor hover text on header links
+   ─────────────────────────────────────────────────────────────── */
+.belt-link {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  position: relative;
+  line-height: 1.1;
+}
+.belt-link-inner {
+  display: flex;
+  transition: transform 0.55s cubic-bezier(0.215, 0.61, 0.355, 1);
+  white-space: nowrap;
+  will-change: transform;
+}
+.belt-link-inner > span {
+  flex-shrink: 0;
+  display: inline-block;
+  text-align: left;
+}
+.belt-link-inner > span + span {
+  margin-left: 0;
+}
+@media (hover: hover) {
+  .belt-link:hover .belt-link-inner {
+    transform: translateX(-50%);
+  }
+  .belt-link:hover .belt-link-inner > span:first-child {
+    opacity: 0.4;
+  }
+  .belt-link:hover .belt-link-inner > span:last-child {
+    opacity: 1;
+    color: var(--brass);
+  }
+}
+.belt-link-inner > span {
+  transition: opacity 0.4s ease, color 0.4s ease;
+}
+.belt-link-inner > span:last-child {
+  opacity: 0.4;
+  color: var(--brass);
+}
+
+/* GAP 15 — mix-blend-mode: screen on chrome wordmark */
+.home-mark .wordmark { mix-blend-mode: screen; }
+
+/* ───────────────────────────────────────────────────────────────
+   GAP 27 — will-change on animated elements
+   ─────────────────────────────────────────────────────────────── */
+.home-mark      { will-change: transform; }
+.scene-copy     { will-change: transform, opacity; }
+.cinema-bar     { will-change: height; }
+.intro-loader   { will-change: opacity; }
+.side-nav-dot   { will-change: transform; }
+.progress-bar-fill { will-change: width; }
+
+/* ───────────────────────────────────────────────────────────────
+   GAP 28 — overscroll-behavior: contain on overlays
+   ─────────────────────────────────────────────────────────────── */
+.detail-card     { overscroll-behavior: contain; }
+#menu-overlay    { overscroll-behavior: contain; }
+.kbd-help-overlay{ overscroll-behavior: contain; }
+.credits-modal   { overscroll-behavior: contain; }
+
+/* ───────────────────────────────────────────────────────────────
+   GAP 20 — @media (hover: hover) guards
+   These selectors override prior :hover rules so they apply only
+   on hover-capable devices (no sticky-hover on touch).
+   ─────────────────────────────────────────────────────────────── */
+@media (hover: none) and (pointer: coarse) {
+  .ctrl-btn:hover,
+  .mode-btn:hover,
+  .side-nav-dot:hover,
+  .section-btn:hover,
+  .menu-overlay nav a:hover,
+  .detail-card .card-close:hover,
+  .pcm-footer .footer-cta:hover {
+    /* Reset accidental hover sticky on touch */
+    border-color: inherit;
+    box-shadow: none;
+    color: inherit;
+    opacity: 0.5;
+  }
+}
+@media (hover: hover) {
+  .ctrl-btn:hover {
+    border-color: var(--brass);
+    box-shadow: 0 0 14px rgba(201, 169, 110, 0.5);
+  }
+  .side-nav-dot:hover .nav-num { color: var(--ink); }
+  .section-btn:hover { opacity: 0.95; }
+  .menu-overlay nav a:hover { color: var(--brass); }
+}
+
+/* ───────────────────────────────────────────────────────────────
+   GAP 2 — SVG drag-to-reveal scrubber (Senior Debt section)
+   ─────────────────────────────────────────────────────────────── */
+.scrub-swiper {
+  position: fixed;
+  bottom: 140px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(560px, 90vw);
+  height: 60px;
+  display: none;
+  align-items: center;
+  z-index: 15;
+  pointer-events: none;
+}
+.scrub-swiper.visible {
+  display: flex;
+  pointer-events: auto;
+}
+.scrub-track {
+  position: relative;
+  flex: 1;
+  height: 30px;
+  margin: 0 24px;
+  display: flex;
+  align-items: center;
+}
+.scrub-track-line {
+  width: 100%;
+  height: 1px;
+  background: rgba(201, 169, 110, 0.0);
+  position: relative;
+}
+.scrub-svg-line {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 30px;
+  top: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+.scrub-drag-handle {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  touch-action: none;
+  z-index: 5;
+  top: 50%;
+  left: 0;
+  transform: translate(-50%, -50%);
+  transition: filter 0.3s ease;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.scrub-drag-handle:hover {
+  filter: drop-shadow(0 0 10px rgba(201, 169, 110, 0.6));
+}
+.scrub-drag-handle.dragging {
+  cursor: grabbing;
+  filter: drop-shadow(0 0 14px rgba(201, 169, 110, 0.8));
+}
+.scrub-end-dot {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+.scrub-label {
+  position: absolute;
+  top: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--brass);
+  opacity: 0.6;
+  white-space: nowrap;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+.scrub-mask-wrap {
+  position: fixed;
+  bottom: 220px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(560px, 80vw);
+  overflow: hidden;
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 0.05s linear;
+  z-index: 14;
+  pointer-events: none;
+}
+.scrub-mask-wrap.revealed {
+  clip-path: inset(0 0% 0 0);
+}
+.scrub-content {
+  padding: 20px 28px;
+  background: rgba(26, 37, 32, 0.85);
+  border: 1px solid rgba(201, 169, 110, 0.2);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.scrub-progress-readout {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--brass);
+  opacity: 0.55;
+}
+
+/* ───────────────────────────────────────────────────────────────
+   GAP 21 — Rich right-side detail drawer
+   ─────────────────────────────────────────────────────────────── */
+.detail-card {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: auto;
+  bottom: auto;
+  width: min(520px, 90vw);
+  height: 100vh;
+  height: calc(var(--vh) * 100);
+  max-height: none;
+  max-width: none;
+  z-index: 40;
+  background: rgba(6, 9, 10, 0.97);
+  border: none;
+  border-left: 1px solid rgba(201, 169, 110, 0.25);
+  padding: 0;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transform: translateX(110%);
+  transition: transform 0.6s cubic-bezier(0.77, 0, 0.175, 1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  overscroll-behavior: contain;
+}
+.detail-card:not(.hidden) {
+  transform: translateX(0);
+  display: flex;
+}
+.detail-card.hidden {
+  transform: translateX(110%);
+  display: flex;        /* still flex; hide via translate to keep transition */
+  pointer-events: none;
+}
+.detail-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 120px;
+  background: linear-gradient(180deg, rgba(6,9,10,1) 0%, transparent 100%);
+  z-index: 2;
+  pointer-events: none;
+}
+.detail-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 40px; bottom: 0;
+  background: linear-gradient(90deg, rgba(6,9,10,0.6) 0%, transparent 100%);
+  z-index: 2;
+  pointer-events: none;
+}
+.detail-card-scrollable {
+  flex: 1;
+  overflow-y: auto;
+  padding: 80px 40px 80px 44px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  position: relative;
+  z-index: 3;
+}
+.detail-card-scrollable::-webkit-scrollbar { display: none; width: 0; height: 0; }
+.detail-scrollbar {
+  position: absolute;
+  right: 8px;
+  top: 80px;
+  bottom: 80px;
+  width: 1px;
+  background: rgba(201, 169, 110, 0.1);
+  z-index: 4;
+}
+.detail-scrollbar-thumb {
+  position: absolute;
+  width: 1px;
+  background: var(--brass);
+  min-height: 40px;
+  top: 0;
+  left: 0;
+  transition: opacity 0.2s ease;
+  box-shadow: 0 0 6px rgba(201, 169, 110, 0.4);
+}
+.detail-card .card-close,
+.detail-card > .card-close {
+  position: absolute;
+  top: 24px;
+  left: 20px;
+  z-index: 10;
+  color: rgba(201, 169, 110, 0.5);
+  transition: color 0.2s, transform 0.3s;
+  cursor: none;
+  background: none;
+  border: none;
+  padding: 4px;
+  font-size: 12px;
+  line-height: 1;
+}
+@media (hover: hover) {
+  .detail-card .card-close:hover {
+    color: var(--brass);
+    transform: scale(1.1) rotate(90deg);
+  }
+}
+.detail-card .card-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(232, 220, 196, 0.4);
+}
+.detail-card .card-meta-row::before {
+  content: '';
+  display: inline-block;
+  width: 14px;
+  height: 1px;
+  background: var(--brass);
+}
+.detail-card .card-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.32em;
+  color: var(--brass);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 14px;
+}
+.detail-card .card-title {
+  font-family: var(--font-serif);
+  font-size: 36px;
+  font-weight: 400;
+  color: var(--ink);
+  letter-spacing: 0.02em;
+  line-height: 1.12;
+  margin: 0 0 18px;
+}
+.detail-card .card-rule {
+  display: block;
+  width: 48px;
+  height: 1px;
+  background: var(--brass);
+  border: none;
+  margin: 22px 0;
+}
+.detail-card .card-body {
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.78;
+  color: rgba(227, 238, 230, 0.84);
+  margin-bottom: 28px;
+}
+.detail-card .card-spec-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px 28px;
+  margin: 22px 0 30px;
+  padding: 22px 0;
+  border-top: 1px solid rgba(201, 169, 110, 0.1);
+  border-bottom: 1px solid rgba(201, 169, 110, 0.1);
+}
+.detail-card .card-spec-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.detail-card .card-spec-label {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.28em;
+  color: rgba(232, 220, 196, 0.4);
+  text-transform: uppercase;
+}
+.detail-card .card-spec-value {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  color: var(--brass);
+  letter-spacing: 0.02em;
+}
+.detail-card .card-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+  padding: 12px 0;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  color: var(--brass);
+  text-transform: uppercase;
+  border: none;
+  background: transparent;
+  cursor: none;
+  position: relative;
+}
+.detail-card .card-cta::after {
+  content: '';
+  position: absolute;
+  bottom: 4px; left: 0;
+  width: 100%; height: 1px;
+  background: var(--brass);
+  transform: scaleX(0.4);
+  transform-origin: 0% 50%;
+  transition: transform 0.4s var(--ease-cinema);
+}
+@media (hover: hover) {
+  .detail-card .card-cta:hover::after { transform: scaleX(1); }
+}
+
+/* ───────────────────────────────────────────────────────────────
+   GAP 25 — Grid-layout footer (replaces old footer)
+   ─────────────────────────────────────────────────────────────── */
+.pcm-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 48px;
+  z-index: 18;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 0 var(--margin, 60px);
+  background: linear-gradient(0deg, rgba(6, 9, 10, 0.9) 0%, transparent 100%);
+  pointer-events: none;
+  opacity: 1;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(227, 238, 230, 0.3);
+}
+.pcm-footer .footer-left {
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: rgba(227, 238, 230, 0.3);
+  text-transform: uppercase;
+  pointer-events: auto;
+}
+.pcm-footer .footer-center {
+  text-align: center;
+}
+.pcm-footer .footer-cta {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--brass);
+  text-transform: uppercase;
+  position: relative;
+  pointer-events: auto;
+  cursor: none;
+  text-decoration: none;
+  background: none;
+  border: none;
+  padding: 4px 2px;
+}
+.pcm-footer .footer-cta::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 0; right: 0;
+  height: 1px;
+  background: var(--brass);
+  transform: scaleX(0);
+  transform-origin: 0% 50%;
+  transition: transform 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+@media (hover: hover) {
+  .pcm-footer .footer-cta:hover::after { transform: scaleX(1); }
+}
+.pcm-footer .footer-right {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: rgba(201, 169, 110, 0.4);
+  pointer-events: auto;
+}
+.pcm-footer .footer-credits-link {
+  background: none;
+  border: none;
+  color: rgba(201, 169, 110, 0.5);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: none;
+  padding: 4px 6px;
+  margin-left: 10px;
+  transition: color 0.3s;
+}
+@media (hover: hover) {
+  .pcm-footer .footer-credits-link:hover { color: var(--brass); }
+}
+@media (max-width: 768px) {
+  .pcm-footer {
+    height: 38px;
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .pcm-footer .footer-center,
+  .pcm-footer .footer-right { display: none; }
+}
+
+/* ───────────────────────────────────────────────────────────────
+   GAP 31 / supplemental — Make controls cluster horizontal at bottom
+   and elevate the menu ring button distinctly
+   ─────────────────────────────────────────────────────────────── */
+.controls-cluster .ctrl-btn {
+  width: 36px;
+  height: 36px;
+}
+.controls-cluster #btn-menu {
+  width: 44px;
+  height: 44px;
+  background: transparent;
+  border: none;
+}
+@media (hover: hover) {
+  .controls-cluster #btn-menu:hover {
+    box-shadow: none;
+    border: none;
+  }
+}
+
+/* ───────────────────────────────────────────────────────────────
+   GAP 30 — Cinema bar accents
+   ─────────────────────────────────────────────────────────────── */
+.cinema-bar {
+  background:
+    linear-gradient(180deg, rgba(6,9,10,1) 0%, rgba(6,9,10,0.85) 100%);
+}
+.cinema-bar--top::after,
+.cinema-bar-top::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(201,169,110,0.4) 50%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.4s var(--ease-cinema);
+}
+.cinema-bar--bottom::before,
+.cinema-bar-bottom::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(201,169,110,0.4) 50%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.4s var(--ease-cinema);
+}
+body.transitioning .cinema-bar--top::after,
+body.transitioning .cinema-bar-top::after,
+body.transitioning .cinema-bar--bottom::before,
+body.transitioning .cinema-bar-bottom::before {
+  opacity: 1;
+}
+
+/* ───────────────────────────────────────────────────────────────
+   Mobile / Responsive
+   ─────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .home-mark { top: 18px; left: var(--margin); }
+  .top-section-meta { top: 18px; right: var(--margin); }
+  .side-nav { right: 14px; gap: 10px; }
+  .controls-cluster { right: 14px; bottom: 64px; gap: 8px; }
+  .kbd-hints { display: none; }
+  .scene-copy { padding: 0 var(--margin); }
+  .scene-copy .main-title { font-size: clamp(2rem, 8vw, 3.4rem); }
+  .detail-card { width: 100vw; max-width: 100vw; border-left: none; }
+  .detail-card-scrollable { padding: 70px 24px 80px 28px; }
+}
+
+/* ───────────────────────────────────────────────────────────────
+   Focus visibility (a11y)
+   ─────────────────────────────────────────────────────────────── */
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--brass);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 4px rgba(201, 169, 110, 0.15);
+}
+
+/* ───────────────────────────────────────────────────────────────
+   Print
+   ─────────────────────────────────────────────────────────────── */
+@media print {
+  body { background: white; color: black; }
+  #canvas-host, .controls-cluster, .side-nav, .bottom-menu,
+  .cinema-bar, .kbd-hints, .vignette, .section-triangles {
+    display: none !important;
+  }
+}
   </style>
 </head>
 <body class="pcm-body">
@@ -1902,7 +2813,8 @@ body:has(.pcm-cursor) {
     "imports": {
       "three": "https://esm.sh/three@0.160.0",
       "three/addons/": "https://esm.sh/three@0.160.0/examples/jsm/",
-      "postprocessing": "https://esm.sh/postprocessing@6.36.4?deps=three@0.160.0"
+      "postprocessing": "https://esm.sh/postprocessing@6.36.4?deps=three@0.160.0",
+      "gsap": "https://esm.sh/gsap@3.12.7"
     }
   }
   </script>
@@ -1910,6 +2822,8 @@ body:has(.pcm-cursor) {
   <script type="module">
   import * as THREE from 'three';
   import * as POSTPROCESSING from 'postprocessing';
+  import gsap from 'gsap';
+  window.gsap = gsap;
 
   // Expose as globals so the non-module scripts below can find them
   window.THREE = THREE;
@@ -1918,9 +2832,7 @@ body:has(.pcm-cursor) {
   // Shared mutable state used across input.js / animation.js
   window.dragRotXTarget = 0;
   window.dragRotYTarget = 0;
-  let dragRotXTarget = 0, dragRotYTarget = 0;
-  let mouseTarget = { x: 0, y: 0 };
-  window.mouseTarget = mouseTarget;
+  window.mouseTarget = { x: 0, y: 0 };
   window.activeIdx = 0;
 
   // ─── scene-setup.js ────────────────────────────────────────────────
@@ -2585,7 +3497,13 @@ function updateCopyContent(idx) {
   const el = id => document.getElementById(id);
 
   if (el('copy-pre')) el('copy-pre').textContent = s.preTitle || '';
-  if (el('copy-title')) el('copy-title').textContent = s.title;
+  if (el('copy-title')) {
+    // Split title into words for reveal (seacat-style line reveal)
+    const words = s.title.split(' ');
+    el('copy-title').innerHTML = words.map(w =>
+      `<span class="reveal-wrap"><span class="reveal-inner">${w}</span></span>`
+    ).join(' ');
+  }
   if (el('copy-sub')) el('copy-sub').textContent = s.subTitle || '';
   if (el('copy-sub')) el('copy-sub').style.display = s.subTitle ? '' : 'none';
   if (el('copy-body')) el('copy-body').textContent = s.body;
@@ -2625,9 +3543,13 @@ function updateCopyContent(idx) {
       <button class="mode-btn ${i === 0 ? 'active' : ''}" data-idx="${i}" onclick="window.setMode(${i})">
         <span class="mode-name">${m.name}</span>
       </button>
-    `).join('');
+    `).join('') + '<span class="mode-drag-indicator"></span>';
     modesEl.style.display = '';
     showModeContent(0, s);
+    // Position drag indicator after layout
+    requestAnimationFrame(() => {
+      if (typeof window.updateModeIndicator === 'function') window.updateModeIndicator(0);
+    });
   } else if (modesEl) {
     modesEl.style.display = 'none';
   }
@@ -2678,6 +3600,10 @@ function showModeContent(idx, section) {
   document.querySelectorAll('.mode-btn').forEach((btn, i) => {
     btn.classList.toggle('active', i === idx);
   });
+  // Animate drag indicator (seacat swiper-style)
+  if (typeof window.updateModeIndicator === 'function') {
+    window.updateModeIndicator(idx);
+  }
 }
 
 window.setMode = function(idx) {
@@ -2686,8 +3612,18 @@ window.setMode = function(idx) {
 };
 
 function updateSectionUI(idx) {
-  // Side nav dots
+  // Side nav dots + ring progress
   document.querySelectorAll('.side-nav-dot').forEach((dot, i) => {
+    const fill = dot.querySelector('.nav-ring-fill');
+    if (fill) {
+      if (i < idx) {
+        fill.style.strokeDashoffset = '0'; // completed
+      } else if (i === idx) {
+        fill.style.strokeDashoffset = '44'; // half-fill active
+      } else {
+        fill.style.strokeDashoffset = '88'; // empty
+      }
+    }
     dot.classList.toggle('active', i === idx);
   });
   // Bottom menu buttons
@@ -2695,8 +3631,33 @@ function updateSectionUI(idx) {
     btn.classList.toggle('active', i === idx);
   });
 
+  // Mode indicator
+  if (typeof updateModeIndicator === 'function') {
+    const activeBtn = document.querySelector('.mode-btn.active');
+    if (activeBtn) {
+      const allBtns = document.querySelectorAll('.mode-btn');
+      const activeIdx = Array.from(allBtns).indexOf(activeBtn);
+      updateModeIndicator(activeIdx >= 0 ? activeIdx : 0);
+    }
+  }
+
   window.activeIdx = idx;
 }
+
+// Mode drag indicator (seacat swiper-style)
+function updateModeIndicator(idx) {
+  const btns = document.querySelectorAll('.mode-btn');
+  const indicator = document.querySelector('.mode-drag-indicator');
+  if (!indicator || !btns[idx]) return;
+  const btn = btns[idx];
+  const row = document.querySelector('.modes-row');
+  if (!row) return;
+  const rowRect = row.getBoundingClientRect();
+  const btnRect = btn.getBoundingClientRect();
+  indicator.style.left = (btnRect.left - rowRect.left) + 'px';
+  indicator.style.width = btnRect.width + 'px';
+}
+window.updateModeIndicator = updateModeIndicator;
 window.updateSectionUI = updateSectionUI;
 window.updateCopyContent = updateCopyContent;
 
@@ -2859,29 +3820,59 @@ window.updateCopyContent = updateCopyContent;
 
   function buildIntroLoader() {
     insertHTML('afterbegin', `
-      <div id="intro-loader" class="intro-loader" role="status" aria-live="polite">
+      <div id="intro-loader" class="intro-loader" role="status" aria-live="polite" aria-label="Loading Patel Capital Markets">
         <div class="loader-inner">
-          <div class="loader-spinner" aria-hidden="true"></div>
-          <div class="loader-wordmark">Patel Capital Markets</div>
-          <div class="loader-status" id="loader-status">Initializing scene...</div>
+          <div class="intro-loader__wordmark-loader">Patel Capital Markets</div>
+          <div class="intro-loader__hairline" aria-hidden="true"></div>
+          <div class="loader-status intro-loader__text" id="loader-status">Initializing scene...</div>
+          <div class="intro-loader__bar-wrap" aria-hidden="true">
+            <div class="intro-loader__bar-fill" id="loader-bar"></div>
+          </div>
+          <div class="intro-loader__pct" id="loader-pct" aria-hidden="true">0%</div>
         </div>
       </div>
     `);
 
-    const statusEl = document.getElementById('loader-status');
+    // Loader percentage animation
+    const loaderBar = document.getElementById('loader-bar');
+    const loaderPct = document.getElementById('loader-pct');
+    const loaderTextEl = document.getElementById('loader-status');
+    const pctSteps  = [0, 12, 28, 46, 62, 78, 90, 96, 100];
+    const pctLabels = [
+      'Initializing...',
+      'Loading assets...',
+      'Three.js · r160',
+      'Building scene...',
+      'Calibrating structure...',
+      'Configuring capital stack...',
+      'Postprocessing online...',
+      'Almost ready...',
+      ''
+    ];
+    let pctIdx = 0;
 
-    // Status text progression
-    LOADER_STATUS_STEPS.forEach(([delay, text]) => {
-      setTimeout(() => {
-        if (statusEl) statusEl.textContent = text;
-      }, delay);
-    });
+    function advanceLoader() {
+      if (pctIdx >= pctSteps.length) return;
+      const pct = pctSteps[pctIdx];
+      if (loaderBar) loaderBar.style.width = pct + '%';
+      if (loaderPct) loaderPct.textContent = pct + '%';
+      if (loaderTextEl && pctLabels[pctIdx] !== undefined && pctLabels[pctIdx] !== '') {
+        loaderTextEl.textContent = pctLabels[pctIdx];
+      }
+      pctIdx++;
+    }
 
-    // Dismiss loader
+    advanceLoader();
+    const loaderInterval = setInterval(() => {
+      advanceLoader();
+      if (pctIdx >= pctSteps.length) clearInterval(loaderInterval);
+    }, 280);
+
+    // Dismiss loader after reaching 100%
     setTimeout(() => {
       const loader = document.getElementById('intro-loader');
       if (loader) loader.classList.add('done');
-    }, 1800);
+    }, 2400);
   }
 
   // ---------------------------------------------------------------------------
@@ -2901,20 +3892,33 @@ window.updateCopyContent = updateCopyContent;
 
   function buildHomeMark() {
     insertHTML('beforeend', `
-      <div class="home-mark" id="home-mark" aria-label="Patel Capital Markets">
-        <div class="wordmark">Patel Capital Markets</div>
-        <div class="slogan">Engineering Creative Finance</div>
-        <div class="brass-hairline"></div>
-      </div>
+      <a href="#" class="home-mark" id="home-mark" role="button"
+         aria-label="Patel Capital Markets — return to home">
+        <span class="wordmark belt-link">
+          <span class="belt-link-inner">
+            <span>Patel Capital Markets</span>
+            <span>Return Home →</span>
+          </span>
+        </span>
+        <span class="slogan">Engineering Creative Finance</span>
+        <span class="brass-hairline" aria-hidden="true"></span>
+      </a>
     `);
 
     // Clicking the wordmark always returns to section 0
     const mark = document.getElementById('home-mark');
     if (mark) {
       mark.style.cursor = 'pointer';
-      mark.addEventListener('click', () => {
+      mark.addEventListener('click', (e) => {
+        e.preventDefault();
         if (typeof window.goToSection === 'function') {
           window.goToSection(0, -1);
+        }
+      });
+      mark.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          if (typeof window.goToSection === 'function') window.goToSection(0, -1);
         }
       });
     }
@@ -2942,10 +3946,20 @@ window.updateCopyContent = updateCopyContent;
     sideNav.className = 'side-nav';
     sideNav.setAttribute('aria-label', 'Section navigation');
     sideNav.innerHTML = SECTION_NAMES.map((name, i) => `
-      <button class="side-nav-dot ${i === 0 ? 'active' : ''}"
+      <button class="side-nav-dot ${i===0?'active':''}"
+        data-idx="${i}"
         data-tooltip="${name}"
-        aria-label="Go to ${name}"
+        aria-label="Go to section ${i + 1} of ${SECTION_NAMES.length}: ${name}"
+        aria-current="${i === 0 ? 'page' : 'false'}"
+        title="${name}"
         onclick="window.goToSection(${i}, ${i} > (window.activeIdx||0) ? 1 : -1)">
+        <svg class="nav-ring" viewBox="0 0 36 36" width="36" height="36" aria-hidden="true">
+          <circle class="nav-ring-track" cx="18" cy="18" r="14" fill="none" stroke="rgba(201,169,110,0.15)" stroke-width="1"/>
+          <circle class="nav-ring-fill" cx="18" cy="18" r="14" fill="none" stroke="#c9a96e" stroke-width="1.5"
+            stroke-dasharray="88" stroke-dashoffset="88" stroke-linecap="round"
+            transform="rotate(-90 18 18)"/>
+        </svg>
+        <span class="nav-num" aria-hidden="true">${String(i+1).padStart(2,'0')}</span>
       </button>
     `).join('');
     document.body.appendChild(sideNav);
@@ -3026,10 +4040,12 @@ window.updateCopyContent = updateCopyContent;
       <div class="bottom-menu-inner">
         ${SECTION_NAMES_SHORT.map((name, i) => `
           <button class="section-btn ${i === 0 ? 'active' : ''}"
-            aria-label="Go to ${name}"
+            aria-label="Go to section ${i + 1}: ${SECTION_NAMES[i]}"
+            aria-current="${i === 0 ? 'page' : 'false'}"
+            title="${SECTION_NAMES[i]}"
             onclick="window.goToSection(${i}, ${i} > (window.activeIdx||0) ? 1 : -1)">
             <span class="btn-num">${String(i + 1).padStart(2, '0')}</span>
-            <span class="btn-name">${name}</span>
+            <span class="btn-name belt-link"><span class="belt-link-inner"><span>${name}</span><span>→</span></span></span>
           </button>
         `).join('')}
       </div>
@@ -3047,11 +4063,39 @@ window.updateCopyContent = updateCopyContent;
   function buildControlsCluster() {
     insertHTML('beforeend', `
       <div class="controls-cluster" role="toolbar" aria-label="View controls">
-        <button id="btn-audio" class="ctrl-btn" aria-label="Toggle audio" title="Audio (M)">♪</button>
-        <button id="btn-explode" class="ctrl-btn" aria-label="Explode view" title="Explode (E)">⊕</button>
-        <button id="btn-wire" class="ctrl-btn" aria-label="Wireframe" title="Wireframe (W)">▦</button>
-        <button id="btn-help" class="ctrl-btn" aria-label="Help" title="Help (H)" onclick="document.getElementById('kbd-help').classList.toggle('hidden')">?</button>
-        <button id="btn-menu" class="ctrl-btn" aria-label="Open menu" title="Menu" onclick="document.getElementById('menu-overlay').classList.toggle('open')">☰</button>
+        <button id="btn-audio" class="ctrl-btn" aria-label="Toggle ambient audio" aria-pressed="false" title="Audio (M)">
+          <svg class="audio-wave" viewBox="0 0 28 18" width="28" height="18" aria-hidden="true">
+            <polyline id="audio-wave-line"
+              points="0,9 4,9 6,9 8,9 10,9 12,9 14,9 16,9 18,9 20,9 22,9 24,9 28,9"
+              fill="none" stroke="currentColor" stroke-width="1.2"
+              stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <button id="btn-explode" class="ctrl-btn" aria-label="Toggle exploded view" aria-pressed="false" title="Explode (E)">⊕</button>
+        <button id="btn-wire" class="ctrl-btn" aria-label="Toggle wireframe view" aria-pressed="false" title="Wireframe (W)">▦</button>
+        <button id="btn-help" class="ctrl-btn" aria-label="Open keyboard shortcuts" aria-haspopup="dialog" title="Help (H)" onclick="document.getElementById('kbd-help').classList.toggle('hidden')">?</button>
+        <button id="btn-menu" aria-label="Open site menu" aria-expanded="false" aria-controls="menu-overlay" title="Menu" onclick="const ov=document.getElementById('menu-overlay');const isOpen=ov.classList.toggle('open');document.body.classList.toggle('menu-open',isOpen);this.setAttribute('aria-expanded',String(isOpen));">
+          <div class="pcm-menu-rings" aria-hidden="true">
+            <svg class="pcm-ring pcm-ring-1" viewBox="0 0 40 40" width="40" height="40">
+              <circle cx="20" cy="20" r="18" fill="none"
+                stroke="rgba(201,169,110,0.25)" stroke-width="0.8"
+                stroke-dasharray="3 4"/>
+            </svg>
+            <svg class="pcm-ring pcm-ring-2" viewBox="0 0 40 40" width="40" height="40">
+              <circle cx="20" cy="20" r="14" fill="none"
+                stroke="rgba(201,169,110,0.15)" stroke-width="0.5"
+                stroke-dasharray="2 6"/>
+            </svg>
+            <svg class="pcm-menu-plus" viewBox="0 0 16 16" width="16" height="16">
+              <line x1="8" y1="2" x2="8" y2="14"
+                stroke="currentColor" stroke-width="1.2"
+                stroke-linecap="round" class="plus-v"/>
+              <line x1="2" y1="8" x2="14" y2="8"
+                stroke="currentColor" stroke-width="1.2"
+                stroke-linecap="round" class="plus-h"/>
+            </svg>
+          </div>
+        </button>
       </div>
     `);
 
@@ -3126,35 +4170,120 @@ window.updateCopyContent = updateCopyContent;
   }
 
   // ---------------------------------------------------------------------------
+  // 12b. Section Corner Triangles (Gap 11)
+  // ---------------------------------------------------------------------------
+  function buildSectionTriangles() {
+    insertHTML('beforeend', `
+      <svg id="section-triangles" class="section-triangles"
+           viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true">
+        <polygon id="tri-tl" points="0 0 0 0 0 0" fill="#06090a" opacity="0"/>
+        <polygon id="tri-br" points="1 1 1 1 1 1" fill="#06090a" opacity="0"/>
+        <polygon id="tri-tr" points="1 0 1 0 1 0" fill="#06090a" opacity="0"/>
+        <polygon id="tri-bl" points="0 1 0 1 0 1" fill="#06090a" opacity="0"/>
+      </svg>
+    `);
+  }
+
+  // ---------------------------------------------------------------------------
+  // 12c. Scrub Swiper (Gap 2 — Senior Debt scrubMode)
+  // ---------------------------------------------------------------------------
+  function buildScrubSwiper() {
+    insertHTML('beforeend', `
+      <!-- Scrub swiper for Senior Debt (Gap 2) -->
+      <div id="scrub-mask" class="scrub-mask-wrap" aria-hidden="true">
+        <div class="scrub-content">
+          <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:0.3em;color:var(--brass);margin-bottom:8px;text-transform:uppercase;" id="scrub-content-label">
+            Senior Debt · Capital Structure
+          </div>
+          <div style="font-family:var(--font-serif);font-size:20px;color:var(--ink);" id="scrub-content-title">
+            Acquisition Financing
+          </div>
+          <div style="font-family:var(--font-body);font-size:13px;color:rgba(227,238,230,0.7);margin-top:6px;line-height:1.6;" id="scrub-content-body">
+            $15M–$500M · SOFR + 175–275 bps · 6–10 week close
+          </div>
+          <div style="display:flex;gap:18px;margin-top:14px;">
+            <div>
+              <div style="font-family:var(--font-mono);font-size:8px;letter-spacing:0.24em;color:rgba(232,220,196,0.4);text-transform:uppercase;">Size</div>
+              <div style="font-family:var(--font-serif);font-size:18px;color:var(--brass);margin-top:2px;" id="scrub-stat-size">$15M–$500M</div>
+            </div>
+            <div>
+              <div style="font-family:var(--font-mono);font-size:8px;letter-spacing:0.24em;color:rgba(232,220,196,0.4);text-transform:uppercase;">Spread</div>
+              <div style="font-family:var(--font-serif);font-size:18px;color:var(--brass);margin-top:2px;" id="scrub-stat-spread">SOFR + 175–275</div>
+            </div>
+            <div>
+              <div style="font-family:var(--font-mono);font-size:8px;letter-spacing:0.24em;color:rgba(232,220,196,0.4);text-transform:uppercase;">Close</div>
+              <div style="font-family:var(--font-serif);font-size:18px;color:var(--brass);margin-top:2px;" id="scrub-stat-close">6–10 weeks</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="scrub-swiper" class="scrub-swiper" role="slider"
+           aria-label="Drag the handle to reveal four capital structure modes: Acquisition, Refinance, Bridge, Construction"
+           aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-orientation="horizontal">
+        <svg class="scrub-end-dot" viewBox="0 0 20 20" aria-hidden="true">
+          <circle cx="10" cy="10" r="8" fill="none" stroke="rgba(201,169,110,0.4)" stroke-width="1" stroke-dasharray="20 11"/>
+          <circle cx="10" cy="10" r="4" fill="rgba(201,169,110,0.2)"/>
+        </svg>
+        <div class="scrub-track">
+          <span class="scrub-label">← Drag to reveal structure</span>
+          <svg class="scrub-svg-line" viewBox="0 0 400 30" preserveAspectRatio="none" aria-hidden="true">
+            <line x1="0" y1="15" x2="400" y2="15"
+              stroke="rgba(201,169,110,0.3)" stroke-width="1" stroke-dasharray="1,10"/>
+            <!-- Mode tick marks at 0, 33%, 66%, 100% -->
+            <circle cx="0" cy="15" r="2" fill="rgba(201,169,110,0.5)"/>
+            <circle cx="133" cy="15" r="2" fill="rgba(201,169,110,0.5)"/>
+            <circle cx="266" cy="15" r="2" fill="rgba(201,169,110,0.5)"/>
+            <circle cx="400" cy="15" r="2" fill="rgba(201,169,110,0.5)"/>
+          </svg>
+          <div id="scrub-handle" class="scrub-drag-handle" tabindex="0"
+               role="button" aria-label="Drag handle to reveal capital structure">
+            <svg viewBox="0 0 48 48" width="48" height="48" aria-hidden="true">
+              <circle cx="24" cy="24" r="22" fill="rgba(6,9,10,0.9)" stroke="rgba(201,169,110,0.5)" stroke-width="1"/>
+              <circle cx="24" cy="24" r="16" fill="none" stroke="rgba(201,169,110,0.2)" stroke-width="0.8" stroke-dasharray="2,9.4"/>
+              <path d="M 24,5 A 19,19 0 0,1 43,24" fill="none" stroke="var(--brass)" stroke-width="1.5" stroke-dasharray="35,65" stroke-linecap="round"/>
+              <polyline points="19,24 24,24 29,24" fill="none" stroke="var(--ink)" stroke-width="1.2" stroke-linecap="round"/>
+              <polyline points="16,24 13,21 16,24 13,27" fill="none" stroke="var(--ink)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+              <polyline points="32,24 35,21 32,24 35,27" fill="none" stroke="var(--ink)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="scrub-progress-readout" id="scrub-progress-readout">0%</div>
+        </div>
+        <svg class="scrub-end-dot" viewBox="0 0 20 20" aria-hidden="true">
+          <circle cx="10" cy="10" r="8" fill="none" stroke="rgba(201,169,110,0.6)" stroke-width="1.2" stroke-dasharray="20 11"/>
+          <circle cx="10" cy="10" r="4" fill="var(--brass)"/>
+        </svg>
+      </div>
+    `);
+  }
+
+  // ---------------------------------------------------------------------------
   // 13. Footer
   // ---------------------------------------------------------------------------
 
   function buildFooter() {
     insertHTML('beforeend', `
-      <div class="pcm-footer" aria-label="Footer">
-        <span>© 2025 Patel Capital Markets · deals@patelcapital.markets</span>
-        <button
-          onclick="document.getElementById('credits-modal').classList.remove('hidden')"
-          style="
-            background:none;
-            border:1px solid var(--brass, #b8972a);
-            color:var(--brass, #b8972a);
-            font-family:var(--font-mono, monospace);
-            font-size:0.65rem;
-            letter-spacing:0.12em;
-            padding:2px 8px;
-            cursor:pointer;
-            margin-left:1rem;
-            opacity:0.7;
-            transition:opacity 0.2s;
-          "
-          onmouseover="this.style.opacity='1'"
-          onmouseout="this.style.opacity='0.7'"
-          aria-label="Open credits">
-          Credits
-        </button>
-        <span id="footer-section" style="float:right;opacity:0.5"></span>
-      </div>
+      <footer class="pcm-footer" role="contentinfo" aria-label="Site footer">
+        <div class="footer-left">
+          © 2026 Patel Capital Markets · <a href="mailto:deals@patelcapital.markets" style="color:inherit;text-decoration:none;">deals@patelcapital.markets</a>
+          <button class="footer-credits-link"
+            onclick="document.getElementById('credits-modal').classList.remove('hidden')"
+            aria-label="Open credits modal">
+            Credits
+          </button>
+        </div>
+        <div class="footer-center">
+          <a href="#" class="footer-cta" id="footer-cta-engage"
+             onclick="window.goToSection && window.goToSection(9,1); return false;"
+             aria-label="Go to the Engage section to start a conversation">
+             Bring us your deal →
+          </a>
+        </div>
+        <div class="footer-right" id="footer-section-counter" aria-live="polite">
+          <span id="footer-section">Home</span>
+          <span style="opacity:0.4;margin:0 6px;">·</span>
+          <span id="footer-counter">01 / 10</span>
+        </div>
+      </footer>
     `);
   }
 
@@ -3301,18 +4430,37 @@ window.updateCopyContent = updateCopyContent;
     if (metaSection) metaSection.textContent = `${String(idx + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}`;
     if (metaCaption) metaCaption.textContent = SECTION_NAMES[idx] || '';
 
-    // Footer section label
+    // Footer section label + counter (new grid footer)
     const footerSection = document.getElementById('footer-section');
     if (footerSection) footerSection.textContent = SECTION_NAMES[idx] || '';
+    const footerCounter = document.getElementById('footer-counter');
+    if (footerCounter) footerCounter.textContent = `${String(idx + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}`;
+
+    // Triangle masks per section
+    if (typeof window.applyTriangles === 'function') {
+      window.applyTriangles(idx);
+    }
+
+    // Scrub swiper visibility (Senior Debt section)
+    if (typeof window._syncScrubber === 'function') {
+      window._syncScrubber(idx);
+    }
+
+    // Menu button aria-expanded state (in case it got out of sync)
+    const menuOpen = document.body.classList.contains('menu-open');
+    const btnMenu = document.getElementById('btn-menu');
+    if (btnMenu) btnMenu.setAttribute('aria-expanded', String(menuOpen));
 
     // Side nav dots
     document.querySelectorAll('.side-nav-dot').forEach((dot, i) => {
       dot.classList.toggle('active', i === idx);
+      dot.setAttribute('aria-current', i === idx ? 'page' : 'false');
     });
 
     // Bottom menu buttons
     document.querySelectorAll('.section-btn').forEach((btn, i) => {
       btn.classList.toggle('active', i === idx);
+      btn.setAttribute('aria-current', i === idx ? 'page' : 'false');
     });
 
     // Progress bar
@@ -3354,6 +4502,8 @@ window.updateCopyContent = updateCopyContent;
     buildControlsCluster();
     buildKbdHints();
     buildStatusConsole();
+    buildSectionTriangles();
+    buildScrubSwiper();
     buildFooter();
 
     // --- Logic / handlers (no DOM insertion) ---
@@ -3385,17 +4535,84 @@ window.updateCopyContent = updateCopyContent;
 
 function initOverlays() {
 
-  // ── 1. DETAIL CARD ──────────────────────────────────────────────────────────
+  // ── 1. DETAIL CARD (Gap 21 — right-side rich drawer) ─────────────────────────
   const detailCard = document.createElement('div');
   detailCard.innerHTML = `
-<div id="detail-card" class="detail-card hidden">
-  <button id="card-close" class="card-close" aria-label="Close">✕</button>
-  <span id="card-label" class="card-label"></span>
-  <h3 id="card-title" class="card-title"></h3>
-  <div class="card-rule"></div>
-  <p id="card-body" class="card-body"></p>
-</div>`;
+<aside id="detail-card" class="detail-card hidden" role="dialog"
+       aria-modal="false" aria-labelledby="card-title"
+       aria-describedby="card-body" aria-label="Capital structure detail">
+  <button id="card-close" class="card-close" aria-label="Close detail panel" title="Close (Esc)">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <line x1="3" y1="3" x2="13" y2="13"
+        stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+      <line x1="13" y1="3" x2="3" y2="13"
+        stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+    </svg>
+  </button>
+  <div class="detail-card-scrollable" id="detail-scrollable">
+    <div class="card-meta-row" id="card-meta-row">PCM · Inspect</div>
+    <span id="card-label" class="card-label">—</span>
+    <h2 id="card-title" class="card-title">—</h2>
+    <hr class="card-rule" aria-hidden="true"/>
+    <p id="card-body" class="card-body">—</p>
+    <div class="card-spec-grid" id="card-spec-grid" hidden>
+      <div class="card-spec-row">
+        <span class="card-spec-label">Layer</span>
+        <span class="card-spec-value" id="card-spec-layer">—</span>
+      </div>
+      <div class="card-spec-row">
+        <span class="card-spec-label">Risk</span>
+        <span class="card-spec-value" id="card-spec-risk">—</span>
+      </div>
+      <div class="card-spec-row">
+        <span class="card-spec-label">Coupon</span>
+        <span class="card-spec-value" id="card-spec-coupon">—</span>
+      </div>
+      <div class="card-spec-row">
+        <span class="card-spec-label">Tenor</span>
+        <span class="card-spec-value" id="card-spec-tenor">—</span>
+      </div>
+    </div>
+    <button type="button" class="card-cta" id="card-cta"
+            onclick="window.goToSection && window.goToSection(9,1); document.getElementById('detail-card').classList.add('hidden');"
+            aria-label="Engage with PCM about this structure">
+      Discuss this structure
+      <svg width="14" height="10" viewBox="0 0 14 10" aria-hidden="true">
+        <path d="M0 5 L13 5 M9 1 L13 5 L9 9" fill="none"
+          stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+  <div class="detail-scrollbar" aria-hidden="true">
+    <div class="detail-scrollbar-thumb" id="detail-thumb"></div>
+  </div>
+</aside>`;
   document.body.appendChild(detailCard.firstElementChild);
+
+  // Detail card custom scrollbar (Gap 21)
+  setTimeout(() => {
+    const detailScrollable = document.getElementById('detail-scrollable');
+    const detailThumb = document.getElementById('detail-thumb');
+    if (detailScrollable && detailThumb) {
+      function updateThumb() {
+        if (detailScrollable.scrollHeight <= detailScrollable.clientHeight) {
+          detailThumb.style.opacity = '0';
+          return;
+        }
+        detailThumb.style.opacity = '1';
+        const scrollRatio = detailScrollable.scrollTop / (detailScrollable.scrollHeight - detailScrollable.clientHeight);
+        const trackH = detailScrollable.clientHeight - 160;
+        const thumbH = Math.max(40, trackH * (detailScrollable.clientHeight / detailScrollable.scrollHeight));
+        const maxTop = Math.max(0, trackH - thumbH);
+        detailThumb.style.height = thumbH + 'px';
+        detailThumb.style.top = (scrollRatio * maxTop) + 'px';
+      }
+      detailScrollable.addEventListener('scroll', updateThumb);
+      window.addEventListener('resize', updateThumb);
+      updateThumb();
+      window._updateDetailScrollbar = updateThumb;
+    }
+  }, 50);
 
   // ── 2. KEYBOARD HELP OVERLAY ─────────────────────────────────────────────────
   const kbdHelp = document.createElement('div');
@@ -3425,7 +4642,7 @@ function initOverlays() {
   const menuOverlay = document.createElement('div');
   menuOverlay.innerHTML = `
 <div id="menu-overlay" class="menu-overlay" role="dialog" aria-modal="true" aria-label="Site menu">
-  <button class="menu-close" onclick="document.getElementById('menu-overlay').classList.remove('open')" aria-label="Close menu">✕</button>
+  <button class="menu-close" onclick="document.getElementById('menu-overlay').classList.remove('open'); document.body.classList.remove('menu-open')" aria-label="Close menu">✕</button>
   <div class="menu-overlay-inner">
     <nav>
       <a href="#" onclick="window.goToSection(0,-1);document.getElementById('menu-overlay').classList.remove('open');return false;">Home</a>
@@ -3667,8 +4884,10 @@ let cursorX = 0, cursorY = 0, cursorTargetX = 0, cursorTargetY = 0;
 document.addEventListener('mousemove', e => {
   cursorTargetX = e.clientX;
   cursorTargetY = e.clientY;
-  mouseTarget.x = (e.clientX / innerWidth) * 2 - 1;
-  mouseTarget.y = -(e.clientY / innerHeight) * 2 + 1;
+  if (window.mouseTarget) {
+    window.mouseTarget.x = (e.clientX / innerWidth) * 2 - 1;
+    window.mouseTarget.y = -(e.clientY / innerHeight) * 2 + 1;
+  }
 });
 
 function updateCursor() {
@@ -3680,6 +4899,27 @@ function updateCursor() {
   }
 }
 updateCursor();
+
+// Cursor trail
+const trailDots = [];
+for (let i = 0; i < 5; i++) {
+  const dot = document.createElement('div');
+  dot.style.cssText = `
+    position:fixed;top:0;left:0;width:${4+i*2}px;height:${4+i*2}px;
+    border-radius:50%;background:rgba(201,169,110,${0.06-i*0.01});
+    pointer-events:none;z-index:9998;transform:translate(-50%,-50%);
+    transition:transform 0.${3+i*2}s ease;will-change:transform;
+  `;
+  document.body.appendChild(dot);
+  trailDots.push(dot);
+}
+document.addEventListener('mousemove', e => {
+  trailDots.forEach((dot, i) => {
+    setTimeout(() => {
+      dot.style.transform = `translate(calc(${e.clientX}px - 50%), calc(${e.clientY}px - 50%))`;
+    }, i * 30);
+  });
+});
 
 // ─── 2. DRAG-ROTATE ──────────────────────────────────────────────────────────
 
@@ -3700,10 +4940,8 @@ document.addEventListener('pointermove', e => {
   const dy = e.clientY - dragStartY;
   dragStartX = e.clientX;
   dragStartY = e.clientY;
-  dragRotYTarget = Math.max(-1.4, Math.min(1.4, (window.dragRotYTarget ?? 0) + dx * 0.005));
-  dragRotXTarget = Math.max(-0.9, Math.min(0.9, (window.dragRotXTarget ?? 0) + dy * 0.005));
-  window.dragRotYTarget = dragRotYTarget;
-  window.dragRotXTarget = dragRotXTarget;
+  window.dragRotYTarget = Math.max(-1.4, Math.min(1.4, (window.dragRotYTarget ?? 0) + dx * 0.005));
+  window.dragRotXTarget = Math.max(-0.9, Math.min(0.9, (window.dragRotXTarget ?? 0) + dy * 0.005));
 });
 
 document.addEventListener('pointerup', () => {
@@ -3720,32 +4958,44 @@ const PART_DETAIL = {
   person: {
     label: 'Sponsor',
     title: 'The Operator',
-    body: 'Real estate sponsors who bring the deal, the local intelligence, the operating expertise. The figure standing on the long side of the lever — the one moving the asset.'
+    meta: 'PCM · Inspect · Sponsor',
+    body: 'Real estate sponsors who bring the deal, the local intelligence, the operating expertise. The figure standing on the long side of the lever — the one moving the asset. We engineer capital around the sponsor, not around a template.',
+    specs: { layer: 'Equity', risk: 'Sponsor Skin', coupon: 'Promote', tenor: 'Hold-Period' }
   },
   coin: {
     label: 'Capital',
     title: 'The Counterweight',
-    body: 'Senior debt, mezzanine, preferred equity, common JV. Dollars sized and structured to each transaction. The disc on the short side of the lever.'
+    meta: 'PCM · Inspect · Capital',
+    body: 'Senior debt, mezzanine, preferred equity, common JV. Dollars sized and structured to each transaction. The disc on the short side of the lever — institutional capital expressed in the most efficient form for the asset.',
+    specs: { layer: 'Full Stack', risk: 'Tranched', coupon: '4–14%', tenor: '3–10yr' }
   },
   fulcrum: {
     label: 'Fulcrum',
     title: 'Where Structure Lives',
-    body: 'Where structure meets leverage. The capital-stack engineering that lets a small sliver of equity move a large asset. Our entire practice lives here.'
+    meta: 'PCM · Inspect · Structure',
+    body: 'Where structure meets leverage. The capital-stack engineering that lets a small sliver of equity move a large asset. Our entire practice lives here — at the pivot point where covenant design, intercreditor logic, and waterfall mechanics decide whether the deal works.',
+    specs: { layer: 'Engineered', risk: 'Modeled', coupon: 'Calibrated', tenor: 'Term-Aware' }
   },
   upArrow: {
     label: 'Lift',
     title: 'Yield Enhancement',
-    body: 'Cheaper coupon, longer tenor, smarter covenants. Programmatic value creation through structure — not market timing.'
+    meta: 'PCM · Inspect · Lift',
+    body: 'Cheaper coupon, longer tenor, smarter covenants. Programmatic value creation through structure — not market timing. A well-engineered stack can move sponsor IRR by 300–500 bps without changing the underlying NOI.',
+    specs: { layer: 'Senior + Mezz', risk: 'Reduced', coupon: '−175 bps', tenor: '+24 mo' }
   },
   downArrow: {
     label: 'Load',
     title: 'Risk Transfer',
-    body: 'Subordinate capital and credit enhancement that absorbs the first loss so the senior stays cheap. Engineered subordination is the product.'
+    meta: 'PCM · Inspect · Risk Transfer',
+    body: 'Subordinate capital and credit enhancement that absorbs the first loss so the senior stays cheap. Engineered subordination is the product — mezz, pref, and JV equity tranched to keep the cost of capital optimised top-to-bottom.',
+    specs: { layer: 'Mezz / Pref', risk: 'First-Loss', coupon: '10–14%', tenor: '3–7yr' }
   },
   ringOuter: {
     label: 'The Stack',
     title: 'Everything Together',
-    body: 'The complete capital stack — engineered top-to-bottom for each transaction. Bound by underwriting, not by template.'
+    meta: 'PCM · Inspect · Complete Stack',
+    body: 'The complete capital stack — engineered top-to-bottom for each transaction. Bound by underwriting, not by template. Senior debt → mezzanine → preferred → common JV → sponsor promote. Every layer priced against the layers above and below.',
+    specs: { layer: 'All Layers', risk: 'Stratified', coupon: 'Blended', tenor: 'Matched' }
   }
 };
 
@@ -3763,16 +5013,51 @@ function showDetailCard(partId, screenX, screenY) {
   if (!detail) return;
   const card = document.getElementById('detail-card');
   if (!card) return;
-  document.getElementById('card-label').textContent = detail.label;
-  document.getElementById('card-title').textContent = detail.title;
-  document.getElementById('card-body').textContent = detail.body;
-  // Clamp to viewport
-  const cx = Math.min(screenX + 20, innerWidth - 340);
-  const cy = Math.min(screenY - 60, innerHeight - 220);
-  card.style.left = cx + 'px';
-  card.style.top = cy + 'px';
+
+  // Set text content
+  const lblEl = document.getElementById('card-label');
+  const ttlEl = document.getElementById('card-title');
+  const bdyEl = document.getElementById('card-body');
+  const metaEl = document.getElementById('card-meta-row');
+  if (lblEl) lblEl.textContent = detail.label || '';
+  if (ttlEl) ttlEl.textContent = detail.title || '';
+  if (bdyEl) bdyEl.textContent = detail.body || '';
+  if (metaEl && detail.meta) {
+    metaEl.lastChild ? metaEl.lastChild.nodeValue = ' ' + detail.meta : (metaEl.textContent = detail.meta);
+    metaEl.textContent = detail.meta;
+  }
+
+  // Spec grid
+  const specGrid = document.getElementById('card-spec-grid');
+  if (specGrid) {
+    if (detail.specs) {
+      specGrid.removeAttribute('hidden');
+      const setSpec = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v || '—'; };
+      setSpec('card-spec-layer',  detail.specs.layer);
+      setSpec('card-spec-risk',   detail.specs.risk);
+      setSpec('card-spec-coupon', detail.specs.coupon);
+      setSpec('card-spec-tenor',  detail.specs.tenor);
+    } else {
+      specGrid.setAttribute('hidden', '');
+    }
+  }
+
+  // Right-side drawer — no longer positions to cursor, slides in from right
+  // (Drawer position is fixed in CSS — we just toggle the .hidden class)
   card.classList.remove('hidden');
+
+  // Reset scroll position so user sees the top of the panel
+  const scrollable = document.getElementById('detail-scrollable');
+  if (scrollable) scrollable.scrollTop = 0;
+  if (typeof window._updateDetailScrollbar === 'function') window._updateDetailScrollbar();
+
+  // Focus the close button for keyboard a11y
+  setTimeout(() => {
+    const closeBtn = document.getElementById('card-close');
+    if (closeBtn) closeBtn.focus({ preventScroll: true });
+  }, 350);
 }
+window.showDetailCard = showDetailCard;
 
 document.addEventListener('click', e => {
   if (isDragging) return;
@@ -3900,8 +5185,10 @@ let t = 0;
 let direction = 1; // +1 forward, -1 backward
 let activeIdx = 0;
 let motionScale = 1.0;
-let dragRotX = 0, dragRotY = 0, dragRotXTarget = 0, dragRotYTarget = 0;
-let mouse = { x: 0, y: 0 }, mouseTarget = { x: 0, y: 0 };
+let dragRotX = 0, dragRotY = 0;
+let mouse = { x: 0, y: 0 };
+// dragRotXTarget/dragRotYTarget and mouseTarget are shared via window
+const _getMouseTarget = () => window.mouseTarget || { x: 0, y: 0 };
 let scrollAccum = 0;
 let lastScrollTime = 0;
 let isTransitioning = false;
@@ -3966,6 +5253,18 @@ function goToSection(idx, dir) {
   if (flash) {
     flash.style.opacity = '0.12';
     setTimeout(() => { flash.style.opacity = '0'; }, 150);
+  }
+
+  // Subtle logo impulse
+  if (window.pcmRoot && window.gsap) {
+    gsap.to(window.pcmRoot.scale, {
+      x: 0.96, y: 0.96, z: 0.96,
+      duration: 0.15,
+      ease: 'power2.in',
+      yoyo: true,
+      repeat: 1,
+      onComplete: () => { window.pcmRoot.scale.set(1,1,1); }
+    });
   }
 
   // Hide copy during transition
@@ -4062,13 +5361,14 @@ function animate() {
     camera.lookAt(camLookSmooth);
 
     // Drag rotation lerp
-    dragRotX = lerp(dragRotX, dragRotXTarget, 0.1);
-    dragRotY = lerp(dragRotY, dragRotYTarget, 0.1);
+    dragRotX = lerp(dragRotX, window.dragRotXTarget || 0, 0.1);
+    dragRotY = lerp(dragRotY, window.dragRotYTarget || 0, 0.1);
   }
 
   // Mouse lerp
-  mouse.x = lerp(mouse.x, mouseTarget.x, 0.08);
-  mouse.y = lerp(mouse.y, mouseTarget.y, 0.08);
+  const _mt = _getMouseTarget();
+  mouse.x = lerp(mouse.x, _mt.x, 0.08);
+  mouse.y = lerp(mouse.y, _mt.y, 0.08);
 
   // ROOT ROTATION (drag + parallax)
   if (window.pcmRoot) {
@@ -4127,11 +5427,302 @@ function animate() {
     pos.needsUpdate = true;
   }
 
+  // ───────────────────────────────────────────────
+  // GAP 6 — SVG waveform animation for audio button
+  // ───────────────────────────────────────────────
+  const waveEl = document.getElementById('audio-wave-line');
+  if (waveEl) {
+    const isOn = !!(window.audioEngine && window.audioEngine.enabled);
+    if (isOn) {
+      const pts = [];
+      const time = t;
+      for (let i = 0; i <= 28; i += 2) {
+        // Multi-frequency sine: warbling wave that feels musical
+        const y = 9
+          + Math.sin(i * 0.7 + time * 8) * 3.4
+          + Math.sin(i * 1.3 + time * 5.2) * 1.6
+          + Math.cos(i * 0.4 + time * 3.1) * 0.8;
+        pts.push(i + ',' + y.toFixed(2));
+      }
+      waveEl.setAttribute('points', pts.join(' '));
+    } else {
+      // Resting flat line with subtle breathing
+      const baseline = 9 + Math.sin(t * 0.6) * 0.15;
+      waveEl.setAttribute(
+        'points',
+        `0,${baseline} 4,${baseline} 6,${baseline} 8,${baseline} 10,${baseline} 12,${baseline} 14,${baseline} 16,${baseline} 18,${baseline} 20,${baseline} 22,${baseline} 24,${baseline} 28,${baseline}`
+      );
+    }
+  }
+
   // Render
   if (window.composer) window.composer.render();
   else if (window.renderer) window.renderer.render(scene, camera);
 }
 animate();
+
+// ═══════════════════════════════════════════════════════════════
+// PCM v13 — SEACAT PARITY: runtime initializers
+// ═══════════════════════════════════════════════════════════════
+
+// ────────────────────────────────────────────────
+// GAP 9 / 10 — --vh CSS variable for mobile (100vh fix)
+// ────────────────────────────────────────────────
+(function initVh() {
+  function setVh() {
+    document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
+  }
+  setVh();
+  let vhRaf = null;
+  function schedule() {
+    if (vhRaf) cancelAnimationFrame(vhRaf);
+    vhRaf = requestAnimationFrame(setVh);
+  }
+  window.addEventListener('resize', schedule);
+  window.addEventListener('orientationchange', () => setTimeout(setVh, 50));
+  window.addEventListener('load', setVh);
+  window._setVh = setVh;
+})();
+
+// ────────────────────────────────────────────────
+// GAP 11 — Triangular corner masks per section
+// ────────────────────────────────────────────────
+const TRIANGLE_CONFIGS = [
+  { tl: 0.30, br: 0.30, tr: 0.00, bl: 0.00 }, // 0: Home — top-left + bottom-right
+  { tl: 0.00, br: 0.00, tr: 0.28, bl: 0.28 }, // 1: Firm Overview — top-right + bottom-left
+  { tl: 0.25, br: 0.25, tr: 0.25, bl: 0.25 }, // 2: Platform Edge — all four
+  { tl: 0.32, br: 0.00, tr: 0.00, bl: 0.32 }, // 3: Senior Debt — diagonal A
+  { tl: 0.00, br: 0.30, tr: 0.30, bl: 0.00 }, // 4: Sub Cap — diagonal B
+  { tl: 0.28, br: 0.28, tr: 0.00, bl: 0.00 }, // 5: Equity
+  { tl: 0.00, br: 0.00, tr: 0.25, bl: 0.25 }, // 6: Execution
+  { tl: 0.30, br: 0.30, tr: 0.30, bl: 0.30 }, // 7: Underwriting — all four
+  { tl: 0.22, br: 0.22, tr: 0.00, bl: 0.00 }, // 8: Compliance
+  { tl: 0.00, br: 0.00, tr: 0.00, bl: 0.00 }, // 9: Engage — no triangles
+];
+window.TRIANGLE_CONFIGS = TRIANGLE_CONFIGS;
+
+window.applyTriangles = function applyTriangles(idx) {
+  const cfg = TRIANGLE_CONFIGS[idx] || { tl: 0, br: 0, tr: 0, bl: 0 };
+  const tris = document.getElementById('section-triangles');
+  if (!tris) return;
+  const tlPoly = document.getElementById('tri-tl');
+  const brPoly = document.getElementById('tri-br');
+  const trPoly = document.getElementById('tri-tr');
+  const blPoly = document.getElementById('tri-bl');
+  if (tlPoly) {
+    tlPoly.setAttribute('points', `0 0 ${cfg.tl} 0 0 ${cfg.tl}`);
+    tlPoly.setAttribute('opacity', cfg.tl > 0 ? '1' : '0');
+  }
+  if (brPoly) {
+    brPoly.setAttribute('points', `1 1 ${1 - cfg.br} 1 1 ${1 - cfg.br}`);
+    brPoly.setAttribute('opacity', cfg.br > 0 ? '1' : '0');
+  }
+  if (trPoly) {
+    trPoly.setAttribute('points', `1 0 ${1 - cfg.tr} 0 1 ${cfg.tr}`);
+    trPoly.setAttribute('opacity', cfg.tr > 0 ? '1' : '0');
+  }
+  if (blPoly) {
+    blPoly.setAttribute('points', `0 1 ${cfg.bl} 1 0 ${1 - cfg.bl}`);
+    blPoly.setAttribute('opacity', cfg.bl > 0 ? '1' : '0');
+  }
+  tris.classList.add('visible');
+};
+
+// Apply initial triangles after DOM ready
+setTimeout(() => {
+  if (typeof window.applyTriangles === 'function') window.applyTriangles(0);
+}, 100);
+
+// ────────────────────────────────────────────────
+// GAP 2 — SVG drag-to-reveal scrubber (Senior Debt)
+// ────────────────────────────────────────────────
+(function initScrubSwiper() {
+  function attempt() {
+    const swiper = document.getElementById('scrub-swiper');
+    const handle = document.getElementById('scrub-handle');
+    const mask   = document.getElementById('scrub-mask');
+    if (!swiper || !handle || !mask) {
+      // Element may not exist yet — retry shortly
+      return setTimeout(attempt, 200);
+    }
+
+    const track = swiper.querySelector('.scrub-track');
+    const readout = document.getElementById('scrub-progress-readout');
+    let progress = 0;     // 0..1
+    let isDragging = false;
+    let startX = 0;
+
+    // Mode-specific content (matches SECTIONS[3].modes)
+    const SCRUB_MODES = [
+      { name: 'Acquisition Financing', label: 'Senior Debt · Acquisition',
+        body: '$15M–$500M · SOFR + 175–275 bps · 6–10 week close',
+        size: '$15M–$500M', spread: 'SOFR + 175–275', close: '6–10 weeks' },
+      { name: 'Refinance Execution', label: 'Senior Debt · Refinance',
+        body: 'Rate-and-term and cash-out. Reset basis, lock in tenor.',
+        size: '$25M–$400M', spread: 'SOFR + 165–250', close: '4–8 weeks' },
+      { name: 'Bridge / Value-Add', label: 'Senior Debt · Bridge',
+        body: 'Short-duration value-add. Lease-up, repositioning, repricing.',
+        size: '$10M–$250M', spread: 'SOFR + 275–450', close: '3–6 weeks' },
+      { name: 'Construction Senior', label: 'Senior Debt · Construction',
+        body: 'Ground-up and major reno. Often paired with mezz behind.',
+        size: '$20M–$600M', spread: 'SOFR + 300–500', close: '8–14 weeks' },
+    ];
+
+    function getTrackWidth() { return track ? track.offsetWidth : 400; }
+    function getTrackLeft()  { return track ? track.getBoundingClientRect().left : 0; }
+
+    function updateProgress(p) {
+      progress = Math.max(0, Math.min(1, p));
+      const trackW = getTrackWidth();
+      handle.style.left = (progress * trackW) + 'px';
+      const insetPct = (1 - progress) * 100;
+      mask.style.clipPath = `inset(0 ${insetPct.toFixed(2)}% 0 0)`;
+      swiper.setAttribute('aria-valuenow', Math.round(progress * 100));
+      if (readout) readout.textContent = Math.round(progress * 100) + '%';
+      if (progress > 0.95) mask.classList.add('revealed');
+      else mask.classList.remove('revealed');
+
+      // Update mode content based on progress
+      const modeIdx = Math.min(SCRUB_MODES.length - 1, Math.floor(progress * SCRUB_MODES.length));
+      const mode = SCRUB_MODES[modeIdx];
+      if (mode) {
+        const el = (id) => document.getElementById(id);
+        if (el('scrub-content-title')) el('scrub-content-title').textContent = mode.name;
+        if (el('scrub-content-label')) el('scrub-content-label').textContent = mode.label;
+        if (el('scrub-content-body'))  el('scrub-content-body').textContent  = mode.body;
+        if (el('scrub-stat-size'))     el('scrub-stat-size').textContent     = mode.size;
+        if (el('scrub-stat-spread'))   el('scrub-stat-spread').textContent   = mode.spread;
+        if (el('scrub-stat-close'))    el('scrub-stat-close').textContent    = mode.close;
+      }
+    }
+
+    // Pointer drag
+    handle.addEventListener('pointerdown', e => {
+      isDragging = true;
+      handle.classList.add('dragging');
+      const tx = e.clientX - getTrackLeft();
+      startX = tx - (progress * getTrackWidth());
+      try { handle.setPointerCapture(e.pointerId); } catch (_){}
+      e.preventDefault();
+    });
+    handle.addEventListener('pointermove', e => {
+      if (!isDragging) return;
+      const tx = e.clientX - getTrackLeft();
+      updateProgress((tx - startX) / getTrackWidth());
+    });
+    function endDrag() {
+      isDragging = false;
+      handle.classList.remove('dragging');
+    }
+    handle.addEventListener('pointerup', endDrag);
+    handle.addEventListener('pointercancel', endDrag);
+    handle.addEventListener('lostpointercapture', endDrag);
+
+    // Click track to jump
+    if (track) {
+      track.addEventListener('pointerdown', e => {
+        if (e.target.closest('.scrub-drag-handle')) return;
+        const tx = e.clientX - getTrackLeft();
+        updateProgress(tx / getTrackWidth());
+      });
+    }
+
+    // Keyboard support
+    handle.addEventListener('keydown', e => {
+      let nudge = 0;
+      if (e.key === 'ArrowRight' || e.key === 'ArrowUp') nudge = 0.05;
+      else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') nudge = -0.05;
+      else if (e.key === 'Home') { updateProgress(0); e.preventDefault(); return; }
+      else if (e.key === 'End')  { updateProgress(1); e.preventDefault(); return; }
+      else if (e.key === 'PageUp')   nudge = 0.25;
+      else if (e.key === 'PageDown') nudge = -0.25;
+      if (nudge !== 0) {
+        updateProgress(progress + nudge);
+        e.preventDefault();
+      }
+    });
+
+    // Show/hide based on active section
+    function syncScrubber(idx) {
+      if (idx === 3) {
+        swiper.classList.add('visible');
+        swiper.setAttribute('aria-hidden', 'false');
+        mask.style.display = 'block';
+        mask.setAttribute('aria-hidden', 'false');
+        // Reset to 0 progress each time we enter Senior Debt section
+        updateProgress(0);
+      } else {
+        swiper.classList.remove('visible');
+        swiper.setAttribute('aria-hidden', 'true');
+        mask.style.display = 'none';
+        mask.setAttribute('aria-hidden', 'true');
+        updateProgress(0);
+      }
+    }
+    window._syncScrubber = syncScrubber;
+
+    // Initial state
+    syncScrubber(window.activeIdx || 0);
+  }
+  attempt();
+})();
+
+// ────────────────────────────────────────────────
+// GAP 25 — Footer CTA wiring (engage with belt-link)
+// ────────────────────────────────────────────────
+setTimeout(() => {
+  const ctaEl = document.getElementById('footer-cta-engage');
+  if (ctaEl) {
+    ctaEl.addEventListener('mouseenter', () => {
+      ctaEl.style.color = 'var(--coin-gold)';
+    });
+    ctaEl.addEventListener('mouseleave', () => {
+      ctaEl.style.color = '';
+    });
+  }
+}, 200);
+
+// ────────────────────────────────────────────────
+// GAP 26 — A11y: ensure every interactive element has aria-label
+// ────────────────────────────────────────────────
+setTimeout(() => {
+  function ensureLabels() {
+    // Mode buttons in scene copy
+    document.querySelectorAll('.mode-btn').forEach((b, i) => {
+      if (!b.getAttribute('aria-label')) {
+        const txt = b.textContent.trim();
+        b.setAttribute('aria-label', `Switch to mode: ${txt || 'mode ' + (i + 1)}`);
+      }
+    });
+    // Tags
+    document.querySelectorAll('.tag').forEach((t) => {
+      if (!t.getAttribute('aria-label')) {
+        t.setAttribute('aria-label', `Tag: ${t.textContent.trim()}`);
+      }
+    });
+    // Any unlabelled buttons
+    document.querySelectorAll('button:not([aria-label])').forEach((b) => {
+      const txt = (b.textContent || '').trim();
+      if (txt) b.setAttribute('aria-label', txt);
+    });
+  }
+  ensureLabels();
+  // Re-run when copy content updates
+  const observer = new MutationObserver(() => ensureLabels());
+  const scene = document.querySelector('.scene-copy');
+  if (scene) observer.observe(scene, { childList: true, subtree: true });
+}, 800);
+
+// ────────────────────────────────────────────────
+// GAP — Watch active section index for menu toggle aria-expanded sync
+// ────────────────────────────────────────────────
+const _menuObserver = new MutationObserver(() => {
+  const isOpen = document.body.classList.contains('menu-open');
+  const btn = document.getElementById('btn-menu');
+  if (btn) btn.setAttribute('aria-expanded', String(isOpen));
+});
+_menuObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+
 
 // ---------------------------------------------------------------------------
 // 6. SECTION COPY REVEAL
@@ -4142,6 +5733,60 @@ function showSectionCopy(idx) {
   copy.classList.remove('hidden');
   copy.classList.add('visible');
   updateCopyContent(idx);
+
+  if (window.gsap) {
+    gsap.killTweensOf('.reveal-inner, .pre-title, .body-text, .stat-item, .tag, .mode-btn, .title-rule, .sub-title');
+
+    // Word-by-word title reveal (seacat style)
+    gsap.fromTo('.reveal-inner',
+      { yPercent: 105 },
+      { yPercent: 0, duration: 0.9, stagger: 0.06, ease: 'expo.out', delay: 0.1 }
+    );
+
+    // Pre-title
+    gsap.fromTo(document.querySelector('.pre-title'),
+      { opacity: 0, x: -20 },
+      { opacity: 1, x: 0, duration: 0.7, ease: 'power3.out', delay: 0.05 }
+    );
+
+    // Rule expands from left
+    gsap.fromTo(document.querySelector('.title-rule'),
+      { scaleX: 0, transformOrigin: 'left center' },
+      { scaleX: 1, duration: 0.8, ease: 'power3.inOut', delay: 0.45 }
+    );
+
+    // Body text
+    gsap.fromTo(document.querySelector('.body-text'),
+      { opacity: 0, y: 18 },
+      { opacity: 1, y: 0, duration: 0.9, ease: 'power2.out', delay: 0.55 }
+    );
+
+    // Stats
+    gsap.fromTo(document.querySelectorAll('.stat-item'),
+      { opacity: 0, y: 24 },
+      { opacity: 1, y: 0, duration: 0.7, stagger: 0.1, ease: 'back.out(1.8)', delay: 0.65 }
+    );
+
+    // Tags
+    gsap.fromTo(document.querySelectorAll('.tag'),
+      { opacity: 0, scale: 0.75 },
+      { opacity: 1, scale: 1, duration: 0.5, stagger: 0.04, ease: 'back.out(2.5)', delay: 0.75 }
+    );
+
+    // Mode buttons
+    gsap.fromTo(document.querySelectorAll('.mode-btn'),
+      { opacity: 0, x: -20 },
+      { opacity: 1, x: 0, duration: 0.5, stagger: 0.07, ease: 'power2.out', delay: 0.8 }
+    );
+
+    // Sub-title
+    gsap.fromTo(document.querySelector('.sub-title'),
+      { opacity: 0, y: 10 },
+      { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out', delay: 0.38 }
+    );
+  }
+
+  window.showSectionCopy = showSectionCopy;
 }
 window.showSectionCopy = showSectionCopy;
 
@@ -4865,8 +6510,40 @@ window.addEventListener('keydown', e => {
 
   // ═══════ INIT SEQUENCE ═══════════════════════════════════════════
   // Chrome auto-initializes on DOMContentLoaded; if it already fired we call manually.
-  if (typeof window.initChrome === 'function' && document.readyState !== 'loading') {
-    try { window.initChrome(); } catch(err) { console.error('initChrome', err); }
+  try { window.initChrome(); } catch(err) { console.error('initChrome', err); }
+
+  if (window.gsap) {
+    // Loader wordmark + hairline + bar wrap reveal
+    gsap.from('.intro-loader__wordmark-loader', { opacity: 0, y: 12, duration: 0.9, ease: 'expo.out' });
+    gsap.from('.intro-loader__hairline', { scaleX: 0, duration: 0.7, ease: 'power3.inOut', delay: 0.2, transformOrigin: 'center' });
+    gsap.from('.intro-loader__bar-wrap', { opacity: 0, y: 8, duration: 0.6, ease: 'power2.out', delay: 0.3 });
+    gsap.from('.intro-loader__pct', { opacity: 0, duration: 0.6, ease: 'power2.out', delay: 0.5 });
+  }
+
+  if (window.gsap) {
+    setTimeout(() => {
+      const wordmark = document.querySelector('.home-mark .wordmark');
+      const slogan = document.querySelector('.home-mark .slogan');
+      const hairline = document.querySelector('.home-mark .brass-hairline');
+      if (wordmark) {
+        gsap.fromTo(wordmark,
+          { opacity: 0, x: -20 },
+          { opacity: 1, x: 0, duration: 1.2, ease: 'expo.out', delay: 2.4 }
+        );
+      }
+      if (slogan) {
+        gsap.fromTo(slogan,
+          { opacity: 0 },
+          { opacity: 1, duration: 0.8, ease: 'power2.out', delay: 2.8 }
+        );
+      }
+      if (hairline) {
+        gsap.fromTo(hairline,
+          { scaleX: 0 },
+          { scaleX: 1, duration: 1.0, ease: 'power3.inOut', delay: 3.0, transformOrigin: 'left' }
+        );
+      }
+    }, 100);
   }
 
   // Overlays
