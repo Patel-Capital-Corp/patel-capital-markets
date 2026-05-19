@@ -1,0 +1,19 @@
+[build]
+publish = "."
+
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200
+
+[[headers]]
+for = "/*"
+[headers.values]
+X-Frame-Options = "DENY"
+X-Content-Type-Options = "nosniff"
+Cache-Control = "public, max-age=3600, stale-while-revalidate=86400"
+
+[[headers]]
+for = "/index.html"
+[headers.values]
+Cache-Control = "public, max-age=300, stale-while-revalidate=3600"

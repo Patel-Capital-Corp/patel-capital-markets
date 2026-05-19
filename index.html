@@ -1,0 +1,4911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#c9a96e" />
+  <title>Patel Capital Markets — Engineering Creative Finance</title>
+  <meta name="description" content="Commercial real estate capital advisory structuring debt, mezzanine, preferred equity, and joint-venture capital for institutional and entrepreneurial sponsors." />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Patel Capital Markets — Engineering Creative Finance" />
+  <meta property="og:description" content="Commercial real estate capital advisory structuring debt, mezzanine, preferred equity, and joint-venture capital." />
+  <meta property="og:site_name" content="Patel Capital Markets" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Patel Capital Markets — Engineering Creative Finance" />
+  <meta name="twitter:description" content="Commercial real estate capital advisory structuring debt, mezzanine, preferred equity, and joint-venture capital." />
+
+  <link rel="canonical" href="https://patelcapital.markets/" />
+
+  <!-- Schema.org JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FinancialService",
+    "name": "Patel Capital Markets",
+    "alternateName": "PCM",
+    "description": "Commercial real estate capital advisory structuring debt, mezzanine, preferred equity, and joint-venture capital.",
+    "url": "https://patelcapital.markets/",
+    "email": "deals@patelcapital.markets",
+    "serviceType": ["Senior Debt Advisory", "Mezzanine Financing", "Preferred Equity", "Joint-Venture Equity", "Capital Markets Advisory"],
+    "areaServed": "United States",
+    "slogan": "Engineering Creative Finance"
+  }
+  </script>
+
+  <!--[if IE]>
+  <p style="padding:40px;font-family:Georgia,serif;color:#c9a96e;background:#06090a;">This experience requires a modern browser. Please use Chrome, Firefox, Safari, or Edge.</p>
+  <![endif]-->
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@300;400;500;600&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+/* ============================================================
+   PCM — Cinematic Site Stylesheet
+   Parts 1 & 2 | Bespoke craft, no boilerplate
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. CUSTOM PROPERTIES
+   ------------------------------------------------------------ */
+:root {
+  --bg:          #06090a;
+  --forest:      #1a2520;
+  --forest-mid:  #2d3e36;
+  --brass:       #c9a96e;
+  --coin-gold:   #d9b97a;
+  --cream:       #e8dcc4;
+  --ink-green:   #0f1814;
+  --accent-glow: #7fb89c;
+  --ink:         #e3eee6;
+
+  --font-serif:  'Cormorant Garamond', Georgia, serif;
+  --font-body:   'Space Grotesk', system-ui, sans-serif;
+  --font-mono:   'Space Mono', 'Courier New', monospace;
+
+  --ease-cinema: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-soft:   cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ------------------------------------------------------------
+   2. RESET + BASE
+   ------------------------------------------------------------ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  cursor: none;
+  position: relative;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  background: none;
+  border: none;
+  cursor: none;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+img,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+/* ------------------------------------------------------------
+   3. CANVAS HOST
+   ------------------------------------------------------------ */
+#canvas-host {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+
+/* ------------------------------------------------------------
+   4. CUSTOM CURSOR
+   ------------------------------------------------------------ */
+#pcm-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  pointer-events: none;
+  will-change: transform;
+}
+
+#pcm-cursor::before {
+  content: '';
+  display: block;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(227, 238, 230, 0.45);
+  transform: translate(-50%, -50%);
+  transition: width 0.2s var(--ease-soft),
+              height 0.2s var(--ease-soft),
+              border-color 0.2s var(--ease-soft),
+              background 0.2s var(--ease-soft);
+}
+
+#pcm-cursor::after {
+  content: '';
+  display: block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--ink);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.2s var(--ease-soft);
+}
+
+#pcm-cursor.cursor-hot::before {
+  width: 64px;
+  height: 64px;
+  border: 1px solid var(--brass);
+  background: rgba(201, 169, 110, 0.08);
+}
+
+#pcm-cursor.cursor-drag::before {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--brass);
+  background: transparent;
+}
+
+/* ------------------------------------------------------------
+   5. CINEMA BARS
+   ------------------------------------------------------------ */
+.cinema-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  height: 0;
+  background: var(--bg);
+  transition: height 700ms var(--ease-cinema);
+  pointer-events: none;
+}
+
+.cinema-bar--top {
+  top: 0;
+}
+
+.cinema-bar--bottom {
+  bottom: 0;
+}
+
+body.transitioning .cinema-bar {
+  height: 80px;
+}
+
+/* ------------------------------------------------------------
+   6. FLASH OVERLAY
+   ------------------------------------------------------------ */
+.flash-overlay {
+  position: fixed;
+  inset: 0;
+  background: #ffffff;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 100;
+  transition: opacity 0.15s linear;
+}
+
+/* ------------------------------------------------------------
+   7. INTRO LOADER
+   ------------------------------------------------------------ */
+.intro-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  transition: opacity 0.8s var(--ease-soft);
+}
+
+.intro-loader__spinner {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid rgba(201, 169, 110, 0.2);
+  border-top-color: var(--brass);
+  animation: spinBrass 1.2s linear infinite;
+}
+
+.intro-loader__text {
+  font-family: var(--font-serif);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.32em;
+  color: var(--brass);
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.intro-loader.done {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------
+   8–10. SCENE COPY
+   ------------------------------------------------------------ */
+.scene-copy {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  z-index: 10;
+  text-align: center;
+  width: 100%;
+  max-width: 680px;
+  padding: 0 24px;
+  transition: opacity 0.8s var(--ease-soft),
+              transform 0.8s var(--ease-soft);
+}
+
+.scene-copy.hidden {
+  opacity: 0;
+  transform: translateX(-50%) translateY(-55%);
+  pointer-events: none;
+}
+
+.scene-copy.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-50%);
+  pointer-events: auto;
+}
+
+/* ------------------------------------------------------------
+   11. SCENE COPY — PRE-TITLE
+   ------------------------------------------------------------ */
+.scene-copy .pre-title {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.32em;
+  color: var(--brass);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 14px;
+}
+
+/* ------------------------------------------------------------
+   12. SCENE COPY — MAIN TITLE
+   ------------------------------------------------------------ */
+.scene-copy .main-title {
+  font-family: var(--font-serif);
+  font-size: clamp(2.8rem, 5vw, 5.5rem);
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: 0.18em;
+  line-height: 1.1;
+}
+
+/* ------------------------------------------------------------
+   13. SCENE COPY — TITLE RULE
+   ------------------------------------------------------------ */
+.scene-copy .title-rule {
+  display: block;
+  width: 40px;
+  height: 1px;
+  background: var(--brass);
+  margin: 1rem auto;
+  border: none;
+}
+
+/* ------------------------------------------------------------
+   14. SCENE COPY — BODY TEXT
+   ------------------------------------------------------------ */
+.scene-copy .body-text {
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--ink);
+  max-width: 540px;
+  margin: 0 auto;
+}
+
+/* ------------------------------------------------------------
+   15. SCENE COPY — STAT ROW
+   ------------------------------------------------------------ */
+.scene-copy .stat-row {
+  display: flex;
+  flex-direction: row;
+  gap: 32px;
+  justify-content: center;
+  align-items: baseline;
+  margin-top: 20px;
+}
+
+.scene-copy .stat-row .stat-number {
+  font-family: var(--font-mono);
+  font-size: 22px;
+  color: var(--brass);
+  line-height: 1;
+}
+
+.scene-copy .stat-row .stat-label {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--cream);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.scene-copy .stat-row .stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ------------------------------------------------------------
+   16. SCENE COPY — TAG ROW
+   ------------------------------------------------------------ */
+.scene-copy .tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.scene-copy .tag-row .tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--brass);
+  border: 1px solid var(--brass);
+  padding: 4px 10px;
+  text-transform: uppercase;
+}
+
+/* ------------------------------------------------------------
+   17. HOME MARK
+   ------------------------------------------------------------ */
+.home-mark {
+  position: fixed;
+  top: 28px;
+  left: 40px;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  cursor: none;
+}
+
+.home-mark__wordmark {
+  font-family: var(--font-serif);
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: 0.12em;
+  line-height: 1;
+}
+
+.home-mark__slogan {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--brass);
+  text-transform: uppercase;
+}
+
+/* ------------------------------------------------------------
+   18. TOP SECTION META
+   ------------------------------------------------------------ */
+.top-section-meta {
+  position: fixed;
+  top: 28px;
+  right: 40px;
+  z-index: 20;
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.top-section-meta__counter {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--brass);
+  letter-spacing: 0.16em;
+}
+
+.top-section-meta__caption {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  color: rgba(232, 220, 196, 0.5);
+  text-transform: uppercase;
+}
+
+/* ------------------------------------------------------------
+   19. SIDE NAV
+   ------------------------------------------------------------ */
+.side-nav {
+  position: fixed;
+  right: 28px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+}
+
+/* ------------------------------------------------------------
+   20–22. SIDE NAV DOTS
+   ------------------------------------------------------------ */
+.side-nav-dot {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid rgba(201, 169, 110, 0.4);
+  background: transparent;
+  cursor: none;
+  transition: background 0.3s var(--ease-soft),
+              transform 0.3s var(--ease-soft),
+              box-shadow 0.3s var(--ease-soft),
+              border-color 0.3s var(--ease-soft);
+  flex-shrink: 0;
+}
+
+.side-nav-dot.active {
+  background: var(--brass);
+  transform: scale(1.5);
+  box-shadow: 0 0 12px var(--brass);
+  border-color: var(--brass);
+}
+
+.side-nav-dot:hover::after {
+  content: attr(data-label);
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--brass);
+  white-space: nowrap;
+  letter-spacing: 0.12em;
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------
+   23. BOTTOM MENU
+   ------------------------------------------------------------ */
+.bottom-menu {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  background: linear-gradient(
+    to top,
+    rgba(6, 9, 10, 0.85) 0%,
+    transparent 100%
+  );
+  padding: 14px 40px 18px;
+}
+
+/* ------------------------------------------------------------
+   24. BOTTOM MENU INNER
+   ------------------------------------------------------------ */
+.bottom-menu-inner {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ------------------------------------------------------------
+   25–26. SECTION BUTTON
+   ------------------------------------------------------------ */
+.section-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: none;
+  opacity: 0.5;
+  transition: opacity 0.3s var(--ease-soft),
+              color 0.3s var(--ease-soft),
+              border-color 0.3s var(--ease-soft),
+              box-shadow 0.3s var(--ease-soft);
+  padding: 4px 0 6px;
+}
+
+.section-btn:hover {
+  opacity: 0.9;
+}
+
+.section-btn__number {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: inherit;
+}
+
+.section-btn__label {
+  font-family: var(--font-serif);
+  font-size: 15px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: inherit;
+  line-height: 1;
+}
+
+.section-btn.active {
+  color: var(--brass);
+  opacity: 1;
+  border-bottom: 2px solid var(--brass);
+  box-shadow: 0 0 12px rgba(201, 169, 110, 0.4);
+}
+
+/* ------------------------------------------------------------
+   27. PROGRESS BAR WRAP
+   ------------------------------------------------------------ */
+.progress-bar-wrap {
+  position: relative;
+  height: 1px;
+  width: 100%;
+  background: rgba(201, 169, 110, 0.15);
+  margin-top: 8px;
+  overflow: visible;
+}
+
+/* ------------------------------------------------------------
+   28. PROGRESS BAR FILL
+   ------------------------------------------------------------ */
+.progress-bar-fill {
+  height: 1px;
+  background: var(--brass);
+  box-shadow: 0 0 12px var(--brass);
+  transition: width 1.4s var(--ease-cinema);
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* ------------------------------------------------------------
+   29. CONTROLS CLUSTER
+   ------------------------------------------------------------ */
+.controls-cluster {
+  position: fixed;
+  bottom: 80px;
+  right: 28px;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+/* ------------------------------------------------------------
+   30–31. CTRL BUTTON
+   ------------------------------------------------------------ */
+.ctrl-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(201, 169, 110, 0.3);
+  background: rgba(6, 9, 10, 0.7);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink);
+  cursor: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.25s var(--ease-soft),
+              box-shadow 0.25s var(--ease-soft),
+              background 0.25s var(--ease-soft),
+              color 0.25s var(--ease-soft);
+  flex-shrink: 0;
+}
+
+.ctrl-btn:hover {
+  border-color: var(--brass);
+  box-shadow: 0 0 10px rgba(201, 169, 110, 0.4);
+}
+
+.ctrl-btn.active {
+  background: var(--brass);
+  color: var(--bg);
+  border-color: var(--brass);
+}
+
+/* ------------------------------------------------------------
+   32. KEYBOARD HINTS
+   ------------------------------------------------------------ */
+.kbd-hints {
+  position: fixed;
+  bottom: 80px;
+  left: 28px;
+  z-index: 20;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--ink);
+  opacity: 0.35;
+  line-height: 1.8;
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------
+   33–34. STATUS CONSOLE
+   ------------------------------------------------------------ */
+.status-console {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--brass);
+  background: rgba(6, 9, 10, 0.8);
+  padding: 8px 14px;
+  max-width: 600px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border: 1px solid rgba(201, 169, 110, 0.2);
+}
+
+.status-console.done {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1.2s var(--ease-soft);
+}
+
+/* ------------------------------------------------------------
+   35–40. DETAIL CARD
+   ------------------------------------------------------------ */
+.detail-card {
+  position: fixed;
+  z-index: 40;
+  background: rgba(10, 14, 12, 0.96);
+  border: 1px solid var(--brass);
+  padding: 24px 28px;
+  max-width: 320px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.detail-card .card-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.32em;
+  color: var(--brass);
+  text-transform: uppercase;
+  display: block;
+}
+
+.detail-card .card-title {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--ink);
+  margin: 6px 0;
+  line-height: 1.2;
+}
+
+.detail-card .card-rule {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: var(--brass);
+  border: none;
+  margin: 10px 0;
+}
+
+.detail-card .card-body {
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--ink);
+}
+
+.detail-card .card-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--brass);
+  cursor: none;
+  opacity: 0.7;
+  transition: opacity 0.2s var(--ease-soft);
+  line-height: 1;
+}
+
+.detail-card .card-close:hover {
+  opacity: 1;
+}
+
+/* ------------------------------------------------------------
+   41. KEYBOARD HELP OVERLAY
+   ------------------------------------------------------------ */
+.kbd-help-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(6, 9, 10, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ------------------------------------------------------------
+   42. KEYBOARD HELP PANEL
+   ------------------------------------------------------------ */
+.kbd-help-panel {
+  background: var(--ink-green);
+  border: 1px solid var(--brass);
+  padding: 36px 40px;
+  max-width: 500px;
+  width: 100%;
+}
+
+/* ------------------------------------------------------------
+   43. KBD HELP PANEL — H2
+   ------------------------------------------------------------ */
+.kbd-help-panel h2 {
+  font-family: var(--font-serif);
+  font-size: 24px;
+  font-weight: 500;
+  color: var(--brass);
+  letter-spacing: 0.12em;
+  margin-bottom: 20px;
+}
+
+/* ------------------------------------------------------------
+   44–45. KBD HELP PANEL — TABLE
+   ------------------------------------------------------------ */
+.kbd-help-panel table {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  width: 100%;
+  line-height: 2;
+  border-collapse: collapse;
+  color: var(--ink);
+}
+
+.kbd-help-panel td:first-child {
+  color: var(--brass);
+  width: 120px;
+  vertical-align: top;
+  letter-spacing: 0.1em;
+}
+
+/* ------------------------------------------------------------
+   46–47. MENU OVERLAY
+   ------------------------------------------------------------ */
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: var(--bg);
+  transform: translateX(100%);
+  transition: transform 0.7s var(--ease-cinema);
+}
+
+.menu-overlay.open {
+  transform: translateX(0);
+}
+
+/* ------------------------------------------------------------
+   48. MENU OVERLAY INNER
+   ------------------------------------------------------------ */
+.menu-overlay-inner {
+  padding: 80px 80px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* ------------------------------------------------------------
+   49. MENU OVERLAY — NAV LINKS
+   ------------------------------------------------------------ */
+.menu-overlay nav a {
+  font-family: var(--font-serif);
+  font-size: 5rem;
+  display: block;
+  color: var(--ink);
+  letter-spacing: 0.08em;
+  line-height: 1.15;
+  transition: color 0.3s var(--ease-soft);
+}
+
+.menu-overlay nav a:hover {
+  color: var(--brass);
+}
+
+/* ------------------------------------------------------------
+   50–51. COOKIE NOTICE
+   ------------------------------------------------------------ */
+.cookie-notice {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 50;
+  background: var(--ink-green);
+  border: 1px solid rgba(201, 169, 110, 0.4);
+  padding: 20px 24px;
+  max-width: 340px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--ink);
+  line-height: 1.6;
+}
+
+.cookie-notice .cookie-accept {
+  display: inline-block;
+  background: var(--brass);
+  color: var(--ink-green);
+  padding: 8px 20px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  cursor: none;
+  border: none;
+  margin-top: 14px;
+  transition: background 0.2s var(--ease-soft),
+              box-shadow 0.2s var(--ease-soft);
+  text-transform: uppercase;
+}
+
+.cookie-notice .cookie-accept:hover {
+  background: var(--coin-gold);
+  box-shadow: 0 0 14px rgba(201, 169, 110, 0.4);
+}
+
+/* ------------------------------------------------------------
+   52–53. CREDITS MODAL
+   ------------------------------------------------------------ */
+.credits-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(6, 9, 10, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.credits-modal-inner {
+  background: var(--ink-green);
+  border: 1px solid var(--brass);
+  padding: 40px;
+  max-width: 500px;
+  width: 100%;
+}
+
+/* ------------------------------------------------------------
+   54. SCROLL CUE
+   ------------------------------------------------------------ */
+.scroll-cue {
+  position: fixed;
+  bottom: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: var(--brass);
+  opacity: 0.6;
+  text-transform: uppercase;
+  animation: pulseBrass 2s ease-in-out infinite;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------
+   55. VIGNETTE
+   ------------------------------------------------------------ */
+.vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 40%,
+    rgba(6, 9, 10, 0.7) 100%
+  );
+}
+
+/* ------------------------------------------------------------
+   56–57. LANDSCAPE GATE
+   ------------------------------------------------------------ */
+.landscape-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: var(--bg);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 40px;
+  text-align: center;
+}
+
+.landscape-gate__icon {
+  font-family: var(--font-mono);
+  font-size: 32px;
+  color: var(--brass);
+  opacity: 0.6;
+}
+
+.landscape-gate__text {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  color: var(--ink);
+  letter-spacing: 0.12em;
+}
+
+.landscape-gate__sub {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--cream);
+  opacity: 0.6;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+@media screen and (orientation: portrait) and (max-width: 768px) {
+  .landscape-gate {
+    display: flex;
+  }
+}
+
+/* ------------------------------------------------------------
+   58. PWA PROMPT
+   ------------------------------------------------------------ */
+.pwa-prompt {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 50;
+  background: var(--ink-green);
+  border: 1px solid rgba(201, 169, 110, 0.4);
+  padding: 20px 24px;
+  max-width: 340px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--ink);
+  line-height: 1.6;
+}
+
+.pwa-prompt .pwa-install {
+  display: inline-block;
+  background: var(--brass);
+  color: var(--ink-green);
+  padding: 8px 20px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  cursor: none;
+  border: none;
+  margin-top: 14px;
+  text-transform: uppercase;
+  transition: background 0.2s var(--ease-soft),
+              box-shadow 0.2s var(--ease-soft);
+}
+
+.pwa-prompt .pwa-install:hover {
+  background: var(--coin-gold);
+  box-shadow: 0 0 14px rgba(201, 169, 110, 0.4);
+}
+
+.pwa-prompt .pwa-dismiss {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: rgba(232, 220, 196, 0.5);
+  cursor: none;
+  border: none;
+  background: none;
+  margin-top: 10px;
+  display: block;
+  letter-spacing: 0.12em;
+  transition: color 0.2s var(--ease-soft);
+}
+
+.pwa-prompt .pwa-dismiss:hover {
+  color: var(--cream);
+}
+
+/* ------------------------------------------------------------
+   59. SKIP TO CONTENT
+   ------------------------------------------------------------ */
+.skip-to-content {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  z-index: 50;
+  background: var(--brass);
+  color: var(--bg);
+  padding: 8px 16px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  transition: top 0.2s var(--ease-soft);
+}
+
+.skip-to-content:focus {
+  top: 0;
+}
+
+/* ------------------------------------------------------------
+   60. PCM FOOTER
+   ------------------------------------------------------------ */
+.pcm-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--ink);
+  opacity: 0.4;
+  padding: 0 40px 6px;
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------
+   61. SCROLLBAR
+   ------------------------------------------------------------ */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(201, 169, 110, 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(201, 169, 110, 0.6);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(201, 169, 110, 0.3) transparent;
+}
+
+/* ------------------------------------------------------------
+   62. @KEYFRAMES — PULSE BRASS
+   ------------------------------------------------------------ */
+@keyframes pulseBrass {
+  0% {
+    opacity: 0.4;
+    transform: translateX(-50%) scale(0.95);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.05);
+  }
+  100% {
+    opacity: 0.4;
+    transform: translateX(-50%) scale(0.95);
+  }
+}
+
+/* Variant for elements not using translateX(-50%) */
+@keyframes pulseBrassSimple {
+  0% {
+    opacity: 0.4;
+    transform: scale(0.95);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 0.4;
+    transform: scale(0.95);
+  }
+}
+
+/* ------------------------------------------------------------
+   63. @KEYFRAMES — SPIN BRASS
+   ------------------------------------------------------------ */
+@keyframes spinBrass {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ------------------------------------------------------------
+   64. @KEYFRAMES — FADE IN UP
+   ------------------------------------------------------------ */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ------------------------------------------------------------
+   65. REDUCED MOTION
+   ------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.3s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.3s !important;
+  }
+
+  .cinema-bar {
+    transition: height 0.3s linear;
+  }
+
+  .flash-overlay {
+    transition: opacity 0.3s linear;
+  }
+
+  .intro-loader {
+    transition: opacity 0.3s linear;
+  }
+
+  .intro-loader__spinner {
+    animation: none;
+    border-color: var(--brass);
+  }
+
+  .scene-copy {
+    transition: opacity 0.3s linear,
+                transform 0.3s linear;
+  }
+
+  .menu-overlay {
+    transition: transform 0.3s linear;
+  }
+
+  .progress-bar-fill {
+    transition: width 0.3s linear;
+  }
+
+  .scroll-cue {
+    animation: none;
+  }
+
+  .status-console.done {
+    transition: opacity 0.3s linear;
+  }
+}
+
+
+/* === Supplemental component styles === */
+/* =============================================================
+   PCM CINEMATIC SITE — SUPPLEMENTAL COMPONENT STYLES
+   Companion to styles.css — all additional component rules
+   ============================================================= */
+
+/* ─────────────────────────────────────────────
+   1. MODES ROW
+   ───────────────────────────────────────────── */
+
+.modes-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 16px 0;
+}
+
+.mode-btn {
+  background: transparent;
+  border: 1px solid rgba(201, 169, 110, 0.25);
+  color: var(--cream);
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  padding: 6px 14px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.3s;
+}
+
+.mode-btn.active {
+  background: var(--brass);
+  color: var(--bg);
+  border-color: var(--brass);
+}
+
+.mode-btn:hover:not(.active) {
+  border-color: var(--brass);
+  color: var(--brass);
+}
+
+.mode-body {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--ink);
+  opacity: 0.85;
+  margin: 10px 0;
+  max-width: 420px;
+  min-height: 48px;
+  transition: opacity 0.3s;
+}
+
+.mode-stats {
+  display: flex;
+  gap: 24px;
+  margin: 10px 0;
+}
+
+/* ─────────────────────────────────────────────
+   2. STAT ITEMS
+   ───────────────────────────────────────────── */
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-val {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem;
+  color: var(--brass);
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+.stat-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  color: var(--cream);
+  opacity: 0.7;
+  text-transform: uppercase;
+}
+
+/* ─────────────────────────────────────────────
+   3. TAGS
+   ───────────────────────────────────────────── */
+
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: rgba(201, 169, 110, 0.7);
+  border: 1px solid rgba(201, 169, 110, 0.2);
+  padding: 3px 10px;
+  text-transform: uppercase;
+}
+
+/* ─────────────────────────────────────────────
+   4. LONG BLOCK
+   ───────────────────────────────────────────── */
+
+.long-block {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  line-height: 1.9;
+  color: var(--ink);
+  opacity: 0.8;
+  max-width: 520px;
+  margin: 16px 0;
+  font-style: italic;
+  border-left: 2px solid rgba(201, 169, 110, 0.4);
+  padding-left: 20px;
+}
+
+/* ─────────────────────────────────────────────
+   5. POETIC BLOCK
+   ───────────────────────────────────────────── */
+
+.poetic-block {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+  line-height: 2.2;
+  color: var(--brass);
+  opacity: 0.9;
+  max-width: 480px;
+  margin: 20px 0;
+  text-align: center;
+  letter-spacing: 0.06em;
+  font-style: italic;
+}
+
+/* ─────────────────────────────────────────────
+   6. CONTACT FORM
+   ───────────────────────────────────────────── */
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 380px;
+  margin-top: 16px;
+}
+
+.pcm-input {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(201, 169, 110, 0.2);
+  color: var(--ink);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  padding: 10px 14px;
+  outline: none;
+  transition: border-color 0.25s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.pcm-input:focus {
+  border-color: var(--brass);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.pcm-input::placeholder {
+  color: rgba(227, 238, 230, 0.3);
+}
+
+.pcm-textarea {
+  resize: vertical;
+  min-height: 90px;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+select.pcm-input {
+  cursor: pointer;
+}
+
+select.pcm-input option {
+  background: #0f1814;
+}
+
+.pcm-submit {
+  background: transparent;
+  border: 1px solid var(--brass);
+  color: var(--brass);
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  padding: 12px 28px;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-transform: uppercase;
+  align-self: flex-start;
+}
+
+.pcm-submit:hover {
+  background: var(--brass);
+  color: var(--bg);
+}
+
+.form-status {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px;
+  margin-top: 6px;
+  min-height: 18px;
+}
+
+/* ─────────────────────────────────────────────
+   7. HOME MARK
+   ───────────────────────────────────────────── */
+
+.home-mark {
+  position: fixed;
+  top: 28px;
+  left: 40px;
+  z-index: 20;
+  opacity: 0;
+  transition: opacity 0.8s;
+  pointer-events: none;
+}
+
+.home-mark.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.home-mark .wordmark {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  color: var(--ink);
+  letter-spacing: 0.18em;
+  font-weight: 500;
+}
+
+.home-mark .slogan {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.32em;
+  color: var(--brass);
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+.home-mark .brass-hairline {
+  width: 100%;
+  height: 1px;
+  background: var(--brass);
+  margin-top: 8px;
+  box-shadow: 0 0 8px rgba(201, 169, 110, 0.4);
+}
+
+/* ─────────────────────────────────────────────
+   8. TOP META
+   ───────────────────────────────────────────── */
+
+.top-section-meta {
+  position: fixed;
+  top: 28px;
+  right: 40px;
+  z-index: 20;
+  text-align: right;
+}
+
+.meta-num {
+  display: block;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  color: var(--ink);
+  letter-spacing: 0.18em;
+}
+
+.meta-cap {
+  display: block;
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  color: var(--brass);
+  text-transform: uppercase;
+  margin-top: 3px;
+  opacity: 0.7;
+}
+
+/* ─────────────────────────────────────────────
+   9. BOTTOM MENU EXTRAS
+   ───────────────────────────────────────────── */
+
+.btn-num {
+  display: block;
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  color: rgba(201, 169, 110, 0.5);
+  margin-bottom: 3px;
+}
+
+.btn-name {
+  display: block;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* ─────────────────────────────────────────────
+   10. INTRO LOADER EXTRAS
+   ───────────────────────────────────────────── */
+
+.loader-inner {
+  text-align: center;
+}
+
+.loader-spinner {
+  width: 36px;
+  height: 36px;
+  border: 2px solid rgba(201, 169, 110, 0.2);
+  border-top-color: var(--brass);
+  border-radius: 50%;
+  animation: spinBrass 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+.loader-wordmark {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem;
+  color: var(--ink);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.loader-status {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  color: var(--brass);
+  letter-spacing: 0.18em;
+  margin-top: 12px;
+  opacity: 0.7;
+}
+
+/* ─────────────────────────────────────────────
+   11. MENU OVERLAY EXTRAS
+   ───────────────────────────────────────────── */
+
+.menu-close {
+  position: absolute;
+  top: 28px;
+  right: 40px;
+  background: transparent;
+  border: none;
+  color: var(--brass);
+  font-size: 1.4rem;
+  cursor: pointer;
+  font-family: 'Space Mono', monospace;
+  z-index: 1;
+}
+
+.menu-overlay nav a {
+  font-size: clamp(2.5rem, 5vw, 5rem);
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  opacity: 0.85;
+  transition: all 0.3s;
+  display: block;
+  margin-bottom: 8px;
+  border-bottom: 1px solid rgba(201, 169, 110, 0.08);
+  padding-bottom: 12px;
+}
+
+.menu-overlay nav a:hover {
+  opacity: 1;
+  padding-left: 16px;
+  color: var(--brass);
+}
+
+/* ─────────────────────────────────────────────
+   12. CINEMA BARS
+   ───────────────────────────────────────────── */
+
+.cinema-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: 0;
+  background: #000;
+  z-index: 45;
+  transition: height 700ms cubic-bezier(0.83, 0, 0.17, 1);
+  pointer-events: none;
+}
+
+.cinema-bar-top {
+  top: 0;
+}
+
+.cinema-bar-bottom {
+  bottom: 0;
+}
+
+body.transitioning .cinema-bar {
+  height: 80px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.transitioning .cinema-bar {
+    transition-duration: 200ms;
+    height: 40px;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   13. PCM CURSOR
+   ───────────────────────────────────────────── */
+
+.pcm-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(227, 238, 230, 0.45);
+  transform: translate(-50%, -50%);
+  transition: width 0.2s, height 0.2s, border-color 0.2s, background 0.2s;
+  will-change: transform;
+}
+
+.cursor-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 4px;
+  height: 4px;
+  background: var(--ink);
+  border-radius: 50%;
+}
+
+.pcm-cursor.cursor-hot {
+  width: 64px;
+  height: 64px;
+  border-color: var(--brass);
+  background: rgba(201, 169, 110, 0.08);
+}
+
+.pcm-cursor.cursor-drag {
+  width: 20px;
+  height: 20px;
+  background: var(--brass);
+  border-color: var(--brass);
+}
+
+body:has(.pcm-cursor) {
+  cursor: none;
+}
+
+/* ─────────────────────────────────────────────
+   14. CADENCE / CONNECTOR
+   ───────────────────────────────────────────── */
+
+.cadence-strip {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin: 20px 0;
+}
+
+.cadence-stage {
+  text-align: center;
+  padding: 0 12px;
+}
+
+.cadence-num {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  color: var(--brass);
+  letter-spacing: 0.22em;
+}
+
+.cadence-label {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.95rem;
+  color: var(--ink);
+  margin-top: 4px;
+}
+
+.cadence-connector {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--brass), rgba(201, 169, 110, 0.2));
+  min-width: 20px;
+  box-shadow: 0 0 4px rgba(201, 169, 110, 0.3);
+}
+
+/* ─────────────────────────────────────────────
+   15. SCROLL CUE
+   ───────────────────────────────────────────── */
+
+.scroll-cue {
+  position: fixed;
+  bottom: 110px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  color: var(--brass);
+  text-transform: uppercase;
+  text-align: center;
+  animation: pulseBrass 2s ease-in-out infinite;
+  z-index: 20;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* ─────────────────────────────────────────────
+   16. SECTION COPY RESPONSIVE
+   ───────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  .scene-copy {
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90vw;
+  }
+
+  .scene-copy.visible {
+    transform: translateX(-50%) translateY(-50%);
+  }
+
+  .scene-copy.hidden {
+    transform: translateX(-50%) translateY(-55%);
+  }
+
+  .copy-inner {
+    padding: 0 16px;
+  }
+
+  .bottom-menu {
+    padding: 10px 20px 14px;
+  }
+
+  .section-btn {
+    padding: 0 6px;
+  }
+
+  .side-nav {
+    right: 14px;
+  }
+
+  .home-mark {
+    left: 20px;
+  }
+
+  .top-section-meta {
+    right: 20px;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   17. CANVAS HOST
+   ───────────────────────────────────────────── */
+
+#canvas-host {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+
+#canvas-host canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ─────────────────────────────────────────────
+   18. DETAIL CARD TRANSITIONS
+   ───────────────────────────────────────────── */
+
+.detail-card {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s, transform 0.3s;
+  pointer-events: none;
+}
+
+.detail-card:not(.hidden) {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* ─────────────────────────────────────────────
+   19. STATUS CONSOLE
+   ───────────────────────────────────────────── */
+
+.status-console div {
+  animation: fadeInUp 0.3s ease both;
+}
+
+.status-console div:nth-child(1) { animation-delay: 0s; }
+.status-console div:nth-child(2) { animation-delay: 0.1s; }
+.status-console div:nth-child(3) { animation-delay: 0.25s; }
+.status-console div:nth-child(4) { animation-delay: 0.45s; }
+.status-console div:nth-child(5) { animation-delay: 0.7s; }
+.status-console div:nth-child(6) { animation-delay: 0.95s; }
+.status-console div:nth-child(7) { animation-delay: 1.2s; }
+.status-console div:nth-child(8) { animation-delay: 1.5s; }
+
+/* ─────────────────────────────────────────────
+   20. FLASH OVERLAY
+   ───────────────────────────────────────────── */
+
+.flash-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: white;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+
+/* === Fixes for late-inserted overlays === */
+.hidden { display: none !important; }
+  </style>
+</head>
+<body class="pcm-body">
+  <a href="#main-content" class="skip-to-content">Skip to content</a>
+
+  <noscript>
+    <div style="padding:40px;font-family:Georgia,serif;color:#c9a96e;background:#06090a;text-align:center;">
+      <h1>Patel Capital Markets</h1>
+      <p>Engineering Creative Finance — Commercial Real Estate Capital Advisory.</p>
+      <p>This cinematic experience requires JavaScript. Contact: deals@patelcapital.markets</p>
+    </div>
+  </noscript>
+
+  <div id="canvas-host" aria-hidden="true"></div>
+
+  <main id="main-content"></main>
+
+  <div class="vignette" aria-hidden="true"></div>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://esm.sh/three@0.160.0",
+      "three/addons/": "https://esm.sh/three@0.160.0/examples/jsm/",
+      "postprocessing": "https://esm.sh/postprocessing@6.36.4?deps=three@0.160.0"
+    }
+  }
+  </script>
+
+  <script type="module">
+  import * as THREE from 'three';
+  import * as POSTPROCESSING from 'postprocessing';
+
+  // Expose as globals so the non-module scripts below can find them
+  window.THREE = THREE;
+  window.POSTPROCESSING = POSTPROCESSING;
+
+  // Shared mutable state used across input.js / animation.js
+  window.dragRotXTarget = 0;
+  window.dragRotYTarget = 0;
+  let dragRotXTarget = 0, dragRotYTarget = 0;
+  let mouseTarget = { x: 0, y: 0 };
+  window.mouseTarget = mouseTarget;
+  window.activeIdx = 0;
+
+  // ─── scene-setup.js ────────────────────────────────────────────────
+function initScene() {
+  // Canvas host must exist in HTML as: <div id="canvas-host"></div>
+
+  // RENDERER
+  const renderer = new THREE.WebGLRenderer({
+    antialias: true,
+    alpha: false,
+    powerPreference: 'high-performance',
+    stencil: false
+  });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.25;
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  document.getElementById('canvas-host').appendChild(renderer.domElement);
+
+  // SCENE
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x06090a);
+  scene.fog = new THREE.FogExp2(0x06090a, 0.018);
+
+  // CAMERA
+  const camera = new THREE.PerspectiveCamera(34, window.innerWidth / window.innerHeight, 0.1, 200);
+  camera.position.set(0, 12, 22); // intro start position
+
+  // PMREM (Room Environment for PBR reflections)
+  // Using a manual IBL setup since RoomEnvironment import may not be available
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  pmrem.compileEquirectangularShader();
+  // Create a simple bright env using a data texture
+  try {
+    // Try to load RoomEnvironment from esm.sh
+    // Falls back gracefully
+    const envData = new Float32Array(4 * 4 * 4 * 6);
+    for (let i = 0; i < envData.length; i += 4) {
+      envData[i] = 0.8; envData[i+1] = 0.85; envData[i+2] = 0.75; envData[i+3] = 1.0;
+    }
+    const envTex = new THREE.DataArrayTexture(envData, 4, 4, 6);
+    envTex.type = THREE.FloatType;
+    envTex.needsUpdate = true;
+    // scene.environment will be set after PMREM processes
+  } catch(e) {
+    // graceful fallback
+  }
+
+  // 7-LIGHT RIG (exact values from spec)
+
+  // 1. Ambient
+  const ambientLight = new THREE.AmbientLight(0xb4c8be, 0.3);
+  scene.add(ambientLight);
+
+  // 2. Key light (warm directional from upper-right-front)
+  const keyLight = new THREE.DirectionalLight(0xfff5e0, 1.6);
+  keyLight.position.set(8, 10, 8);
+  keyLight.castShadow = true;
+  keyLight.shadow.mapSize.set(2048, 2048);
+  keyLight.shadow.camera.near = 0.5;
+  keyLight.shadow.camera.far = 50;
+  keyLight.shadow.camera.left = -12;
+  keyLight.shadow.camera.right = 12;
+  keyLight.shadow.camera.top = 12;
+  keyLight.shadow.camera.bottom = -12;
+  keyLight.shadow.bias = -0.0005;
+  scene.add(keyLight);
+
+  // 3. Rim light (cool green from upper-left-back)
+  const rimLight = new THREE.DirectionalLight(0x7fb89c, 0.7);
+  rimLight.position.set(-8, 5, -5);
+  scene.add(rimLight);
+
+  // 4. Fill light (brass from below-front)
+  const fillLight = new THREE.DirectionalLight(0xc9a96e, 0.45);
+  fillLight.position.set(0, -6, 8);
+  scene.add(fillLight);
+
+  // 5. Center spot (warm gold, flickers in animation loop)
+  const centerSpotLight = new THREE.PointLight(0xffe0a0, 1.8, 18, 1.4);
+  centerSpotLight.position.set(0, 0.5, 5);
+  scene.add(centerSpotLight);
+  window.centerSpotLight = centerSpotLight;
+
+  // 6. Accent brass (left)
+  const accentBrass = new THREE.PointLight(0xc9a96e, 0.8, 10, 1.8);
+  accentBrass.position.set(-3.5, 2, 2);
+  scene.add(accentBrass);
+
+  // 7. Accent green (right)
+  const accentGreen = new THREE.PointLight(0x7fb89c, 0.6, 10, 1.8);
+  accentGreen.position.set(3.5, -2, 2);
+  scene.add(accentGreen);
+
+  // POSTPROCESSING CHAIN
+  const EffectComposer = POSTPROCESSING.EffectComposer;
+  const RenderPass = POSTPROCESSING.RenderPass;
+  const EffectPass = POSTPROCESSING.EffectPass;
+  const BloomEffect = POSTPROCESSING.BloomEffect;
+  const ChromaticAberrationEffect = POSTPROCESSING.ChromaticAberrationEffect;
+  const VignetteEffect = POSTPROCESSING.VignetteEffect;
+
+  const composer = new EffectComposer(renderer);
+  composer.addPass(new RenderPass(scene, camera));
+
+  const bloomEffect = new BloomEffect({
+    intensity: 0.85,
+    luminanceThreshold: 0.35,
+    luminanceSmoothing: 0.4,
+    radius: 0.7,
+  });
+
+  const chromAberration = new ChromaticAberrationEffect({
+    offset: new THREE.Vector2(0.0008, 0.0008),
+  });
+
+  const vignetteEffect = new VignetteEffect({
+    offset: 0.32,
+    darkness: 0.6,
+  });
+
+  composer.addPass(new EffectPass(camera, bloomEffect, chromAberration, vignetteEffect));
+
+  // RESIZE
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    composer.setSize(window.innerWidth, window.innerHeight);
+  });
+
+  // Expose globals
+  window.scene = scene;
+  window.camera = camera;
+  window.renderer = renderer;
+  window.composer = composer;
+
+  return { scene, camera, renderer, composer, lights: { ambientLight, keyLight, rimLight, fillLight, centerSpotLight, accentBrass, accentGreen } };
+}
+
+
+  // ─── logo-geometry.js ──────────────────────────────────────────────
+function buildPCMLogo(THREE) {
+  // ── MATERIALS ──────────────────────────────────────────────────────────────
+  const matRing = new THREE.MeshPhysicalMaterial({
+    color: 0x1a2520,
+    metalness: 0.35,
+    roughness: 0.38,
+    clearcoat: 0.7,
+    clearcoatRoughness: 0.22,
+    envMapIntensity: 1.2
+  });
+
+  const matShadow = new THREE.MeshStandardMaterial({
+    color: 0x0f1814,
+    roughness: 0.8
+  });
+
+  const matBrass = new THREE.MeshPhysicalMaterial({
+    color: 0xc9a96e,
+    metalness: 0.82,
+    roughness: 0.18,
+    envMapIntensity: 1.5
+  });
+
+  const matCoin = new THREE.MeshPhysicalMaterial({
+    color: 0xd9b97a,
+    metalness: 0.92,
+    roughness: 0.12,
+    envMapIntensity: 2.0,
+    clearcoat: 0.5
+  });
+
+  const matPerson = new THREE.MeshPhysicalMaterial({
+    color: 0x1a2520,
+    metalness: 0.3,
+    roughness: 0.45,
+    clearcoat: 0.4
+  });
+
+  const matCream = new THREE.MeshStandardMaterial({
+    color: 0xe8dcc4,
+    roughness: 0.7
+  });
+
+  // ── OUTER RING ─────────────────────────────────────────────────────────────
+  const outerRing = new THREE.Mesh(
+    new THREE.TorusGeometry(3.4, 0.24, 32, 128),
+    matRing
+  );
+  outerRing.userData.partId = 'ringOuter';
+  outerRing.castShadow = true;
+
+  const shadowRing = new THREE.Mesh(
+    new THREE.TorusGeometry(3.42, 0.27, 24, 96),
+    matShadow
+  );
+  shadowRing.position.z = -0.04;
+
+  const accentRing = new THREE.Mesh(
+    new THREE.TorusGeometry(3.05, 0.045, 16, 96),
+    matBrass
+  );
+
+  // ── TICK MARKS ─────────────────────────────────────────────────────────────
+  const tickGroup = new THREE.Group();
+  for (let i = 0; i < 12; i++) {
+    const a = (i / 12) * Math.PI * 2;
+    const isMajor = i % 3 === 0;
+    const geo = isMajor
+      ? new THREE.CapsuleGeometry(0.04, 0.22, 8, 12)
+      : new THREE.CapsuleGeometry(0.025, 0.14, 6, 8);
+    const mat = isMajor ? matBrass : matCream;
+    const tick = new THREE.Mesh(geo, mat);
+    tick.position.set(Math.cos(a) * 3.68, Math.sin(a) * 3.68, 0);
+    tick.rotation.z = a + Math.PI / 2;
+    tickGroup.add(tick);
+  }
+
+  // ── LEVER GROUP ────────────────────────────────────────────────────────────
+  const leverGroup = new THREE.Group();
+  leverGroup.rotation.z = 0.16;
+  leverGroup.userData.partId = 'lever';
+
+  const leverBar = new THREE.Mesh(
+    new THREE.BoxGeometry(4.5, 0.18, 0.22),
+    matRing
+  );
+  leverGroup.add(leverBar);
+
+  const capGeo = new THREE.CylinderGeometry(0.12, 0.12, 0.24, 16);
+  const leftCap = new THREE.Mesh(capGeo, matBrass);
+  leftCap.position.set(-2.3, 0, 0);
+  leftCap.rotation.x = Math.PI / 2;
+  const rightCap = new THREE.Mesh(capGeo.clone(), matBrass);
+  rightCap.position.set(2.3, 0, 0);
+  rightCap.rotation.x = Math.PI / 2;
+  leverGroup.add(leftCap, rightCap);
+
+  // ── COIN GROUP ─────────────────────────────────────────────────────────────
+  const coinGroup = new THREE.Group();
+  coinGroup.position.set(-2.0, 0, 0);
+  coinGroup.userData.partId = 'coin';
+
+  const disc = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.58, 0.58, 0.16, 64),
+    matCoin
+  );
+  disc.rotation.x = Math.PI / 2;
+  coinGroup.add(disc);
+
+  const rimGeo = new THREE.TorusGeometry(0.58, 0.025, 8, 64);
+  const frontRim = new THREE.Mesh(rimGeo, matRing);
+  frontRim.position.z = 0.08;
+  const backRim = new THREE.Mesh(rimGeo.clone(), matRing);
+  backRim.position.z = -0.08;
+  coinGroup.add(frontRim, backRim);
+
+  const dollarBar = new THREE.Mesh(
+    new THREE.BoxGeometry(0.07, 0.72, 0.045),
+    matBrass
+  );
+  dollarBar.position.z = 0.09;
+  coinGroup.add(dollarBar);
+
+  const upperArc = new THREE.Mesh(
+    new THREE.TorusGeometry(0.16, 0.05, 10, 24, Math.PI * 1.05),
+    matBrass
+  );
+  upperArc.position.set(0, 0.15, 0.09);
+  coinGroup.add(upperArc);
+
+  const lowerArc = new THREE.Mesh(
+    new THREE.TorusGeometry(0.16, 0.05, 10, 24, Math.PI * 1.05),
+    matBrass
+  );
+  lowerArc.position.set(0, -0.15, 0.09);
+  lowerArc.rotation.y = Math.PI;
+  coinGroup.add(lowerArc);
+
+  leverGroup.add(coinGroup);
+
+  // ── PERSON GROUP ───────────────────────────────────────────────────────────
+  const personRoot = new THREE.Group();
+  personRoot.position.set(2.0, 0.09, 0);
+  personRoot.userData.partId = 'person';
+
+  const head = new THREE.Mesh(
+    new THREE.SphereGeometry(0.19, 28, 28),
+    matPerson
+  );
+  head.position.y = 1.08;
+  personRoot.add(head);
+
+  const neck = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.065, 0.085, 0.12, 16),
+    matPerson
+  );
+  neck.position.y = 0.91;
+  personRoot.add(neck);
+
+  const torso = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.17, 0.24, 0.54, 20),
+    matPerson
+  );
+  torso.position.y = 0.58;
+  personRoot.add(torso);
+
+  const armGeo = new THREE.CapsuleGeometry(0.055, 0.46, 8, 14);
+  const leftArm = new THREE.Mesh(armGeo, matPerson);
+  leftArm.position.set(-0.24, 0.72, 0);
+  leftArm.rotation.z = 0.4;
+  const rightArm = new THREE.Mesh(armGeo.clone(), matPerson);
+  rightArm.position.set(0.24, 0.72, 0);
+  rightArm.rotation.z = -0.4;
+  personRoot.add(leftArm, rightArm);
+
+  const hips = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.24, 0.2, 0.13, 20),
+    matPerson
+  );
+  hips.position.y = 0.28;
+  personRoot.add(hips);
+
+  const legGeo = new THREE.CapsuleGeometry(0.075, 0.34, 8, 14);
+  const leftLeg = new THREE.Mesh(legGeo, matPerson);
+  leftLeg.position.set(-0.1, 0.05, 0);
+  const rightLeg = new THREE.Mesh(legGeo.clone(), matPerson);
+  rightLeg.position.set(0.1, 0.05, 0);
+  personRoot.add(leftLeg, rightLeg);
+
+  const footGeo = new THREE.BoxGeometry(0.17, 0.07, 0.2);
+  const leftFoot = new THREE.Mesh(footGeo, matPerson);
+  leftFoot.position.set(-0.1, -0.14, 0.04);
+  const rightFoot = new THREE.Mesh(footGeo.clone(), matPerson);
+  rightFoot.position.set(0.1, -0.14, 0.04);
+  personRoot.add(leftFoot, rightFoot);
+
+  leverGroup.add(personRoot);
+
+  // ── FULCRUM GROUP ──────────────────────────────────────────────────────────
+  const fulcrumGroup = new THREE.Group();
+  fulcrumGroup.position.set(0, -0.45, 0);
+  fulcrumGroup.userData.partId = 'fulcrum';
+
+  const pyramid = new THREE.Mesh(
+    new THREE.ConeGeometry(0.22, 0.42, 4),
+    matRing
+  );
+  pyramid.position.y = -0.08;
+  pyramid.rotation.y = Math.PI / 4;
+  fulcrumGroup.add(pyramid);
+
+  const pivotDot = new THREE.Mesh(
+    new THREE.SphereGeometry(0.085, 20, 20),
+    matBrass
+  );
+  pivotDot.position.y = 0.2;
+  fulcrumGroup.add(pivotDot);
+
+  const glowRingMat = new THREE.MeshBasicMaterial({
+    color: 0xc9a96e,
+    transparent: true,
+    opacity: 0.6,
+    side: THREE.DoubleSide,
+    depthWrite: false
+  });
+  const glowRing = new THREE.Mesh(
+    new THREE.RingGeometry(0.13, 0.22, 32),
+    glowRingMat
+  );
+  glowRing.position.y = 0.2;
+  glowRing.rotation.x = Math.PI / 2;
+  fulcrumGroup.add(glowRing);
+
+  // ── ICON ROW ───────────────────────────────────────────────────────────────
+  const iconRow = new THREE.Group();
+
+  // Up arrow
+  const upArrowGroup = new THREE.Group();
+  upArrowGroup.position.set(-1.15, -1.85, 0);
+  upArrowGroup.userData.partId = 'upArrow';
+  const upShaft = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.045, 0.045, 0.46, 16),
+    matBrass
+  );
+  const upHead = new THREE.Mesh(
+    new THREE.ConeGeometry(0.14, 0.24, 20),
+    matBrass
+  );
+  upHead.position.y = 0.34;
+  upArrowGroup.add(upShaft, upHead);
+
+  // Refresh icon
+  const refreshGroup = new THREE.Group();
+  refreshGroup.position.set(0, -1.85, 0);
+  const refreshArc = new THREE.Mesh(
+    new THREE.TorusGeometry(0.25, 0.045, 12, 32, Math.PI * 1.55),
+    matBrass
+  );
+  refreshArc.rotation.z = -0.4;
+  const refreshTip = new THREE.Mesh(
+    new THREE.ConeGeometry(0.09, 0.18, 14),
+    matBrass
+  );
+  refreshTip.position.set(0.21, 0.16, 0);
+  refreshTip.rotation.z = -1.0;
+  refreshGroup.add(refreshArc, refreshTip);
+
+  // Down arrow
+  const downArrowGroup = new THREE.Group();
+  downArrowGroup.position.set(1.15, -1.85, 0);
+  downArrowGroup.userData.partId = 'downArrow';
+  const downShaft = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.045, 0.045, 0.46, 16),
+    matBrass
+  );
+  const downHead = new THREE.Mesh(
+    new THREE.ConeGeometry(0.14, 0.24, 20),
+    matBrass
+  );
+  downHead.position.y = -0.34;
+  downHead.rotation.z = Math.PI;
+  downArrowGroup.add(downShaft, downHead);
+
+  iconRow.add(upArrowGroup, refreshGroup, downArrowGroup);
+
+  // ── ORBITAL DOTS ───────────────────────────────────────────────────────────
+  const orbitalDots = [];
+  for (let i = 0; i < 10; i++) {
+    const dot = new THREE.Mesh(
+      new THREE.SphereGeometry(0.055, 14, 14),
+      matBrass.clone()
+    );
+    const phase = (i / 10) * Math.PI * 2;
+    dot.userData.phase = phase;
+    orbitalDots.push(dot);
+  }
+
+  // ── HALO DISC ──────────────────────────────────────────────────────────────
+  const haloMat = new THREE.MeshBasicMaterial({
+    color: 0x7fb89c,
+    transparent: true,
+    opacity: 0.07,
+    blending: THREE.AdditiveBlending,
+    side: THREE.DoubleSide,
+    depthWrite: false
+  });
+  const haloDisc = new THREE.Mesh(
+    new THREE.CircleGeometry(4.8, 64),
+    haloMat
+  );
+  haloDisc.position.z = -1.2;
+
+  // ── PARTICLES ──────────────────────────────────────────────────────────────
+  const particleCount = 240;
+  const positions = new Float32Array(particleCount * 3);
+  const phases = new Float32Array(particleCount);
+  for (let i = 0; i < particleCount; i++) {
+    positions[i * 3]     = (Math.random() - 0.5) * 16;
+    positions[i * 3 + 1] = (Math.random() - 0.5) * 12;
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 10;
+    phases[i] = Math.random() * Math.PI * 2;
+  }
+  const particleGeo = new THREE.BufferGeometry();
+  particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  const particleMat = new THREE.PointsMaterial({
+    color: 0xc9a96e,
+    size: 0.045,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    transparent: true,
+    opacity: 0.7
+  });
+  const particles = new THREE.Points(particleGeo, particleMat);
+  particles.userData.phases = phases;
+
+  // ── BACKGROUND GRADIENT PLANE ──────────────────────────────────────────────
+  const bgPlane = new THREE.Mesh(
+    new THREE.PlaneGeometry(60, 40),
+    new THREE.ShaderMaterial({
+      uniforms: { time: { value: 0 } },
+      vertexShader: `
+        varying vec2 vUv;
+        void main() {
+          vUv = uv;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        varying vec2 vUv;
+        uniform float time;
+        void main() {
+          vec3 top = vec3(0.04, 0.07, 0.06);
+          vec3 mid = vec3(0.06, 0.10, 0.09);
+          vec3 bot = vec3(0.02, 0.03, 0.03);
+          vec3 col = mix(bot, mid, vUv.y * 1.5);
+          col = mix(col, top, max(0.0, vUv.y - 0.5) * 2.0);
+          col += 0.005 * sin(time * 0.3 + vUv.x * 8.0);
+          gl_FragColor = vec4(col, 1.0);
+        }
+      `,
+      depthWrite: false
+    })
+  );
+  bgPlane.position.z = -8;
+
+  // ── ASSEMBLE ROOT ──────────────────────────────────────────────────────────
+  const root = new THREE.Group();
+  root.add(outerRing, shadowRing, accentRing, tickGroup, leverGroup, fulcrumGroup, iconRow);
+  orbitalDots.forEach(d => root.add(d));
+  root.add(haloDisc, particles, bgPlane);
+
+  return {
+    root,
+    leverGroup,
+    coinGroup,
+    personGroup: personRoot,
+    fulcrumGroup,
+    refreshGroup,
+    outerRing,
+    accentRingMesh: accentRing,
+    tickGroup,
+    orbitalDots,
+    haloDisc,
+    particles,
+    bgPlane,
+    glowRing,
+    upArrowGroup,
+    downArrowGroup
+  };
+}
+
+
+  // ─── sections-data.js ──────────────────────────────────────────────
+const SECTIONS = [
+  {
+    id: 'home',
+    preTitle: 'Patel Capital Markets',
+    title: 'Engineering Creative Finance',
+    subTitle: 'Commercial Real Estate Capital Advisory',
+    body: 'Commercial real estate capital advisory structuring debt, mezzanine, preferred equity, and joint-venture capital for institutional and entrepreneurial sponsors.',
+    stats: [['$3.4B', 'Under Advisement'], ['126', 'Closed Transactions']],
+    tags: ['Capital Advisory', 'CRE', 'Multi-Stack'],
+  },
+  {
+    id: 'firm',
+    preTitle: 'About Us',
+    title: 'Control The Leverage',
+    body: 'Founded on the principle that capital structure is the most under-leveraged form of value creation in real estate. We engineer the stack so the asset can perform.',
+    stats: [['2019', 'Founded'], ['18', 'Investment Professionals']],
+    tags: ['Independent', 'Founder-Led', 'Pan-Asset-Class'],
+    longBlock: 'Capital structure is not a footnote — it is the operating system of every real estate transaction. The spread between senior debt and equity return is where institutional value is manufactured. We exist to exploit that spread systematically, for every sponsor we advise.',
+    callout: 'The deals that don\'t fit anywhere else are the ones we\'re built for.',
+  },
+  {
+    id: 'edge',
+    preTitle: 'Why PCM',
+    title: 'Three Things We Do Differently',
+    body: 'Structural creativity that finds optionality others miss. Cross-stack reach from senior to common equity. Institutional access without institutional friction.',
+    modes: [
+      { name: 'Structural', body: 'Optionality others miss — covenant engineering, tranche stacking, conversion features.' },
+      { name: 'Reach', body: 'Senior to common, every layer. One advisor, full stack.' },
+      { name: 'Access', body: 'Institutional capital, no institutional friction.' },
+    ],
+    stats: [['1', 'Structural'], ['2', 'Reach'], ['3', 'Access']],
+    tags: ['Creativity', 'Reach', 'Access'],
+  },
+  {
+    id: 'senior',
+    preTitle: 'Capital Stack · Layer One',
+    title: 'Senior Debt',
+    subTitle: 'First on the stack, foundational to every deal',
+    body: 'Acquisition, refinance, bridge, construction. Bank, life co, agency, debt fund, CMBS execution — sized to the asset, structured to the business plan.',
+    modes: [
+      { name: 'Acquisition', body: 'Purchase financing across asset classes. Bank, CMBS, agency. Speed and certainty.', stats: [['$15M–$500M', 'Size'], ['SOFR + 175–275', 'Spread']] },
+      { name: 'Refinance', body: 'Rate-and-term and cash-out. Lock in better basis, extract equity, reset covenants.', stats: [['6–10wk', 'Close']] },
+      { name: 'Bridge', body: 'Short-duration, value-add. Light value-add, lease-up, repositioning.', stats: [['12–36mo', 'Term'], ['SOFR + 275–450', 'Spread']] },
+      { name: 'Construction', body: 'Ground-up and major renovation. Senior construction + sometimes mezz behind.', stats: [['18–48mo', 'Term']] },
+    ],
+    stats: [['$15M–$500M', 'Deal Size'], ['SOFR + 175–450', 'Typical Spread'], ['6–10wk', 'Close']],
+    tags: ['Acquisition', 'Refinance', 'Bridge', 'Construction'],
+    scrubMode: true,
+  },
+  {
+    id: 'subordinate',
+    preTitle: 'Capital Stack · Layer Two',
+    title: 'Subordinate Capital',
+    subTitle: 'The risk-tranche layer',
+    body: 'Mezzanine, preferred equity, and uni-tranche. The risk-tranche layer that lets common equity stay common while the senior stays cheap.',
+    modes: [
+      { name: 'Mezzanine', body: 'Subordinate debt with intercreditor. Coupon + sometimes warrants or kickers.', stats: [['10–13%', 'Coupon']] },
+      { name: 'Preferred', body: 'Equity-flavored subordination. Cumulative dividend + redemption.', stats: [['11–14%', 'Pref']] },
+      { name: 'Uni-Tranche', body: 'Single-paper combo of senior + mezz. Simpler exec for the right deal.', stats: [['L+450–700', 'Blended']] },
+    ],
+    stats: [['65–85%', 'Attachment'], ['10–14%', 'Typical Coupon'], ['3–7yr', 'Tenor']],
+    tags: ['Mezzanine', 'Preferred', 'Uni-Tranche'],
+  },
+  {
+    id: 'equity',
+    preTitle: 'Capital Stack · Layer Three',
+    title: 'Joint-Venture Equity',
+    subTitle: 'Sponsor-led capital alongside institutional partners',
+    body: 'One-off JV, programmatic, and common. Sponsor-led capital alongside institutional partners — family offices, pension funds, sovereign capital.',
+    modes: [
+      { name: 'One-Off JV', body: 'Single-deal partnership. Promote + waterfall + governance.', stats: [['1', 'Deal']] },
+      { name: 'Programmatic', body: 'Multi-asset commitment. Capital reserved across a vintage.', stats: [['3–6', 'Assets']] },
+      { name: 'Common', body: 'Pari-passu common equity. Same risk as sponsor.', stats: [['1×', 'Risk Parity']] },
+    ],
+    stats: [['85–95%', 'LP Position'], ['12–20%', 'Target IRR'], ['1.6×–2.4×', 'Target MOIC']],
+    tags: ['One-Off JV', 'Programmatic', 'Common Equity'],
+  },
+  {
+    id: 'execution',
+    preTitle: 'How We Work',
+    title: 'The Cadence Is The Product',
+    body: 'Discovery → underwriting → structuring → term sheet → close. A repeatable process designed to surface every degree of freedom before we go to market.',
+    poetic: 'Discovery is listening. Underwriting is stress-testing. Structuring is engineering. Term sheet is the test. Close is the proof.',
+    stats: [['5', 'Stages'], ['<48hr', 'Indication Turn']],
+    tags: ['Process', 'Discipline', 'Speed'],
+  },
+  {
+    id: 'underwriting',
+    preTitle: 'Diligence',
+    title: 'Modeled, Stress-Tested, Defensible',
+    body: 'DSCR, LTC, LTV, and 50+ sensitivity scenarios. We model so our clients can defend — to lenders, to investment committees, to their own capital partners.',
+    modes: [
+      { name: 'DSCR', body: 'Debt service coverage at base + stress. 1.20× minimum stress hurdle.' },
+      { name: 'LTC · LTV', body: 'Loan-to-cost and loan-to-value. Constraints across the stack.' },
+      { name: 'Sensitivity', body: 'Rate, rent, expense, exit cap. 50+ scenarios.' },
+    ],
+    stats: [['50+', 'Scenarios'], ['1.20×', 'Min DSCR Stress']],
+    tags: ['DSCR', 'LTC · LTV', 'Sensitivity'],
+  },
+  {
+    id: 'compliance',
+    preTitle: 'Standards',
+    title: 'Institutional By Design',
+    body: 'KYC, AML, accredited verification, and institutional-grade documentation baked into every transaction. Compliance is structure, not paperwork.',
+    stats: [['SOC 2', 'Type II'], ['FINRA', 'Series 79']],
+    tags: ['KYC', 'AML', 'Documentation'],
+  },
+  {
+    id: 'engage',
+    preTitle: 'Contact',
+    title: 'Bring Us Your Complex Deal',
+    body: 'The deals that don\'t fit anywhere else are the ones we\'re built for. Reach out with the sponsor memo, the rent roll, or just a thesis.',
+    stats: [],
+    tags: ['New Deals', 'Sponsors', 'Capital Partners'],
+    hasContact: true,
+  },
+];
+window.SECTIONS = SECTIONS;
+
+function updateCopyContent(idx) {
+  const s = SECTIONS[idx];
+  if (!s) return;
+
+  const el = id => document.getElementById(id);
+
+  if (el('copy-pre')) el('copy-pre').textContent = s.preTitle || '';
+  if (el('copy-title')) el('copy-title').textContent = s.title;
+  if (el('copy-sub')) el('copy-sub').textContent = s.subTitle || '';
+  if (el('copy-sub')) el('copy-sub').style.display = s.subTitle ? '' : 'none';
+  if (el('copy-body')) el('copy-body').textContent = s.body;
+
+  // Stats row
+  const statsEl = el('copy-stats');
+  if (statsEl && s.stats) {
+    statsEl.innerHTML = s.stats.map(([val, label]) =>
+      `<div class="stat-item"><span class="stat-val">${val}</span><span class="stat-label">${label}</span></div>`
+    ).join('');
+  }
+
+  // Tags row
+  const tagsEl = el('copy-tags');
+  if (tagsEl && s.tags) {
+    tagsEl.innerHTML = s.tags.map(t => `<span class="tag">${t}</span>`).join('');
+  }
+
+  // Long block
+  const longEl = el('copy-long');
+  if (longEl) {
+    longEl.textContent = s.longBlock || '';
+    longEl.style.display = s.longBlock ? '' : 'none';
+  }
+
+  // Poetic block
+  const poeticEl = el('copy-poetic');
+  if (poeticEl) {
+    poeticEl.textContent = s.poetic || '';
+    poeticEl.style.display = s.poetic ? '' : 'none';
+  }
+
+  // Modes
+  const modesEl = el('copy-modes');
+  if (modesEl && s.modes) {
+    modesEl.innerHTML = s.modes.map((m, i) => `
+      <button class="mode-btn ${i === 0 ? 'active' : ''}" data-idx="${i}" onclick="window.setMode(${i})">
+        <span class="mode-name">${m.name}</span>
+      </button>
+    `).join('');
+    modesEl.style.display = '';
+    showModeContent(0, s);
+  } else if (modesEl) {
+    modesEl.style.display = 'none';
+  }
+
+  // Contact form
+  const contactEl = el('copy-contact');
+  if (contactEl) {
+    contactEl.style.display = s.hasContact ? '' : 'none';
+  }
+
+  // Home wordmark vs regular copy
+  const homeMark = document.querySelector('.home-mark');
+  const sceneCopy = document.querySelector('.scene-copy');
+  if (idx === 0) {
+    homeMark?.classList.add('visible');
+    if (sceneCopy) sceneCopy.style.bottom = '160px';
+  } else {
+    homeMark?.classList.remove('visible');
+    if (sceneCopy) sceneCopy.style.bottom = '';
+  }
+
+  // Top meta
+  if (el('meta-section')) el('meta-section').textContent = `${String(idx + 1).padStart(2,'0')} / 10`;
+  if (el('meta-caption')) el('meta-caption').textContent = s.preTitle || '';
+
+  // Progress bar
+  const fill = document.querySelector('.progress-bar-fill');
+  if (fill) fill.style.width = `${(idx / 9) * 100}%`;
+}
+
+function showModeContent(idx, section) {
+  const s = section || (window.SECTIONS && window.SECTIONS[window.activeIdx || 0]);
+  if (!s || !s.modes) return;
+  const mode = s.modes[idx];
+  if (!mode) return;
+  const el = id => document.getElementById(id);
+  if (el('mode-body')) el('mode-body').textContent = mode.body;
+  const modeStats = el('mode-stats');
+  if (modeStats && mode.stats) {
+    modeStats.innerHTML = mode.stats.map(([v, l]) =>
+      `<div class="stat-item"><span class="stat-val">${v}</span><span class="stat-label">${l}</span></div>`
+    ).join('');
+    modeStats.style.display = '';
+  } else if (modeStats) {
+    modeStats.style.display = 'none';
+  }
+  // Update active mode btn
+  document.querySelectorAll('.mode-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', i === idx);
+  });
+}
+
+window.setMode = function(idx) {
+  const s = window.SECTIONS?.[window.activeIdx || 0];
+  showModeContent(idx, s);
+};
+
+function updateSectionUI(idx) {
+  // Side nav dots
+  document.querySelectorAll('.side-nav-dot').forEach((dot, i) => {
+    dot.classList.toggle('active', i === idx);
+  });
+  // Bottom menu buttons
+  document.querySelectorAll('.section-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', i === idx);
+  });
+
+  window.activeIdx = idx;
+}
+window.updateSectionUI = updateSectionUI;
+window.updateCopyContent = updateCopyContent;
+
+
+  // ─── chrome.js (IIFE; runs immediately, exposes initChrome) ────────
+/**
+ * chrome.js — PCM Cinematic Site
+ * Injects and wires all persistent UI chrome elements.
+ * Call initChrome() once after DOMContentLoaded.
+ */
+
+(function () {
+  'use strict';
+
+  // ---------------------------------------------------------------------------
+  // Constants
+  // ---------------------------------------------------------------------------
+
+  const SECTION_NAMES = [
+    'Home',
+    'Firm Overview',
+    'Platform Edge',
+    'Senior Debt',
+    'Subordinate Capital',
+    'Joint-Venture Equity',
+    'Execution',
+    'Underwriting',
+    'Compliance',
+    'Engage',
+  ];
+
+  const SECTION_NAMES_SHORT = [
+    'Home',
+    'Firm',
+    'Platform',
+    'Senior Debt',
+    'Sub Capital',
+    'Equity',
+    'Execution',
+    'Underwriting',
+    'Compliance',
+    'Engage',
+  ];
+
+  const STATUS_LINES = [
+    [0,    'PCM · Cinematic Experience v1.0'],
+    [100,  'Three.js r160 · ACES Filmic · PBR active'],
+    [250,  'Postprocessing: Bloom + ChromAb + Vignette'],
+    [450,  'PMREMGenerator · RoomEnvironment'],
+    [700,  'PCM Logo geometry: 48 meshes · 240 particles'],
+    [950,  '7-light rig · shadow mapping'],
+    [1200, '10 section presets · cinematic auto-glide'],
+    [1500, 'Scene ready · '],
+  ];
+
+  const LOADER_STATUS_STEPS = [
+    [0,    'Initializing scene...'],
+    [400,  'Building centerpiece...'],
+    [800,  'Engaging postprocessing...'],
+    [1200, 'Calibrating stack...'],
+  ];
+
+  // ---------------------------------------------------------------------------
+  // Helpers
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Insert raw HTML at a position relative to document.body and return the
+   * first newly inserted element for optional post-processing.
+   */
+  function insertHTML(position, html) {
+    document.body.insertAdjacentHTML(position, html);
+  }
+
+  /** Create a DOM element with className, optional attributes, and innerHTML. */
+  function createElement(tag, opts) {
+    const el = document.createElement(tag);
+    if (opts.className)   el.className = opts.className;
+    if (opts.id)          el.id = opts.id;
+    if (opts.innerHTML)   el.innerHTML = opts.innerHTML;
+    if (opts.role)        el.setAttribute('role', opts.role);
+    if (opts.ariaLabel)   el.setAttribute('aria-label', opts.ariaLabel);
+    if (opts.ariaHidden)  el.setAttribute('aria-hidden', opts.ariaHidden);
+    if (opts.ariaLive)    el.setAttribute('aria-live', opts.ariaLive);
+    return el;
+  }
+
+  // ---------------------------------------------------------------------------
+  // 1. Custom Cursor
+  // ---------------------------------------------------------------------------
+
+  function buildCursor() {
+    insertHTML('afterbegin', `
+      <div id="pcm-cursor" class="pcm-cursor" aria-hidden="true">
+        <div id="pcm-cursor-dot" class="cursor-dot"></div>
+      </div>
+    `);
+
+    // Hide the system cursor site-wide (CSS mirror: body { cursor: none })
+    document.body.style.cursor = 'none';
+
+    const cursor = document.getElementById('pcm-cursor');
+    const dot    = document.getElementById('pcm-cursor-dot');
+
+    let mx = -200, my = -200; // start off-screen
+    let cx = -200, cy = -200;
+    let rafId = null;
+
+    function lerp(a, b, t) { return a + (b - a) * t; }
+
+    function animateCursor() {
+      cx = lerp(cx, mx, 0.12);
+      cy = lerp(cy, my, 0.12);
+      cursor.style.transform = `translate(${cx}px, ${cy}px)`;
+      dot.style.transform    = `translate(${mx}px, ${my}px)`;
+      rafId = requestAnimationFrame(animateCursor);
+    }
+
+    document.addEventListener('mousemove', (e) => {
+      mx = e.clientX;
+      my = e.clientY;
+    });
+
+    document.addEventListener('mouseenter', () => {
+      cursor.style.opacity = '1';
+    });
+
+    document.addEventListener('mouseleave', () => {
+      cursor.style.opacity = '0';
+    });
+
+    // Pointer-down / up state for click feedback
+    document.addEventListener('mousedown', () => {
+      cursor.classList.add('pressing');
+    });
+
+    document.addEventListener('mouseup', () => {
+      cursor.classList.remove('pressing');
+    });
+
+    // Hover state on interactive elements
+    const interactiveSelector = 'a, button, [role="button"], input, select, textarea, label';
+    document.addEventListener('mouseover', (e) => {
+      if (e.target.closest(interactiveSelector)) {
+        cursor.classList.add('hovering');
+      }
+    });
+    document.addEventListener('mouseout', (e) => {
+      if (e.target.closest(interactiveSelector)) {
+        cursor.classList.remove('hovering');
+      }
+    });
+
+    animateCursor();
+  }
+
+  // ---------------------------------------------------------------------------
+  // 2. Intro Loader
+  // ---------------------------------------------------------------------------
+
+  function buildIntroLoader() {
+    insertHTML('afterbegin', `
+      <div id="intro-loader" class="intro-loader" role="status" aria-live="polite">
+        <div class="loader-inner">
+          <div class="loader-spinner" aria-hidden="true"></div>
+          <div class="loader-wordmark">Patel Capital Markets</div>
+          <div class="loader-status" id="loader-status">Initializing scene...</div>
+        </div>
+      </div>
+    `);
+
+    const statusEl = document.getElementById('loader-status');
+
+    // Status text progression
+    LOADER_STATUS_STEPS.forEach(([delay, text]) => {
+      setTimeout(() => {
+        if (statusEl) statusEl.textContent = text;
+      }, delay);
+    });
+
+    // Dismiss loader
+    setTimeout(() => {
+      const loader = document.getElementById('intro-loader');
+      if (loader) loader.classList.add('done');
+    }, 1800);
+  }
+
+  // ---------------------------------------------------------------------------
+  // 3. Cinema Bars
+  // ---------------------------------------------------------------------------
+
+  function buildCinemaBars() {
+    insertHTML('afterbegin', `
+      <div class="cinema-bar cinema-bar-top" aria-hidden="true"></div>
+      <div class="cinema-bar cinema-bar-bottom" aria-hidden="true"></div>
+    `);
+  }
+
+  // ---------------------------------------------------------------------------
+  // 4. Home Mark (top-left wordmark)
+  // ---------------------------------------------------------------------------
+
+  function buildHomeMark() {
+    insertHTML('beforeend', `
+      <div class="home-mark" id="home-mark" aria-label="Patel Capital Markets">
+        <div class="wordmark">Patel Capital Markets</div>
+        <div class="slogan">Engineering Creative Finance</div>
+        <div class="brass-hairline"></div>
+      </div>
+    `);
+
+    // Clicking the wordmark always returns to section 0
+    const mark = document.getElementById('home-mark');
+    if (mark) {
+      mark.style.cursor = 'pointer';
+      mark.addEventListener('click', () => {
+        if (typeof window.goToSection === 'function') {
+          window.goToSection(0, -1);
+        }
+      });
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // 5. Top Meta (top-right)
+  // ---------------------------------------------------------------------------
+
+  function buildTopMeta() {
+    insertHTML('beforeend', `
+      <div class="top-section-meta" aria-live="polite">
+        <span id="meta-section" class="meta-num">01 / 10</span>
+        <span id="meta-caption" class="meta-cap">Patel Capital Markets</span>
+      </div>
+    `);
+  }
+
+  // ---------------------------------------------------------------------------
+  // 6. Side Nav
+  // ---------------------------------------------------------------------------
+
+  function buildSideNav() {
+    const sideNav = document.createElement('nav');
+    sideNav.className = 'side-nav';
+    sideNav.setAttribute('aria-label', 'Section navigation');
+    sideNav.innerHTML = SECTION_NAMES.map((name, i) => `
+      <button class="side-nav-dot ${i === 0 ? 'active' : ''}"
+        data-tooltip="${name}"
+        aria-label="Go to ${name}"
+        onclick="window.goToSection(${i}, ${i} > (window.activeIdx||0) ? 1 : -1)">
+      </button>
+    `).join('');
+    document.body.appendChild(sideNav);
+  }
+
+  // ---------------------------------------------------------------------------
+  // 7. Scene Copy (center overlay)
+  // ---------------------------------------------------------------------------
+
+  function buildSceneCopy() {
+    insertHTML('beforeend', `
+      <div id="scene-copy" class="scene-copy hidden" role="main" id="main-content">
+        <div class="copy-inner">
+          <span id="copy-pre" class="pre-title"></span>
+          <h1 id="copy-title" class="main-title"></h1>
+          <span id="copy-sub" class="sub-title" style="display:none"></span>
+          <div class="title-rule" aria-hidden="true"></div>
+          <p id="copy-body" class="body-text"></p>
+          <div id="copy-stats" class="stat-row"></div>
+          <div id="copy-tags" class="tag-row"></div>
+          <div id="copy-long" class="long-block" style="display:none"></div>
+          <div id="copy-poetic" class="poetic-block" style="display:none"></div>
+          <div id="copy-modes" class="modes-row" style="display:none"></div>
+          <div id="mode-body" class="mode-body"></div>
+          <div id="mode-stats" class="mode-stats" style="display:none"></div>
+          <div id="copy-contact" class="contact-section" style="display:none">
+            <form id="contact-form" class="contact-form" onsubmit="window.submitContact(event)">
+              <input type="text" name="name" placeholder="Your Name" class="pcm-input" required autocomplete="name">
+              <input type="email" name="email" placeholder="Email Address" class="pcm-input" required autocomplete="email">
+              <select name="dealType" class="pcm-input" required>
+                <option value="" disabled selected>Deal Type</option>
+                <option value="senior">Senior Debt</option>
+                <option value="mezz">Mezzanine</option>
+                <option value="preferred">Preferred Equity</option>
+                <option value="jv">Joint-Venture Equity</option>
+                <option value="other">Other</option>
+              </select>
+              <input type="text" name="size" placeholder="Deal Size (e.g. $50M)" class="pcm-input">
+              <textarea name="message" placeholder="Tell us about your deal..." class="pcm-input pcm-textarea" rows="4"></textarea>
+              <button type="submit" class="pcm-submit">SUBMIT DEAL &rarr;</button>
+              <div id="form-status" class="form-status"></div>
+            </form>
+          </div>
+        </div>
+      </div>
+    `);
+  }
+
+  // ---------------------------------------------------------------------------
+  // 8. Scroll Cue
+  // ---------------------------------------------------------------------------
+
+  function buildScrollCue() {
+    insertHTML('beforeend', `
+      <div id="scroll-cue" class="scroll-cue" aria-hidden="true">
+        <span>Scroll</span>
+        <span style="display:block;margin-top:4px;">↓</span>
+      </div>
+    `);
+  }
+
+  // Exported so other modules (main.js / scroll handler) can call it.
+  window.dismissScrollCue = function () {
+    const cue = document.getElementById('scroll-cue');
+    if (cue) cue.remove();
+  };
+
+  // ---------------------------------------------------------------------------
+  // 9. Bottom Menu
+  // ---------------------------------------------------------------------------
+
+  function buildBottomMenu() {
+    const bottomMenu = document.createElement('div');
+    bottomMenu.className = 'bottom-menu';
+    bottomMenu.setAttribute('role', 'navigation');
+    bottomMenu.setAttribute('aria-label', 'Section menu');
+    bottomMenu.innerHTML = `
+      <div class="bottom-menu-inner">
+        ${SECTION_NAMES_SHORT.map((name, i) => `
+          <button class="section-btn ${i === 0 ? 'active' : ''}"
+            aria-label="Go to ${name}"
+            onclick="window.goToSection(${i}, ${i} > (window.activeIdx||0) ? 1 : -1)">
+            <span class="btn-num">${String(i + 1).padStart(2, '0')}</span>
+            <span class="btn-name">${name}</span>
+          </button>
+        `).join('')}
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" style="width:0%"></div>
+      </div>
+    `;
+    document.body.appendChild(bottomMenu);
+  }
+
+  // ---------------------------------------------------------------------------
+  // 10. Controls Cluster (bottom-right)
+  // ---------------------------------------------------------------------------
+
+  function buildControlsCluster() {
+    insertHTML('beforeend', `
+      <div class="controls-cluster" role="toolbar" aria-label="View controls">
+        <button id="btn-audio" class="ctrl-btn" aria-label="Toggle audio" title="Audio (M)">♪</button>
+        <button id="btn-explode" class="ctrl-btn" aria-label="Explode view" title="Explode (E)">⊕</button>
+        <button id="btn-wire" class="ctrl-btn" aria-label="Wireframe" title="Wireframe (W)">▦</button>
+        <button id="btn-help" class="ctrl-btn" aria-label="Help" title="Help (H)" onclick="document.getElementById('kbd-help').classList.toggle('hidden')">?</button>
+        <button id="btn-menu" class="ctrl-btn" aria-label="Open menu" title="Menu" onclick="document.getElementById('menu-overlay').classList.toggle('open')">☰</button>
+      </div>
+    `);
+
+    // Audio toggle
+    const btnAudio = document.getElementById('btn-audio');
+    if (btnAudio) {
+      btnAudio.addEventListener('click', () => {
+        const muted = btnAudio.classList.toggle('muted');
+        btnAudio.setAttribute('aria-pressed', String(muted));
+        if (typeof window.toggleAudio === 'function') window.toggleAudio(muted);
+      });
+    }
+
+    // Explode toggle
+    const btnExplode = document.getElementById('btn-explode');
+    if (btnExplode) {
+      btnExplode.addEventListener('click', () => {
+        const active = btnExplode.classList.toggle('active');
+        btnExplode.setAttribute('aria-pressed', String(active));
+        if (typeof window.toggleExplode === 'function') window.toggleExplode(active);
+      });
+    }
+
+    // Wireframe toggle
+    const btnWire = document.getElementById('btn-wire');
+    if (btnWire) {
+      btnWire.addEventListener('click', () => {
+        const active = btnWire.classList.toggle('active');
+        btnWire.setAttribute('aria-pressed', String(active));
+        if (typeof window.toggleWireframe === 'function') window.toggleWireframe(active);
+      });
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // 11. Keyboard Hints (bottom-left)
+  // ---------------------------------------------------------------------------
+
+  function buildKbdHints() {
+    insertHTML('beforeend', `
+      <div class="kbd-hints" aria-hidden="true">
+        <div>↑↓ navigate</div>
+        <div>drag rotate</div>
+        <div>click inspect</div>
+        <div>H help</div>
+      </div>
+    `);
+  }
+
+  // ---------------------------------------------------------------------------
+  // 12. Status Console
+  // ---------------------------------------------------------------------------
+
+  function buildStatusConsole() {
+    const consoleEl = document.createElement('div');
+    consoleEl.id = 'status-console';
+    consoleEl.className = 'status-console';
+    consoleEl.setAttribute('role', 'log');
+    consoleEl.setAttribute('aria-live', 'polite');
+    document.body.appendChild(consoleEl);
+
+    STATUS_LINES.forEach(([delay, msg]) => {
+      setTimeout(() => {
+        const line = document.createElement('div');
+        line.textContent = `> ${msg}`;
+        consoleEl.appendChild(line);
+        if (delay >= 1500) {
+          setTimeout(() => consoleEl.classList.add('done'), 2000);
+        }
+      }, delay);
+    });
+  }
+
+  // ---------------------------------------------------------------------------
+  // 13. Footer
+  // ---------------------------------------------------------------------------
+
+  function buildFooter() {
+    insertHTML('beforeend', `
+      <div class="pcm-footer" aria-label="Footer">
+        <span>© 2025 Patel Capital Markets · deals@patelcapital.markets</span>
+        <button
+          onclick="document.getElementById('credits-modal').classList.remove('hidden')"
+          style="
+            background:none;
+            border:1px solid var(--brass, #b8972a);
+            color:var(--brass, #b8972a);
+            font-family:var(--font-mono, monospace);
+            font-size:0.65rem;
+            letter-spacing:0.12em;
+            padding:2px 8px;
+            cursor:pointer;
+            margin-left:1rem;
+            opacity:0.7;
+            transition:opacity 0.2s;
+          "
+          onmouseover="this.style.opacity='1'"
+          onmouseout="this.style.opacity='0.7'"
+          aria-label="Open credits">
+          Credits
+        </button>
+        <span id="footer-section" style="float:right;opacity:0.5"></span>
+      </div>
+    `);
+  }
+
+  // ---------------------------------------------------------------------------
+  // 14. Contact Form Submit
+  // ---------------------------------------------------------------------------
+
+  function wireContactForm() {
+    window.submitContact = async function (e) {
+      e.preventDefault();
+      const form   = e.target;
+      const status = document.getElementById('form-status');
+      const data   = Object.fromEntries(new FormData(form));
+
+      status.textContent  = 'Sending...';
+      status.style.color  = 'var(--brass)';
+
+      try {
+        const res = await fetch('/api/contact', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify(data),
+        });
+        if (res.ok) {
+          status.textContent = "Deal received. We'll be in touch within 24 hours.";
+          status.style.color = 'var(--accent-glow)';
+          form.reset();
+        } else {
+          throw new Error('Server error');
+        }
+      } catch {
+        status.textContent = 'Email us directly: deals@patelcapital.markets';
+        status.style.color = 'var(--cream)';
+      }
+    };
+  }
+
+  // ---------------------------------------------------------------------------
+  // Keyboard shortcuts
+  // ---------------------------------------------------------------------------
+
+  function wireKeyboard() {
+    document.addEventListener('keydown', (e) => {
+      // Ignore shortcuts when typing in a form field
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
+
+      switch (e.key.toUpperCase()) {
+        case 'M':
+          document.getElementById('btn-audio')?.click();
+          break;
+        case 'E':
+          document.getElementById('btn-explode')?.click();
+          break;
+        case 'W':
+          document.getElementById('btn-wire')?.click();
+          break;
+        case 'H': {
+          const help = document.getElementById('kbd-help');
+          if (help) help.classList.toggle('hidden');
+          break;
+        }
+        case 'ARROWDOWN':
+        case 'ARROWRIGHT': {
+          e.preventDefault();
+          const next = (window.activeIdx || 0) + 1;
+          if (next < SECTION_NAMES.length && typeof window.goToSection === 'function') {
+            window.goToSection(next, 1);
+          }
+          break;
+        }
+        case 'ARROWUP':
+        case 'ARROWLEFT': {
+          e.preventDefault();
+          const prev = (window.activeIdx || 0) - 1;
+          if (prev >= 0 && typeof window.goToSection === 'function') {
+            window.goToSection(prev, -1);
+          }
+          break;
+        }
+        default:
+          break;
+      }
+    });
+  }
+
+  // ---------------------------------------------------------------------------
+  // Wheel / touch navigation
+  // ---------------------------------------------------------------------------
+
+  function wireScrollNavigation() {
+    let lastWheelTime = 0;
+    const WHEEL_COOLDOWN = 900; // ms between section jumps
+
+    window.addEventListener('wheel', (e) => {
+      const now = Date.now();
+      if (now - lastWheelTime < WHEEL_COOLDOWN) return;
+      lastWheelTime = now;
+
+      if (typeof window.goToSection !== 'function') return;
+
+      const dir = e.deltaY > 0 ? 1 : -1;
+      const next = (window.activeIdx || 0) + dir;
+      if (next >= 0 && next < SECTION_NAMES.length) {
+        window.goToSection(next, dir);
+        window.dismissScrollCue();
+      }
+    }, { passive: true });
+
+    // Touch swipe
+    let touchStartY = null;
+    window.addEventListener('touchstart', (e) => {
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+
+    window.addEventListener('touchend', (e) => {
+      if (touchStartY === null) return;
+      const delta = touchStartY - e.changedTouches[0].clientY;
+      touchStartY = null;
+      if (Math.abs(delta) < 40) return; // swipe threshold
+
+      const dir  = delta > 0 ? 1 : -1;
+      const next = (window.activeIdx || 0) + dir;
+      if (next >= 0 && next < SECTION_NAMES.length && typeof window.goToSection === 'function') {
+        window.goToSection(next, dir);
+        window.dismissScrollCue();
+      }
+    }, { passive: true });
+  }
+
+  // ---------------------------------------------------------------------------
+  // updateChrome — called by main.js each time the active section changes
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Sync all chrome elements to reflect the current active section index.
+   * @param {number} idx - zero-based section index
+   */
+  window.updateChrome = function (idx) {
+    const total = SECTION_NAMES.length;
+
+    // Meta (top-right)
+    const metaSection = document.getElementById('meta-section');
+    const metaCaption = document.getElementById('meta-caption');
+    if (metaSection) metaSection.textContent = `${String(idx + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}`;
+    if (metaCaption) metaCaption.textContent = SECTION_NAMES[idx] || '';
+
+    // Footer section label
+    const footerSection = document.getElementById('footer-section');
+    if (footerSection) footerSection.textContent = SECTION_NAMES[idx] || '';
+
+    // Side nav dots
+    document.querySelectorAll('.side-nav-dot').forEach((dot, i) => {
+      dot.classList.toggle('active', i === idx);
+    });
+
+    // Bottom menu buttons
+    document.querySelectorAll('.section-btn').forEach((btn, i) => {
+      btn.classList.toggle('active', i === idx);
+    });
+
+    // Progress bar
+    const fill = document.querySelector('.progress-bar-fill');
+    if (fill) fill.style.width = `${((idx) / (total - 1)) * 100}%`;
+
+    // Dismiss scroll cue after the first navigation
+    if (idx !== 0) window.dismissScrollCue();
+  };
+
+  // ---------------------------------------------------------------------------
+  // initChrome — public entry point
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Creates and injects all persistent UI chrome elements, wires all
+   * event handlers, and exposes `window.updateChrome` for section sync.
+   * Must be called once after the DOM is ready.
+   */
+  window.initChrome = function () {
+    // Insertion order matters: elements inserted afterbegin appear in
+    // reverse-DOM order (last call ends up first), so we reverse-order
+    // those calls deliberately.
+    //
+    // Elements that use 'beforeend' / appendChild stack naturally.
+
+    // --- afterbegin (stacked bottom-up) ---
+    buildCinemaBars();      // cinema bars are purely decorative, prepend first
+    buildIntroLoader();     // loader overlaps everything, prepend last so it's on top
+    buildCursor();          // cursor must be visually topmost; prepend very last
+
+    // --- beforeend / appendChild ---
+    buildHomeMark();
+    buildTopMeta();
+    buildSideNav();
+    buildSceneCopy();
+    buildScrollCue();
+    buildBottomMenu();
+    buildControlsCluster();
+    buildKbdHints();
+    buildStatusConsole();
+    buildFooter();
+
+    // --- Logic / handlers (no DOM insertion) ---
+    wireContactForm();
+    wireKeyboard();
+    wireScrollNavigation();
+
+    // Sync chrome to initial section (0)
+    window.updateChrome(0);
+  };
+
+  // Auto-init if the DOM is already ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', window.initChrome);
+  } else {
+    // DOMContentLoaded already fired (script loaded deferred / async)
+    // Let the caller decide; auto-init only when this file is the entry point.
+    // Exposed as window.initChrome so main.js can call it explicitly.
+  }
+}());
+
+
+  // ─── overlays.js ───────────────────────────────────────────────────
+/**
+ * overlays.js — PCM Site Overlay UI
+ * Creates and injects all overlay DOM elements at startup,
+ * then wires up their event handlers.
+ */
+
+function initOverlays() {
+
+  // ── 1. DETAIL CARD ──────────────────────────────────────────────────────────
+  const detailCard = document.createElement('div');
+  detailCard.innerHTML = `
+<div id="detail-card" class="detail-card hidden">
+  <button id="card-close" class="card-close" aria-label="Close">✕</button>
+  <span id="card-label" class="card-label"></span>
+  <h3 id="card-title" class="card-title"></h3>
+  <div class="card-rule"></div>
+  <p id="card-body" class="card-body"></p>
+</div>`;
+  document.body.appendChild(detailCard.firstElementChild);
+
+  // ── 2. KEYBOARD HELP OVERLAY ─────────────────────────────────────────────────
+  const kbdHelp = document.createElement('div');
+  kbdHelp.innerHTML = `
+<div id="kbd-help" class="kbd-help-overlay hidden" role="dialog" aria-modal="true" aria-label="Keyboard shortcuts">
+  <div class="kbd-help-panel">
+    <h2>Keyboard Shortcuts</h2>
+    <table>
+      <tr><td>↓ / →</td><td>Next section</td></tr>
+      <tr><td>↑ / ←</td><td>Previous section</td></tr>
+      <tr><td>1–9, 0</td><td>Jump to section</td></tr>
+      <tr><td>Drag</td><td>Rotate centerpiece</td></tr>
+      <tr><td>Click</td><td>Inspect part</td></tr>
+      <tr><td>E</td><td>Explode view</td></tr>
+      <tr><td>W</td><td>Wireframe toggle</td></tr>
+      <tr><td>M</td><td>Audio toggle</td></tr>
+      <tr><td>R</td><td>Reset to Home</td></tr>
+      <tr><td>H</td><td>Toggle this help</td></tr>
+      <tr><td>Esc</td><td>Close overlays</td></tr>
+    </table>
+    <button onclick="document.getElementById('kbd-help').classList.add('hidden')" style="margin-top:20px;padding:8px 20px;background:var(--brass);color:#06090a;border:none;font-family:'Space Mono';font-size:11px;cursor:pointer;letter-spacing:0.1em;">CLOSE</button>
+  </div>
+</div>`;
+  document.body.appendChild(kbdHelp.firstElementChild);
+
+  // ── 3. MENU OVERLAY ──────────────────────────────────────────────────────────
+  const menuOverlay = document.createElement('div');
+  menuOverlay.innerHTML = `
+<div id="menu-overlay" class="menu-overlay" role="dialog" aria-modal="true" aria-label="Site menu">
+  <button class="menu-close" onclick="document.getElementById('menu-overlay').classList.remove('open')" aria-label="Close menu">✕</button>
+  <div class="menu-overlay-inner">
+    <nav>
+      <a href="#" onclick="window.goToSection(0,-1);document.getElementById('menu-overlay').classList.remove('open');return false;">Home</a>
+      <a href="#" onclick="window.goToSection(1,1);document.getElementById('menu-overlay').classList.remove('open');return false;">Firm Overview</a>
+      <a href="#" onclick="window.goToSection(2,1);document.getElementById('menu-overlay').classList.remove('open');return false;">Platform Edge</a>
+      <a href="#" onclick="window.goToSection(3,1);document.getElementById('menu-overlay').classList.remove('open');return false;">Senior Debt</a>
+      <a href="#" onclick="window.goToSection(4,1);document.getElementById('menu-overlay').classList.remove('open');return false;">Subordinate Capital</a>
+      <a href="#" onclick="window.goToSection(5,1);document.getElementById('menu-overlay').classList.remove('open');return false;">Joint-Venture Equity</a>
+      <a href="#" onclick="window.goToSection(6,1);document.getElementById('menu-overlay').classList.remove('open');return false;">Execution</a>
+      <a href="#" onclick="window.goToSection(7,1);document.getElementById('menu-overlay').classList.remove('open');return false;">Underwriting</a>
+      <a href="#" onclick="window.goToSection(8,1);document.getElementById('menu-overlay').classList.remove('open');return false;">Compliance</a>
+      <a href="#" onclick="window.goToSection(9,1);document.getElementById('menu-overlay').classList.remove('open');return false;">Engage</a>
+    </nav>
+    <div class="menu-contact" style="margin-top:60px;font-family:'Space Mono';font-size:11px;color:var(--brass);letter-spacing:0.18em;">
+      deals@patelcapital.markets
+    </div>
+  </div>
+</div>`;
+  document.body.appendChild(menuOverlay.firstElementChild);
+
+  // ── 4. COOKIE NOTICE ─────────────────────────────────────────────────────────
+  const cookieNotice = document.createElement('div');
+  cookieNotice.innerHTML = `
+<div id="cookie-notice" class="cookie-notice" role="dialog" aria-live="polite">
+  <p style="margin:0 0 14px;line-height:1.6;">Patel Capital Markets uses essential cookies to deliver this experience. No tracking. No analytics beyond what's necessary.</p>
+  <button class="cookie-accept" onclick="document.getElementById('cookie-notice').style.display='none';localStorage.setItem('pcm-cookie','1')">Accept &amp; Continue</button>
+</div>`;
+  document.body.appendChild(cookieNotice.firstElementChild);
+
+  // Cookie init: hide immediately if already accepted
+  if (localStorage.getItem('pcm-cookie') === '1') {
+    const notice = document.getElementById('cookie-notice');
+    if (notice) notice.style.display = 'none';
+  }
+
+  // ── 5. CREDITS MODAL ─────────────────────────────────────────────────────────
+  const creditsModal = document.createElement('div');
+  creditsModal.innerHTML = `
+<div id="credits-modal" class="credits-modal hidden" role="dialog" aria-modal="true">
+  <div class="credits-modal-inner">
+    <h2 style="font-family:'Cormorant Garamond';font-size:2rem;color:var(--brass);margin-bottom:24px;">Credits</h2>
+    <p style="font-family:'Space Grotesk';font-size:14px;line-height:1.8;color:var(--ink);">
+      Patel Capital Markets<br>
+      Engineering Creative Finance<br><br>
+      3D Centerpiece &amp; Animation — Bespoke<br>
+      Typography — Cormorant Garamond, Space Grotesk, Space Mono<br>
+      Brand Identity — Patel Capital Corp.<br><br>
+      deals@patelcapital.markets
+    </p>
+    <button onclick="document.getElementById('credits-modal').classList.add('hidden')" style="margin-top:24px;padding:10px 24px;background:transparent;border:1px solid var(--brass);color:var(--brass);font-family:'Space Mono';font-size:11px;cursor:pointer;letter-spacing:0.1em;">CLOSE</button>
+  </div>
+</div>`;
+  document.body.appendChild(creditsModal.firstElementChild);
+
+  // ── 6. LANDSCAPE GATE ────────────────────────────────────────────────────────
+  const landscapeGate = document.createElement('div');
+  landscapeGate.innerHTML = `
+<div id="landscape-gate" class="landscape-gate" role="alert" aria-live="assertive">
+  <div style="text-align:center;padding:40px;">
+    <div style="font-family:'Cormorant Garamond';font-size:1.8rem;color:var(--brass);margin-bottom:16px;">Rotate Device</div>
+    <div style="font-family:'Space Grotesk';font-size:14px;color:var(--ink);opacity:0.7;">This experience is designed for landscape orientation.</div>
+    <div style="font-family:'Space Mono';font-size:40px;margin-top:24px;color:var(--brass);">⟳</div>
+  </div>
+</div>`;
+  document.body.appendChild(landscapeGate.firstElementChild);
+
+  // ── 7. PWA INSTALL PROMPT ────────────────────────────────────────────────────
+  const pwaPrompt = document.createElement('div');
+  pwaPrompt.innerHTML = `
+<div id="pwa-prompt" class="pwa-prompt hidden">
+  <p style="margin:0 0 12px;font-family:'Space Grotesk';font-size:13px;line-height:1.6;">Add Patel Capital Markets to your home screen for the full cinematic experience.</p>
+  <div style="display:flex;gap:10px;">
+    <button id="pwa-install" style="padding:8px 16px;background:var(--brass);color:#06090a;border:none;font-family:'Space Mono';font-size:11px;cursor:pointer;">INSTALL</button>
+    <button onclick="document.getElementById('pwa-prompt').classList.add('hidden')" style="padding:8px 16px;background:transparent;border:1px solid rgba(201,169,110,0.3);color:var(--brass);font-family:'Space Mono';font-size:11px;cursor:pointer;">DISMISS</button>
+  </div>
+</div>`;
+  document.body.appendChild(pwaPrompt.firstElementChild);
+
+  // ── 8. FLASH OVERLAY ─────────────────────────────────────────────────────────
+  const flashOverlay = document.createElement('div');
+  flashOverlay.id = 'flash-overlay';
+  flashOverlay.className = 'flash-overlay';
+  document.body.appendChild(flashOverlay);
+
+  // ── 9. SKIP TO CONTENT ───────────────────────────────────────────────────────
+  const skipLink = document.createElement('a');
+  skipLink.href = '#main-content';
+  skipLink.className = 'skip-to-content';
+  skipLink.textContent = 'Skip to content';
+  document.body.insertBefore(skipLink, document.body.firstChild);
+
+  // ── EVENT HANDLERS ───────────────────────────────────────────────────────────
+
+  // Detail card close button
+  const cardClose = document.getElementById('card-close');
+  if (cardClose) {
+    cardClose.addEventListener('click', function () {
+      const card = document.getElementById('detail-card');
+      if (card) card.classList.add('hidden');
+    });
+  }
+
+  // Click outside kbd-help-panel to close the kbd-help overlay
+  const kbdHelpOverlay = document.getElementById('kbd-help');
+  if (kbdHelpOverlay) {
+    kbdHelpOverlay.addEventListener('click', function (e) {
+      const panel = kbdHelpOverlay.querySelector('.kbd-help-panel');
+      if (panel && !panel.contains(e.target)) {
+        kbdHelpOverlay.classList.add('hidden');
+      }
+    });
+  }
+
+  // Menu overlay: wire up any element with [data-open-menu] to open the overlay,
+  // plus expose a global toggle for the hamburger button in the header
+  window.openMenuOverlay = function () {
+    const overlay = document.getElementById('menu-overlay');
+    if (overlay) overlay.classList.add('open');
+  };
+  window.closeMenuOverlay = function () {
+    const overlay = document.getElementById('menu-overlay');
+    if (overlay) overlay.classList.remove('open');
+  };
+
+  document.querySelectorAll('[data-open-menu]').forEach(function (el) {
+    el.addEventListener('click', window.openMenuOverlay);
+  });
+
+  // Credits modal: wire up any element with [data-open-credits]
+  window.openCreditsModal = function () {
+    const modal = document.getElementById('credits-modal');
+    if (modal) modal.classList.remove('hidden');
+  };
+  window.closeCreditsModal = function () {
+    const modal = document.getElementById('credits-modal');
+    if (modal) modal.classList.add('hidden');
+  };
+
+  document.querySelectorAll('[data-open-credits]').forEach(function (el) {
+    el.addEventListener('click', window.openCreditsModal);
+  });
+
+  // Click outside credits-modal-inner to close credits modal
+  const creditsModalEl = document.getElementById('credits-modal');
+  if (creditsModalEl) {
+    creditsModalEl.addEventListener('click', function (e) {
+      const inner = creditsModalEl.querySelector('.credits-modal-inner');
+      if (inner && !inner.contains(e.target)) {
+        creditsModalEl.classList.add('hidden');
+      }
+    });
+  }
+
+  // PWA beforeinstallprompt capture
+  let _pwaInstallEvent = null;
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault();
+    _pwaInstallEvent = e;
+    const prompt = document.getElementById('pwa-prompt');
+    if (prompt) prompt.classList.remove('hidden');
+  });
+
+  const pwaInstallBtn = document.getElementById('pwa-install');
+  if (pwaInstallBtn) {
+    pwaInstallBtn.addEventListener('click', function () {
+      const prompt = document.getElementById('pwa-prompt');
+      if (prompt) prompt.classList.add('hidden');
+      if (_pwaInstallEvent) {
+        _pwaInstallEvent.prompt();
+        _pwaInstallEvent.userChoice.then(function (choiceResult) {
+          if (choiceResult.outcome === 'accepted') {
+            _pwaInstallEvent = null;
+          }
+        });
+      }
+    });
+  }
+
+  // Escape key: close all visible overlays
+  // (animation.js keyboard handler may also handle this, but we register
+  //  a fallback here for overlays that live outside that scope)
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+
+    const detailCardEl = document.getElementById('detail-card');
+    if (detailCardEl && !detailCardEl.classList.contains('hidden')) {
+      detailCardEl.classList.add('hidden');
+      return;
+    }
+
+    const kbdHelpEl = document.getElementById('kbd-help');
+    if (kbdHelpEl && !kbdHelpEl.classList.contains('hidden')) {
+      kbdHelpEl.classList.add('hidden');
+      return;
+    }
+
+    const menuOverlayEl = document.getElementById('menu-overlay');
+    if (menuOverlayEl && menuOverlayEl.classList.contains('open')) {
+      menuOverlayEl.classList.remove('open');
+      return;
+    }
+
+    const creditsModalEsc = document.getElementById('credits-modal');
+    if (creditsModalEsc && !creditsModalEsc.classList.contains('hidden')) {
+      creditsModalEsc.classList.add('hidden');
+      return;
+    }
+
+    const pwaPromptEl = document.getElementById('pwa-prompt');
+    if (pwaPromptEl && !pwaPromptEl.classList.contains('hidden')) {
+      pwaPromptEl.classList.add('hidden');
+    }
+  });
+
+  // Expose closeAllOverlays globally for use by animation.js / other modules
+  window.closeAllOverlays = function () {
+    const ids = ['detail-card', 'kbd-help', 'credits-modal', 'pwa-prompt'];
+    ids.forEach(function (id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('hidden');
+    });
+    const menuOverlayEl = document.getElementById('menu-overlay');
+    if (menuOverlayEl) menuOverlayEl.classList.remove('open');
+  };
+}
+
+
+  // ─── input.js ──────────────────────────────────────────────────────
+// ─── PCM SITE INPUT HANDLING ─────────────────────────────────────────────────
+// Globals assumed: THREE, camera, window.pcmRoot, window.bgPlane,
+//                 window.particles, window.haloDisc, mouseTarget
+
+// ─── 1. CUSTOM CURSOR ────────────────────────────────────────────────────────
+
+const cursor = document.getElementById('pcm-cursor');
+const cursorDot = document.getElementById('pcm-cursor-dot');
+let cursorX = 0, cursorY = 0, cursorTargetX = 0, cursorTargetY = 0;
+
+document.addEventListener('mousemove', e => {
+  cursorTargetX = e.clientX;
+  cursorTargetY = e.clientY;
+  mouseTarget.x = (e.clientX / innerWidth) * 2 - 1;
+  mouseTarget.y = -(e.clientY / innerHeight) * 2 + 1;
+});
+
+function updateCursor() {
+  requestAnimationFrame(updateCursor);
+  cursorX = cursorX + (cursorTargetX - cursorX) * 0.18;
+  cursorY = cursorY + (cursorTargetY - cursorY) * 0.18;
+  if (cursor) {
+    cursor.style.transform = `translate(${cursorX}px, ${cursorY}px) translate(-50%, -50%)`;
+  }
+}
+updateCursor();
+
+// ─── 2. DRAG-ROTATE ──────────────────────────────────────────────────────────
+
+let isDragging = false;
+let dragStartX = 0, dragStartY = 0;
+
+document.addEventListener('pointerdown', e => {
+  isDragging = true;
+  dragStartX = e.clientX;
+  dragStartY = e.clientY;
+  document.body.style.cursor = 'none';
+  cursor?.classList.add('cursor-drag');
+});
+
+document.addEventListener('pointermove', e => {
+  if (!isDragging) return;
+  const dx = e.clientX - dragStartX;
+  const dy = e.clientY - dragStartY;
+  dragStartX = e.clientX;
+  dragStartY = e.clientY;
+  dragRotYTarget = Math.max(-1.4, Math.min(1.4, (window.dragRotYTarget ?? 0) + dx * 0.005));
+  dragRotXTarget = Math.max(-0.9, Math.min(0.9, (window.dragRotXTarget ?? 0) + dy * 0.005));
+  window.dragRotYTarget = dragRotYTarget;
+  window.dragRotXTarget = dragRotXTarget;
+});
+
+document.addEventListener('pointerup', () => {
+  isDragging = false;
+  cursor?.classList.remove('cursor-drag');
+});
+
+// ─── 3. RAYCASTER PART-PICKING ───────────────────────────────────────────────
+
+const raycaster = new THREE.Raycaster();
+const mouse2D = new THREE.Vector2();
+
+const PART_DETAIL = {
+  person: {
+    label: 'Sponsor',
+    title: 'The Operator',
+    body: 'Real estate sponsors who bring the deal, the local intelligence, the operating expertise. The figure standing on the long side of the lever — the one moving the asset.'
+  },
+  coin: {
+    label: 'Capital',
+    title: 'The Counterweight',
+    body: 'Senior debt, mezzanine, preferred equity, common JV. Dollars sized and structured to each transaction. The disc on the short side of the lever.'
+  },
+  fulcrum: {
+    label: 'Fulcrum',
+    title: 'Where Structure Lives',
+    body: 'Where structure meets leverage. The capital-stack engineering that lets a small sliver of equity move a large asset. Our entire practice lives here.'
+  },
+  upArrow: {
+    label: 'Lift',
+    title: 'Yield Enhancement',
+    body: 'Cheaper coupon, longer tenor, smarter covenants. Programmatic value creation through structure — not market timing.'
+  },
+  downArrow: {
+    label: 'Load',
+    title: 'Risk Transfer',
+    body: 'Subordinate capital and credit enhancement that absorbs the first loss so the senior stays cheap. Engineered subordination is the product.'
+  },
+  ringOuter: {
+    label: 'The Stack',
+    title: 'Everything Together',
+    body: 'The complete capital stack — engineered top-to-bottom for each transaction. Bound by underwriting, not by template.'
+  }
+};
+
+function getPartId(obj) {
+  let o = obj;
+  while (o) {
+    if (o.userData && o.userData.partId) return o.userData.partId;
+    o = o.parent;
+  }
+  return null;
+}
+
+function showDetailCard(partId, screenX, screenY) {
+  const detail = PART_DETAIL[partId];
+  if (!detail) return;
+  const card = document.getElementById('detail-card');
+  if (!card) return;
+  document.getElementById('card-label').textContent = detail.label;
+  document.getElementById('card-title').textContent = detail.title;
+  document.getElementById('card-body').textContent = detail.body;
+  // Clamp to viewport
+  const cx = Math.min(screenX + 20, innerWidth - 340);
+  const cy = Math.min(screenY - 60, innerHeight - 220);
+  card.style.left = cx + 'px';
+  card.style.top = cy + 'px';
+  card.classList.remove('hidden');
+}
+
+document.addEventListener('click', e => {
+  if (isDragging) return;
+  mouse2D.x = (e.clientX / innerWidth) * 2 - 1;
+  mouse2D.y = -(e.clientY / innerHeight) * 2 + 1;
+  raycaster.setFromCamera(mouse2D, camera);
+  const root = window.pcmRoot;
+  if (!root) return;
+  const hits = raycaster.intersectObjects(root.children, true);
+  if (hits.length > 0) {
+    const partId = getPartId(hits[0].object);
+    if (partId) showDetailCard(partId, e.clientX, e.clientY);
+  }
+});
+
+// ─── 4. HOVER SCALE-UP ───────────────────────────────────────────────────────
+
+let hoveredPartId = null;
+const baseScales = new Map();
+
+function setPartScale(partId, scale) {
+  const root = window.pcmRoot;
+  if (!root) return;
+  root.traverse(obj => {
+    if (obj.userData.partId === partId) {
+      if (!baseScales.has(obj.uuid)) baseScales.set(obj.uuid, obj.scale.clone());
+      const base = baseScales.get(obj.uuid);
+      obj.scale.lerp(base.clone().multiplyScalar(scale), 0.12);
+    }
+  });
+}
+
+const HOVER_SCALES = { coin: 1.08, person: 1.06, fulcrum: 1.2, upArrow: 1.15, downArrow: 1.15, ringOuter: 1.03 };
+
+document.addEventListener('mousemove', e => {
+  if (isDragging) return;
+  mouse2D.x = (e.clientX / innerWidth) * 2 - 1;
+  mouse2D.y = -(e.clientY / innerHeight) * 2 + 1;
+  raycaster.setFromCamera(mouse2D, camera);
+  const root = window.pcmRoot;
+  if (!root) return;
+  const hits = raycaster.intersectObjects(root.children, true);
+  const newHover = hits.length > 0 ? getPartId(hits[0].object) : null;
+
+  if (newHover !== hoveredPartId) {
+    if (hoveredPartId) setPartScale(hoveredPartId, 1.0);
+    hoveredPartId = newHover;
+    if (cursor) {
+      if (newHover) cursor.classList.add('cursor-hot');
+      else cursor.classList.remove('cursor-hot');
+    }
+  }
+  if (hoveredPartId && HOVER_SCALES[hoveredPartId]) {
+    setPartScale(hoveredPartId, HOVER_SCALES[hoveredPartId]);
+  }
+});
+
+// ─── 5. DETAIL CARD CLOSE ────────────────────────────────────────────────────
+
+document.getElementById('card-close')?.addEventListener('click', () => {
+  document.getElementById('detail-card')?.classList.add('hidden');
+});
+
+// ─── 6. EXPLODE MODE ─────────────────────────────────────────────────────────
+
+let exploded = false;
+const explodeOffsets = new Map();
+
+function toggleExplode() {
+  exploded = !exploded;
+  const root = window.pcmRoot;
+  if (!root) return;
+  root.children.forEach(child => {
+    if (child === window.bgPlane || child === window.particles || child === window.haloDisc) return;
+    if (!explodeOffsets.has(child.uuid)) {
+      const dir = child.position.clone().normalize();
+      if (dir.length() < 0.01) dir.set(Math.random()-0.5, Math.random()-0.5, 0.3).normalize();
+      explodeOffsets.set(child.uuid, dir.multiplyScalar(1.5));
+    }
+    const offset = explodeOffsets.get(child.uuid);
+    const target = exploded
+      ? child.position.clone().add(offset)
+      : child.position.clone().sub(offset);
+    // Store in userData for lerp in animation loop
+    child.userData.explodeTarget = target;
+    child.userData.explodeBase = exploded ? child.position.clone() : child.position.clone().add(offset);
+  });
+  document.getElementById('btn-explode')?.classList.toggle('active', exploded);
+}
+window.toggleExplode = toggleExplode;
+document.getElementById('btn-explode')?.addEventListener('click', toggleExplode);
+
+// ─── 7. WIREFRAME MODE ───────────────────────────────────────────────────────
+
+let wireframe = false;
+function toggleWireframe() {
+  wireframe = !wireframe;
+  const root = window.pcmRoot;
+  if (!root) return;
+  root.traverse(obj => {
+    if (obj.isMesh && obj.material && obj.material !== window.bgPlane?.material) {
+      if (Array.isArray(obj.material)) {
+        obj.material.forEach(m => { m.wireframe = wireframe; });
+      } else {
+        obj.material.wireframe = wireframe;
+      }
+    }
+  });
+  document.getElementById('btn-wire')?.classList.toggle('active', wireframe);
+}
+window.toggleWireframe = toggleWireframe;
+document.getElementById('btn-wire')?.addEventListener('click', toggleWireframe);
+
+
+  // ─── animation.js ──────────────────────────────────────────────────
+// PCM Cinematic Site — Animation System
+// Globals expected: THREE, camera, scene, composer, pcmRoot, leverGroup,
+// refreshGroup, orbitalDots, haloDisc, particles, outerRing, accentRingMesh,
+// tickGroup, fulcrumGlowRing, centerSpotLight, bgPlane
+
+// ---------------------------------------------------------------------------
+// 1. STATE VARIABLES
+// ---------------------------------------------------------------------------
+let t = 0;
+let direction = 1; // +1 forward, -1 backward
+let activeIdx = 0;
+let motionScale = 1.0;
+let dragRotX = 0, dragRotY = 0, dragRotXTarget = 0, dragRotYTarget = 0;
+let mouse = { x: 0, y: 0 }, mouseTarget = { x: 0, y: 0 };
+let scrollAccum = 0;
+let lastScrollTime = 0;
+let isTransitioning = false;
+let introT = 0;
+const INTRO_DUR = 2.5;
+let introComplete = false;
+let prevTime = performance.now();
+const TRANS_DUR = 1.6;
+let transT = 0;
+let transFrom = null, transTo = null;
+
+// ---------------------------------------------------------------------------
+// 2. CAMERA PRESETS (10 sections)
+// ---------------------------------------------------------------------------
+const PRESETS = [
+  { id: 'home',         cam: [0, 0.6, 11.5],   look: [0, 0, 0],      fov: 34, tilt:  0.16, zoomIn: 8.4 },
+  { id: 'firm',         cam: [3.8, 0.8, 9.2],  look: [-0.5, 0, 0],   fov: 36, tilt:  0.14, zoomIn: 7.1 },
+  { id: 'edge',         cam: [-3.5, 1.8, 9.2], look: [0.5, 0.2, 0],  fov: 38, tilt:  0.08, zoomIn: 7.1 },
+  { id: 'senior',       cam: [0, -2.6, 6.8],   look: [0, 0.4, 0],    fov: 42, tilt:  0.22, zoomIn: 5.0 },
+  { id: 'subordinate',  cam: [3.0, 0, 7.2],    look: [-1.8, 0, 0],   fov: 32, tilt:  0.05, zoomIn: 5.4 },
+  { id: 'equity',       cam: [-3.0, 0, 7.2],   look: [1.8, 0, 0],    fov: 32, tilt: -0.06, zoomIn: 5.4 },
+  { id: 'execution',    cam: [0, 4.8, 6.0],    look: [0, -0.6, 0],   fov: 44, tilt:  0.18, zoomIn: 4.4 },
+  { id: 'underwriting', cam: [0, 0, 5.4],      look: [0, 0, 0],      fov: 28, tilt:  0.20, zoomIn: 3.6 },
+  { id: 'compliance',   cam: [4.8, 3.0, 6.8],  look: [0, 0, 0],      fov: 38, tilt:  0.04, zoomIn: 5.2 },
+  { id: 'engage',       cam: [0, 0.9, 8.4],    look: [0, -0.2, 0],   fov: 36, tilt:  0.12, zoomIn: 6.2 },
+];
+window.PRESETS = PRESETS;
+
+// ---------------------------------------------------------------------------
+// 3. LERP HELPERS
+// ---------------------------------------------------------------------------
+function lerp(a, b, t) { return a + (b - a) * t; }
+function cubicEaseInOut(t) { return t < 0.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2; }
+const camPos = new THREE.Vector3(0, 12, 22);
+const camLook = new THREE.Vector3(0, 0, 0);
+const camLookSmooth = new THREE.Vector3(0, 0, 0);
+let camFov = 50;
+
+// ---------------------------------------------------------------------------
+// 4. TRANSITION FUNCTION
+// ---------------------------------------------------------------------------
+function goToSection(idx, dir) {
+  if (isTransitioning || idx === activeIdx) return;
+  direction = dir;
+  transFrom = {
+    cam: camPos.clone(),
+    look: camLookSmooth.clone(),
+    fov: camFov,
+    tilt: leverGroup ? leverGroup.rotation.z : 0
+  };
+  transTo = PRESETS[idx];
+  transT = 0;
+  isTransitioning = true;
+  activeIdx = idx;
+
+  // Cinema bars
+  document.body.classList.add('transitioning');
+  setTimeout(() => document.body.classList.remove('transitioning'), 800);
+
+  // Flash
+  const flash = document.getElementById('flash-overlay');
+  if (flash) {
+    flash.style.opacity = '0.12';
+    setTimeout(() => { flash.style.opacity = '0'; }, 150);
+  }
+
+  // Hide copy during transition
+  const copy = document.querySelector('.scene-copy');
+  if (copy) copy.classList.remove('visible'), copy.classList.add('hidden');
+
+  // Update UI
+  updateSectionUI(idx);
+
+  if (window.onSectionChange) window.onSectionChange(idx, dir);
+}
+window.goToSection = goToSection;
+
+// ---------------------------------------------------------------------------
+// 5. MAIN ANIMATION LOOP
+// ---------------------------------------------------------------------------
+function animate() {
+  requestAnimationFrame(animate);
+  const now = performance.now();
+  const dt = Math.min((now - prevTime) / 1000, 0.05);
+  prevTime = now;
+  t += dt;
+
+  // INTRO SWOOP
+  if (!introComplete) {
+    introT += dt / INTRO_DUR;
+    if (introT >= 1) { introT = 1; introComplete = true; showSectionCopy(0); }
+    const ease = 1 - Math.pow(1 - Math.min(introT, 1), 3);
+    const p = PRESETS[0];
+    camPos.x = lerp(0, p.cam[0], ease);
+    camPos.y = lerp(12, p.cam[1], ease);
+    camPos.z = lerp(22, p.cam[2], ease);
+    camFov = lerp(50, p.fov, ease);
+    camLookSmooth.set(lerp(0, p.look[0], ease), lerp(0, p.look[1], ease), 0);
+    camera.position.copy(camPos);
+    camera.fov = camFov;
+    camera.updateProjectionMatrix();
+    camera.lookAt(camLookSmooth);
+    if (leverGroup) leverGroup.rotation.z = lerp(0.16, p.tilt, ease);
+  }
+
+  // CINEMATIC TRANSITION
+  else if (isTransitioning) {
+    transT += dt / TRANS_DUR;
+    if (transT >= 1) { transT = 1; isTransitioning = false; showSectionCopy(activeIdx); }
+    const ease = cubicEaseInOut(Math.min(transT, 1));
+    const tt = Math.min(transT, 1);
+    const p = transTo;
+
+    // Mid-flight arc lift + Z pullback
+    const arcY = Math.sin(tt * Math.PI) * 0.6;
+    const arcZ = Math.sin(tt * Math.PI) * 1.4;
+
+    camPos.x = lerp(transFrom.cam.x, p.cam[0], ease);
+    camPos.y = lerp(transFrom.cam.y, p.cam[1], ease) + arcY;
+    camPos.z = lerp(transFrom.cam.z, p.cam[2], ease) + arcZ;
+    camFov = lerp(transFrom.fov, p.fov, ease);
+
+    camLookSmooth.x = lerp(transFrom.look.x, p.look[0], ease);
+    camLookSmooth.y = lerp(transFrom.look.y, p.look[1], ease);
+    camLookSmooth.z = 0;
+
+    if (leverGroup) leverGroup.rotation.z = lerp(transFrom.tilt, p.tilt, ease);
+
+    camera.position.copy(camPos);
+    camera.fov = camFov;
+    camera.updateProjectionMatrix();
+    camera.lookAt(camLookSmooth);
+  }
+
+  // IDLE: scroll-zoom dolly + mouse parallax
+  else {
+    // Scroll accumulator decay
+    const idleMs = now - lastScrollTime;
+    if (idleMs > 200) {
+      scrollAccum *= 0.92;
+    }
+
+    // Zoom dolly
+    const p = PRESETS[activeIdx];
+    const zoomT = Math.max(0, scrollAccum);
+    const targetZ = lerp(p.cam[2], p.zoomIn, zoomT);
+    camPos.x = lerp(camPos.x, p.cam[0] + dragRotY * 0.5 + mouse.x * 0.2 * motionScale, 0.06);
+    camPos.y = lerp(camPos.y, p.cam[1] + dragRotX * 0.3 + mouse.y * 0.14 * motionScale, 0.06);
+    camPos.z = lerp(camPos.z, targetZ, 0.08);
+
+    camLook.set(p.look[0], p.look[1], 0);
+    camLookSmooth.lerp(camLook, 0.06);
+    camFov = lerp(camFov, p.fov, 0.05);
+
+    camera.position.copy(camPos);
+    camera.fov = camFov;
+    camera.updateProjectionMatrix();
+    camera.lookAt(camLookSmooth);
+
+    // Drag rotation lerp
+    dragRotX = lerp(dragRotX, dragRotXTarget, 0.1);
+    dragRotY = lerp(dragRotY, dragRotYTarget, 0.1);
+  }
+
+  // Mouse lerp
+  mouse.x = lerp(mouse.x, mouseTarget.x, 0.08);
+  mouse.y = lerp(mouse.y, mouseTarget.y, 0.08);
+
+  // ROOT ROTATION (drag + parallax)
+  if (window.pcmRoot) {
+    window.pcmRoot.rotation.y = dragRotY + mouse.x * 0.2 * motionScale;
+    window.pcmRoot.rotation.x = dragRotX + mouse.y * 0.14 * motionScale;
+  }
+
+  // DIRECTION-AWARE LOGO ANIMATION
+  if (window.outerRing) window.outerRing.rotation.z += 0.0015 * direction;
+  if (window.accentRingMesh) window.accentRingMesh.rotation.z -= 0.0025 * direction;
+  if (window.tickGroup) window.tickGroup.rotation.z += 0.0008 * direction;
+  if (window.refreshGroup) window.refreshGroup.rotation.z = t * 0.5 * direction;
+
+  // Orbital dots
+  if (window.orbitalDots) {
+    window.orbitalDots.forEach((dot, i) => {
+      const phase = dot.userData.phase + t * 0.4 * direction;
+      dot.position.set(Math.cos(phase) * 3.4, Math.sin(phase) * 3.4, 0);
+      const pulse = 0.9 + Math.sin(t * 2 + i) * 0.4;
+      dot.scale.setScalar(pulse);
+    });
+  }
+
+  // Halo disc pulse
+  if (window.haloDisc) {
+    window.haloDisc.material.opacity = 0.04 + Math.sin(t * 0.8) * 0.03;
+  }
+
+  // Fulcrum glow ring oscillation
+  if (window.fulcrumGlowRing) {
+    window.fulcrumGlowRing.material.opacity = 0.4 + Math.sin(t * 2.4) * 0.2;
+  }
+
+  // Center spot flicker
+  if (window.centerSpotLight) {
+    window.centerSpotLight.intensity = 1.8 + Math.sin(t * 1.4) * 0.15;
+  }
+
+  // BG shader time
+  if (window.bgPlane) {
+    window.bgPlane.material.uniforms.time.value = t;
+  }
+
+  // Particles drift
+  if (window.particles) {
+    const pos = window.particles.geometry.attributes.position;
+    const phases = window.particles.userData.phases;
+    for (let i = 0; i < 240; i++) {
+      pos.array[i * 3]     += Math.sin(t * 0.3 + phases[i]) * 0.002 * direction;
+      pos.array[i * 3 + 1] += Math.cos(t * 0.2 + phases[i] * 1.3) * 0.001;
+      pos.array[i * 3 + 2] += Math.sin(t * 0.15 + phases[i] * 0.7) * 0.0015;
+      // Wrap
+      if (pos.array[i * 3 + 1] >  8) pos.array[i * 3 + 1] = -8;
+      if (pos.array[i * 3 + 1] < -8) pos.array[i * 3 + 1] =  8;
+    }
+    pos.needsUpdate = true;
+  }
+
+  // Render
+  if (window.composer) window.composer.render();
+  else if (window.renderer) window.renderer.render(scene, camera);
+}
+animate();
+
+// ---------------------------------------------------------------------------
+// 6. SECTION COPY REVEAL
+// ---------------------------------------------------------------------------
+function showSectionCopy(idx) {
+  const copy = document.querySelector('.scene-copy');
+  if (!copy) return;
+  copy.classList.remove('hidden');
+  copy.classList.add('visible');
+  updateCopyContent(idx);
+}
+window.showSectionCopy = showSectionCopy;
+
+// ---------------------------------------------------------------------------
+// 7. SCROLL HANDLING
+// ---------------------------------------------------------------------------
+function handleWheel(e) {
+  if (!introComplete) return;
+  e.preventDefault();
+  lastScrollTime = performance.now();
+
+  if (isTransitioning) return;
+
+  scrollAccum = Math.max(-1.2, Math.min(1.2, scrollAccum + e.deltaY * 0.0008));
+
+  // Fast burst or threshold -> auto-transition
+  if (Math.abs(e.deltaY) > 30 || Math.abs(scrollAccum) > 0.7) {
+    const dir = e.deltaY > 0 ? 1 : -1;
+    const next = Math.max(0, Math.min(9, activeIdx + dir));
+    if (next !== activeIdx) {
+      scrollAccum = 0;
+      goToSection(next, dir);
+    }
+  }
+}
+window.addEventListener('wheel', handleWheel, { passive: false });
+
+// ---------------------------------------------------------------------------
+// 8. TOUCH HANDLING (40px threshold)
+// ---------------------------------------------------------------------------
+let touchStartY = 0;
+window.addEventListener('touchstart', e => { touchStartY = e.touches[0].clientY; }, { passive: true });
+window.addEventListener('touchend', e => {
+  if (!introComplete || isTransitioning) return;
+  const dy = touchStartY - e.changedTouches[0].clientY;
+  if (Math.abs(dy) > 40) {
+    const dir = dy > 0 ? 1 : -1;
+    const next = Math.max(0, Math.min(9, activeIdx + dir));
+    if (next !== activeIdx) goToSection(next, dir);
+  }
+}, { passive: true });
+
+// ---------------------------------------------------------------------------
+// 9. KEYBOARD
+// ---------------------------------------------------------------------------
+window.addEventListener('keydown', e => {
+  if (!introComplete) return;
+  if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+    const next = Math.min(9, activeIdx + 1);
+    if (next !== activeIdx) goToSection(next, 1);
+  } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+    const next = Math.max(0, activeIdx - 1);
+    if (next !== activeIdx) goToSection(next, -1);
+  } else if (e.key >= '1' && e.key <= '9') {
+    const idx = parseInt(e.key) - 1;
+    goToSection(idx, idx > activeIdx ? 1 : -1);
+  } else if (e.key === '0') {
+    goToSection(9, 9 > activeIdx ? 1 : -1);
+  } else if (e.key === 'r' || e.key === 'R') {
+    goToSection(0, -1);
+  } else if (e.key === 'h' || e.key === 'H') {
+    document.getElementById('kbd-help')?.classList.toggle('hidden');
+  } else if (e.key === 'Escape') {
+    document.getElementById('kbd-help')?.classList.add('hidden');
+    document.getElementById('menu-overlay')?.classList.remove('open');
+    document.getElementById('detail-card')?.classList.add('hidden');
+    document.getElementById('credits-modal')?.classList.add('hidden');
+  }
+});
+
+// ---------------------------------------------------------------------------
+// 10. PROGRESS + REDUCED MOTION
+// ---------------------------------------------------------------------------
+if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  motionScale = 0.3;
+}
+
+
+  // ─── audio.js ──────────────────────────────────────────────────────
+/**
+ * PCMAudioEngine — Patel Capital Markets
+ * Cinematic ambient audio system built on the Web Audio API.
+ *
+ * Architecture:
+ *   - Brass drone layer  : four detuned oscillators (sawtooth/triangle/sine)
+ *                          routed through a resonant LPF and a hand-built
+ *                          convolution reverb with a realistic IR.
+ *   - Pink noise texture : Paul Kellet's pink-noise algorithm rendered into a
+ *                          looping buffer, band-passed for a warm room feel.
+ *   - Sub-bass pulse     : 32.7 Hz (C1) sine, felt rather than heard, with a
+ *                          slow LFO tremolo for organic breathing.
+ *   - High shimmer       : Sparse stochastic pings on brass harmonic series,
+ *                          each with a quick attack / long exponential tail.
+ *   - Stereo width       : A small allpass stereo widener sits on the master
+ *                          bus before the final gain stage.
+ *   - Per-section morph  : Ten section profiles drive smooth parameter
+ *                          transitions via setTargetAtTime on every live node.
+ */
+
+class PCMAudioEngine {
+  constructor() {
+    this.ctx          = null;
+    this.masterGain   = null;
+    this.widener      = null;   // stereo width allpass pair
+    this.enabled      = false;
+    this.activeSection = 0;
+    this.nodes        = new Map();
+    this.initialized  = false;
+    this._shimmerTimer = null;
+    this._lfoTimer     = null;
+    this._visibilityHandler = null;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /*  PUBLIC                                                              */
+  /* ------------------------------------------------------------------ */
+
+  init() {
+    if (this.initialized) return;
+
+    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const ctx = this.ctx;
+
+    /* Master gain — starts silent, fades in on enable() */
+    this.masterGain = ctx.createGain();
+    this.masterGain.gain.setValueAtTime(0, ctx.currentTime);
+
+    /* Stereo widener: two allpass filters at slightly different frequencies
+       on L and R channels using a ChannelSplitter / ChannelMerger pair.      */
+    this._buildWidener();
+
+    /* Signal chain:
+       [sources] → masterGain → widener → ctx.destination                      */
+    this.masterGain.connect(this.widener.splitter);
+
+    this._buildBrassDrone();
+    this._buildWoodgrainNoise();
+    this._buildSubBass();
+    this._buildHighFreqShimmer();  // bootstraps scheduler; pings deferred
+    this._buildSubLFO();           // low-frequency tremolo on sub-bass
+
+    this.initialized = true;
+  }
+
+  enable() {
+    if (!this.initialized) this.init();
+    if (this.ctx.state === 'suspended') this.ctx.resume();
+    this.enabled = true;
+
+    const t = this.ctx.currentTime;
+    this.masterGain.gain.cancelScheduledValues(t);
+    this.masterGain.gain.setTargetAtTime(0.72, t, 1.8);
+
+    /* Kick off stochastic schedulers */
+    this._scheduleShimmer();
+    this._startSubLFO();
+
+    /* Mute / unmute on tab visibility */
+    this._visibilityHandler = () => {
+      if (!this.ctx) return;
+      const now = this.ctx.currentTime;
+      if (document.hidden) {
+        this.masterGain.gain.setTargetAtTime(0, now, 0.4);
+      } else if (this.enabled) {
+        this.masterGain.gain.setTargetAtTime(0.72, now, 0.4);
+      }
+    };
+    document.addEventListener('visibilitychange', this._visibilityHandler);
+
+    document.getElementById('btn-audio')?.classList.add('active');
+  }
+
+  disable() {
+    if (!this.initialized) return;
+    this.enabled = false;
+
+    const t = this.ctx.currentTime;
+    this.masterGain.gain.cancelScheduledValues(t);
+    this.masterGain.gain.setTargetAtTime(0, t, 1.5);
+
+    clearTimeout(this._shimmerTimer);
+    clearTimeout(this._lfoTimer);
+    this._shimmerTimer = null;
+    this._lfoTimer     = null;
+
+    if (this._visibilityHandler) {
+      document.removeEventListener('visibilitychange', this._visibilityHandler);
+      this._visibilityHandler = null;
+    }
+
+    document.getElementById('btn-audio')?.classList.remove('active');
+  }
+
+  toggle() {
+    if (this.enabled) this.disable();
+    else this.enable();
+  }
+
+  /* Morph all live parameters toward the target section profile. */
+  setSection(idx) {
+    if (!this.initialized || !this.ctx) return;
+    this.activeSection = idx;
+
+    const profile = this.SECTION_PROFILES[idx] || this.SECTION_PROFILES[0];
+    const ctx     = this.ctx;
+    const t       = ctx.currentTime;
+    const tau     = 2.2;   // time-constant (seconds) for smooth morphs
+
+    /* --- Brass drone --- */
+    const drone = this.nodes.get('brassDrone');
+    if (drone) {
+      const f = profile.droneFreq;
+      drone.oscs[0].frequency.setTargetAtTime(f,              t, tau);
+      drone.oscs[1].frequency.setTargetAtTime(f + 0.18,       t, tau);
+      drone.oscs[2].frequency.setTargetAtTime(f * 1.5,        t, tau);
+      drone.oscs[3].frequency.setTargetAtTime(f * 2.0,        t, tau);
+      drone.lpf.frequency.setTargetAtTime(profile.lpfFreq,    t, tau * 0.8);
+      drone.lpf.Q.setTargetAtTime(profile.lpfQ,               t, tau * 0.8);
+      drone.gain.gain.setTargetAtTime(profile.droneGain,      t, tau);
+      drone.convGain.gain.setTargetAtTime(profile.reverbMix,  t, tau);
+    }
+
+    /* --- Pink noise --- */
+    const noise = this.nodes.get('noise');
+    if (noise) {
+      noise.gain.gain.setTargetAtTime(profile.noiseGain, t, tau * 0.7);
+      noise.lpf.frequency.setTargetAtTime(profile.noiseCut, t, tau * 0.7);
+    }
+
+    /* --- Sub bass --- */
+    const sub = this.nodes.get('sub');
+    if (sub) {
+      sub.osc.frequency.setTargetAtTime(profile.subFreq, t, tau * 1.5);
+      sub.gain.gain.setTargetAtTime(profile.subGain,     t, tau);
+    }
+
+    /* --- LFO (sub tremolo depth) --- */
+    const lfo = this.nodes.get('lfo');
+    if (lfo) {
+      lfo.depthGain.gain.setTargetAtTime(profile.lfoDepth, t, tau);
+      lfo.osc.frequency.setTargetAtTime(profile.lfoRate,   t, tau * 1.5);
+    }
+  }
+
+  /* ------------------------------------------------------------------ */
+  /*  SECTION PROFILES                                                    */
+  /* ------------------------------------------------------------------ */
+  /*
+   * Fields per profile:
+   *   droneFreq  — fundamental Hz of brass drone
+   *   droneGain  — dry drone level
+   *   reverbMix  — send level into the convolution reverb
+   *   lpfFreq    — drone LPF cutoff (Hz)
+   *   lpfQ       — drone LPF resonance
+   *   noiseGain  — pink noise level
+   *   noiseCut   — pink noise LPF cutoff
+   *   subFreq    — sub bass Hz
+   *   subGain    — sub bass level
+   *   lfoDepth   — sub tremolo amplitude gain
+   *   lfoRate    — sub tremolo rate (Hz)
+   */
+  SECTION_PROFILES = [
+    /* 0 — Hero / Home: full, weighty, centred */
+    { droneFreq: 65.4,  droneGain: 0.13, reverbMix: 0.32, lpfFreq: 420,  lpfQ: 1.1,
+      noiseGain: 0.024, noiseCut: 620,   subFreq: 32.7,   subGain: 0.065, lfoDepth: 0.018, lfoRate: 0.07 },
+
+    /* 1 — The Firm: slightly darker, more intimate */
+    { droneFreq: 58.3,  droneGain: 0.11, reverbMix: 0.28, lpfFreq: 360,  lpfQ: 0.9,
+      noiseGain: 0.019, noiseCut: 540,   subFreq: 29.1,   subGain: 0.055, lfoDepth: 0.014, lfoRate: 0.06 },
+
+    /* 2 — Edge / Advantage: brighter, slightly raised energy */
+    { droneFreq: 73.4,  droneGain: 0.14, reverbMix: 0.36, lpfFreq: 520,  lpfQ: 1.3,
+      noiseGain: 0.029, noiseCut: 700,   subFreq: 36.7,   subGain: 0.045, lfoDepth: 0.022, lfoRate: 0.09 },
+
+    /* 3 — Senior Capital: deepest, most authoritative */
+    { droneFreq: 55.0,  droneGain: 0.15, reverbMix: 0.40, lpfFreq: 310,  lpfQ: 1.5,
+      noiseGain: 0.014, noiseCut: 450,   subFreq: 27.5,   subGain: 0.085, lfoDepth: 0.012, lfoRate: 0.05 },
+
+    /* 4 — Sub Capital: close relative of Senior, slightly warmer */
+    { droneFreq: 61.7,  droneGain: 0.12, reverbMix: 0.30, lpfFreq: 330,  lpfQ: 1.0,
+      noiseGain: 0.017, noiseCut: 480,   subFreq: 30.9,   subGain: 0.072, lfoDepth: 0.016, lfoRate: 0.06 },
+
+    /* 5 — Equity / Growth: mid-high brightness, forward */
+    { droneFreq: 69.3,  droneGain: 0.13, reverbMix: 0.34, lpfFreq: 440,  lpfQ: 1.2,
+      noiseGain: 0.021, noiseCut: 660,   subFreq: 34.6,   subGain: 0.052, lfoDepth: 0.020, lfoRate: 0.08 },
+
+    /* 6 — Execution: crisper, more transient, higher shimmer activity */
+    { droneFreq: 77.8,  droneGain: 0.11, reverbMix: 0.26, lpfFreq: 500,  lpfQ: 0.8,
+      noiseGain: 0.027, noiseCut: 720,   subFreq: 38.9,   subGain: 0.038, lfoDepth: 0.025, lfoRate: 0.11 },
+
+    /* 7 — Underwriting: deep and spacious */
+    { droneFreq: 65.4,  droneGain: 0.14, reverbMix: 0.45, lpfFreq: 260,  lpfQ: 1.4,
+      noiseGain: 0.011, noiseCut: 380,   subFreq: 32.7,   subGain: 0.094, lfoDepth: 0.010, lfoRate: 0.05 },
+
+    /* 8 — Compliance / Governance: spare, restrained, low noise */
+    { droneFreq: 58.3,  droneGain: 0.09, reverbMix: 0.22, lpfFreq: 210,  lpfQ: 0.7,
+      noiseGain: 0.009, noiseCut: 320,   subFreq: 29.1,   subGain: 0.062, lfoDepth: 0.008, lfoRate: 0.04 },
+
+    /* 9 — Engage / Contact: open, welcoming, highest shimmer density */
+    { droneFreq: 87.3,  droneGain: 0.12, reverbMix: 0.38, lpfFreq: 620,  lpfQ: 1.0,
+      noiseGain: 0.034, noiseCut: 800,   subFreq: 43.7,   subGain: 0.035, lfoDepth: 0.028, lfoRate: 0.13 },
+  ];
+
+  /* ------------------------------------------------------------------ */
+  /*  PRIVATE — BUILDERS                                                  */
+  /* ------------------------------------------------------------------ */
+
+  /**
+   * Stereo widener.
+   * Uses a ChannelSplitter → two allpass filters at slightly different
+   * frequencies (one per channel) → ChannelMerger.  The resulting phase
+   * differential between L and R gives perceived width without resorting
+   * to a Haas effect or mid-side matrix.
+   */
+  _buildWidener() {
+    const ctx     = this.ctx;
+    const splitter = ctx.createChannelSplitter(2);
+    const merger   = ctx.createChannelMerger(2);
+
+    const apL = ctx.createBiquadFilter();
+    apL.type = 'allpass';
+    apL.frequency.value = 620;
+    apL.Q.value = 0.7;
+
+    const apR = ctx.createBiquadFilter();
+    apR.type = 'allpass';
+    apR.frequency.value = 840;
+    apR.Q.value = 0.7;
+
+    splitter.connect(apL, 0);
+    splitter.connect(apR, 1);
+    apL.connect(merger, 0, 0);
+    apR.connect(merger, 0, 1);
+    merger.connect(ctx.destination);
+
+    this.widener = { splitter, merger, apL, apR };
+  }
+
+  /**
+   * Brass drone.
+   *
+   * Signal path:
+   *   osc1 (saw, C2)  ─┐
+   *   osc2 (saw, ~C2) ─┤
+   *   osc3 (tri, G2)  ─┤→ LPF (resonant) → dryGain  → masterGain
+   *   osc4 (sin, C3)  ─┘              └──→ conv IR → convGain → masterGain
+   *
+   * The convolution reverb uses a synthetically generated impulse response
+   * that models a large stone hall: dense early reflections followed by an
+   * exponentially decaying diffuse tail with mild random modulation.
+   */
+  _buildBrassDrone() {
+    const ctx = this.ctx;
+
+    /* --- Oscillators --- */
+    const osc1 = ctx.createOscillator();
+    osc1.type = 'sawtooth';
+    osc1.frequency.value = 65.4;   // C2 fundamental
+
+    const osc2 = ctx.createOscillator();
+    osc2.type = 'sawtooth';
+    osc2.frequency.value = 65.58;  // tiny detune for beating warmth
+
+    const osc3 = ctx.createOscillator();
+    osc3.type = 'triangle';        // 5th: G2
+    osc3.frequency.value = 97.99;
+
+    const osc4 = ctx.createOscillator();
+    osc4.type = 'sine';            // octave: C3 — round low end
+    osc4.frequency.value = 130.8;
+
+    /* --- LPF: shapes the timbre, controlled per section --- */
+    const lpf = ctx.createBiquadFilter();
+    lpf.type = 'lowpass';
+    lpf.frequency.value = 420;
+    lpf.Q.value = 1.1;
+
+    /* --- Dry gain --- */
+    const dg = ctx.createGain();
+    dg.gain.value = 0.13;
+
+    /* --- Convolution reverb (synthetic stone-hall IR) --- */
+    const conv     = ctx.createConvolver();
+    conv.buffer    = this._buildHallIR(2.6);   // 2.6-second tail
+
+    const convGain = ctx.createGain();
+    convGain.gain.value = 0.32;
+
+    /* --- Wire --- */
+    [osc1, osc2, osc3, osc4].forEach(o => {
+      o.connect(lpf);
+      o.start();
+    });
+
+    lpf.connect(dg);
+    lpf.connect(conv);
+
+    dg.connect(this.masterGain);
+    conv.connect(convGain);
+    convGain.connect(this.masterGain);
+
+    this.nodes.set('brassDrone', {
+      oscs: [osc1, osc2, osc3, osc4],
+      gain: dg,
+      lpf,
+      conv,
+      convGain,
+    });
+  }
+
+  /**
+   * Generates a synthetic hall impulse response.
+   *
+   * The IR has three phases:
+   *   1. Pre-delay (2 ms silence)
+   *   2. Early reflections: 12 discrete echoes at logarithmically spaced
+   *      delays up to ~80 ms, each attenuated and slightly randomised.
+   *   3. Diffuse tail: exponentially decaying coloured noise with a subtle
+   *      per-sample modulation to avoid metallic resonance.
+   *
+   * @param {number} decaySec  Total IR length in seconds.
+   * @returns {AudioBuffer}
+   */
+  _buildHallIR(decaySec) {
+    const ctx    = this.ctx;
+    const sr     = ctx.sampleRate;
+    const len    = Math.ceil(sr * decaySec);
+    const ir     = ctx.createBuffer(2, len, sr);
+    const decay  = decaySec;
+
+    /* Early reflections: 12 taps */
+    const erTimes = [0.003, 0.007, 0.012, 0.019, 0.028, 0.040,
+                     0.054, 0.071, 0.091, 0.115, 0.143, 0.178];
+
+    for (let ch = 0; ch < 2; ch++) {
+      const d    = ir.getChannelData(ch);
+      const sign = ch === 0 ? 1 : -1;   // slight L/R difference
+
+      /* --- Early reflections --- */
+      erTimes.forEach((tSec, i) => {
+        const samp = Math.floor(tSec * sr);
+        if (samp < len) {
+          const amp = Math.pow(0.70, i) * (1 + sign * 0.04 * (Math.random() - 0.5));
+          d[samp] += amp;
+        }
+      });
+
+      /* --- Diffuse tail: pink-ish noise with exponential envelope --- */
+      /* We reuse a simplified pink-noise filter in-line here.          */
+      let pn0 = 0, pn1 = 0, pn2 = 0, pn3 = 0, pn4 = 0, pn5 = 0;
+      for (let i = Math.floor(0.002 * sr); i < len; i++) {
+        const white = Math.random() * 2 - 1;
+        pn0 = 0.99886 * pn0 + white * 0.0555179;
+        pn1 = 0.99332 * pn1 + white * 0.0750759;
+        pn2 = 0.96900 * pn2 + white * 0.1538520;
+        pn3 = 0.86650 * pn3 + white * 0.3104856;
+        pn4 = 0.55000 * pn4 + white * 0.5329522;
+        pn5 = -0.7616 * pn5 - white * 0.0168980;
+        const pink = (pn0 + pn1 + pn2 + pn3 + pn4 + pn5 + white * 0.5362) * 0.11;
+
+        /* Exponential decay; steeper decay exponent than linear for
+           realistic hall character (Sabine-ish model).                 */
+        const env = Math.pow(1 - i / len, decay * 1.2);
+
+        /* Mild tremolo prevents metallic ringing in the tail */
+        const mod  = 1 + 0.015 * Math.sin(2 * Math.PI * 0.9 * i / sr);
+
+        d[i] += pink * env * mod * 0.55;
+      }
+    }
+
+    return ir;
+  }
+
+  /**
+   * Pink noise texture — warm room ambience.
+   *
+   * Paul Kellet's 7-term pink-noise algorithm fills a 4-second looping
+   * buffer.  The buffer is routed through a HPF (removes sub rumble) and
+   * a gentle LPF so it sits between 80 Hz and ~620 Hz.
+   */
+  _buildWoodgrainNoise() {
+    const ctx    = this.ctx;
+    const bufLen = ctx.sampleRate * 4;
+    const buf    = ctx.createBuffer(2, bufLen, ctx.sampleRate);
+
+    for (let ch = 0; ch < 2; ch++) {
+      const d = buf.getChannelData(ch);
+      let b0=0, b1=0, b2=0, b3=0, b4=0, b5=0, b6=0;
+      for (let i = 0; i < bufLen; i++) {
+        const w = Math.random() * 2 - 1;
+        b0 = 0.99886 * b0 + w * 0.0555179;
+        b1 = 0.99332 * b1 + w * 0.0750759;
+        b2 = 0.96900 * b2 + w * 0.1538520;
+        b3 = 0.86650 * b3 + w * 0.3104856;
+        b4 = 0.55000 * b4 + w * 0.5329522;
+        b5 = -0.7616  * b5 - w * 0.0168980;
+        d[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + w * 0.5362) * 0.11;
+        b6 = w * 0.115926;
+      }
+    }
+
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    src.loop   = true;
+
+    /* Very slight playback-rate detune per channel for width */
+    src.playbackRate.value = 1.0;
+
+    const hpf = ctx.createBiquadFilter();
+    hpf.type           = 'highpass';
+    hpf.frequency.value = 80;
+    hpf.Q.value         = 0.6;
+
+    const lpf = ctx.createBiquadFilter();
+    lpf.type           = 'lowpass';
+    lpf.frequency.value = 620;
+    lpf.Q.value         = 0.5;
+
+    const ng = ctx.createGain();
+    ng.gain.value = 0.024;
+
+    src.connect(hpf);
+    hpf.connect(lpf);
+    lpf.connect(ng);
+    ng.connect(this.masterGain);
+    src.start();
+
+    this.nodes.set('noise', { src, gain: ng, hpf, lpf });
+  }
+
+  /**
+   * Sub-bass.
+   *
+   * A 32.7 Hz (C1) sine oscillator provides the tactile low-end foundation.
+   * Its output runs through a dedicated gain node that is also the target
+   * of the LFO depth gain (see _buildSubLFO), so the LFO tremolo modulates
+   * the sub level rather than pitch — keeping tuning stable while adding
+   * an organic breathing quality.
+   */
+  _buildSubBass() {
+    const ctx = this.ctx;
+
+    const osc = ctx.createOscillator();
+    osc.type            = 'sine';
+    osc.frequency.value = 32.7;
+
+    /* Second-order Butterworth LPF to ensure sub remains clean */
+    const lpf = ctx.createBiquadFilter();
+    lpf.type            = 'lowpass';
+    lpf.frequency.value = 80;
+    lpf.Q.value         = 0.5;
+
+    const g = ctx.createGain();
+    g.gain.value = 0.065;
+
+    osc.connect(lpf);
+    lpf.connect(g);
+    g.connect(this.masterGain);
+    osc.start();
+
+    this.nodes.set('sub', { osc, lpf, gain: g });
+  }
+
+  /**
+   * Sub-bass LFO tremolo.
+   *
+   * A very slow (0.07 Hz) sine oscillator is scaled by a depth gain and
+   * connected to the sub's gain AudioParam.  This gives the sub-bass the
+   * slow "breathing" feel characteristic of large-room ambience.
+   */
+  _buildSubLFO() {
+    const ctx = this.ctx;
+
+    const lfoOsc = ctx.createOscillator();
+    lfoOsc.type            = 'sine';
+    lfoOsc.frequency.value = 0.07;
+
+    /* The LFO outputs −1…+1; scale it to a small amplitude */
+    const depthGain = ctx.createGain();
+    depthGain.gain.value = 0.018;
+
+    const sub = this.nodes.get('sub');
+    lfoOsc.connect(depthGain);
+    if (sub) depthGain.connect(sub.gain.gain);
+
+    /* Store but do NOT start yet — start in _startSubLFO() on enable() */
+    this.nodes.set('lfo', { osc: lfoOsc, depthGain });
+  }
+
+  _startSubLFO() {
+    const lfo = this.nodes.get('lfo');
+    if (lfo && !lfo._started) {
+      lfo.osc.start();
+      lfo._started = true;
+    }
+  }
+
+  /* ------------------------------------------------------------------ */
+  /*  HIGH-FREQ SHIMMER — stochastic brass-harmonic pings               */
+  /* ------------------------------------------------------------------ */
+
+  _buildHighFreqShimmer() {
+    /*
+     * No persistent nodes here — each ping is a self-contained subgraph
+     * that is created, scheduled, and garbage-collected by the browser.
+     * _scheduleShimmer() is called from enable() to start the scheduler.
+     */
+  }
+
+  /**
+   * Schedules a single shimmer ping and then reschedules itself.
+   *
+   * Each ping:
+   *   • Picks a frequency from the brass overtone series (C major harmonics).
+   *   • Creates an oscillator + amplitude envelope.
+   *   • Applies a short allpass smear for shimmer-like sustain.
+   *   • Connects directly to masterGain (bypasses sub bus).
+   *   • Self-destructs after its envelope completes.
+   *
+   * The inter-ping interval is randomised (0.8 – 4.2 s) so the density
+   * feels organic rather than metronomic.
+   */
+  _scheduleShimmer() {
+    if (!this.enabled || !this.ctx) return;
+
+    const ctx      = this.ctx;
+    const profile  = this.SECTION_PROFILES[this.activeSection] || this.SECTION_PROFILES[0];
+
+    /* Density: higher lfoRate sections get slightly more shimmer */
+    const minGap   = 0.6;
+    const maxGap   = 4.5 - profile.lfoRate * 15;  // section-aware density
+    const gapSec   = Math.random() * (maxGap - minGap) + minGap;
+    const gapMs    = gapSec * 1000;
+
+    /* Schedule the actual audio event slightly into the future so it is
+       always ahead of the currentTime by the time it fires.              */
+    const offset  = Math.random() * 0.4 + 0.05;   // 50–450 ms ahead
+    const t       = ctx.currentTime + offset;
+
+    /*
+     * Brass overtone series above the current drone fundamental.
+     * Partials: 4f, 5f, 6f, 7f, 8f, 10f — avoiding 9f (minor 7th clash).
+     */
+    const f0       = profile.droneFreq;
+    const partials = [4, 5, 6, 7, 8, 10];
+    const mult     = partials[Math.floor(Math.random() * partials.length)];
+    const freq     = f0 * mult;
+
+    /* Amplitude: quieter for lower sections, slightly louder for Edge/Engage */
+    const peakAmp  = 0.012 + profile.noiseGain * 0.6;
+
+    /* --- Oscillator + envelope --- */
+    const osc = ctx.createOscillator();
+    osc.type            = 'sine';
+    osc.frequency.value = freq;
+
+    /* Tiny frequency wobble for breath */
+    osc.frequency.setValueAtTime(freq,          t);
+    osc.frequency.linearRampToValueAtTime(freq * 1.0008, t + 0.08);
+    osc.frequency.linearRampToValueAtTime(freq,          t + 0.4);
+
+    const env = ctx.createGain();
+    env.gain.setValueAtTime(0,        t);
+    env.gain.linearRampToValueAtTime(peakAmp,   t + 0.018);  // fast attack
+    env.gain.setValueAtTime(peakAmp,            t + 0.025);
+    env.gain.exponentialRampToValueAtTime(0.0001, t + 1.6);  // long tail
+
+    /* Allpass "smear" for that bell/shimmer quality */
+    const ap = ctx.createBiquadFilter();
+    ap.type             = 'allpass';
+    ap.frequency.value  = freq * 0.5;
+    ap.Q.value          = 8.0;
+
+    osc.connect(ap);
+    ap.connect(env);
+    env.connect(this.masterGain);
+
+    osc.start(t);
+    osc.stop(t + 1.7);
+
+    /* Reschedule */
+    this._shimmerTimer = setTimeout(() => this._scheduleShimmer(), gapMs);
+  }
+
+  /* ------------------------------------------------------------------ */
+  /*  CONVENIENCE GETTERS (diagnostics / external query)                 */
+  /* ------------------------------------------------------------------ */
+
+  get currentProfile() {
+    return this.SECTION_PROFILES[this.activeSection] || this.SECTION_PROFILES[0];
+  }
+
+  get contextState() {
+    return this.ctx ? this.ctx.state : 'uninitialized';
+  }
+}
+
+/* -------------------------------------------------------------------- */
+/*  Singleton + global wiring                                            */
+/* -------------------------------------------------------------------- */
+
+const audioEngine = new PCMAudioEngine();
+window.audioEngine = audioEngine;
+
+/* Toggle button */
+document.getElementById('btn-audio')?.addEventListener('click', () => audioEngine.toggle());
+
+/* Section change hook — called by scroll observer in main.js */
+window.onSectionChange = function(idx) {
+  audioEngine.setSection(idx);
+};
+
+/* Keyboard shortcut: M */
+window.addEventListener('keydown', e => {
+  if ((e.key === 'm' || e.key === 'M') && !e.ctrlKey && !e.metaKey) {
+    audioEngine.toggle();
+  }
+});
+
+
+  // ═══════ INIT SEQUENCE ═══════════════════════════════════════════
+  // Chrome auto-initializes on DOMContentLoaded; if it already fired we call manually.
+  if (typeof window.initChrome === 'function' && document.readyState !== 'loading') {
+    try { window.initChrome(); } catch(err) { console.error('initChrome', err); }
+  }
+
+  // Overlays
+  try { initOverlays(); } catch(err) { console.error('initOverlays', err); }
+
+  // Scene
+  const { scene, camera, renderer, composer } = initScene();
+
+  // Logo
+  const logoRefs = buildPCMLogo(THREE);
+  scene.add(logoRefs.root);
+  window.pcmRoot          = logoRefs.root;
+  window.leverGroup       = logoRefs.leverGroup;
+  window.refreshGroup     = logoRefs.refreshGroup;
+  window.orbitalDots      = logoRefs.orbitalDots;
+  window.haloDisc         = logoRefs.haloDisc;
+  window.particles        = logoRefs.particles;
+  window.outerRing        = logoRefs.outerRing;
+  window.accentRingMesh   = logoRefs.accentRingMesh;
+  window.tickGroup        = logoRefs.tickGroup;
+  window.fulcrumGlowRing  = logoRefs.glowRing;
+  window.bgPlane          = logoRefs.bgPlane;
+
+  // Make leverGroup and friends accessible as bare names where animation.js expects them
+  // (the script is concatenated so its top-level `let` declarations are in module scope —
+  //  we shadow them by writing to window as the source of truth.)
+
+  // Dismiss intro loader after a beat
+  setTimeout(() => {
+    const loader = document.getElementById('intro-loader');
+    if (loader) loader.classList.add('done');
+    setTimeout(() => loader && loader.remove(), 1000);
+  }, 2200);
+
+  // Initial UI sync
+  if (typeof updateCopyContent === 'function') updateCopyContent(0);
+  if (typeof updateSectionUI === 'function') updateSectionUI(0);
+  if (typeof window.updateChrome === 'function') window.updateChrome(0);
+
+  </script>
+</body>
+</html>
