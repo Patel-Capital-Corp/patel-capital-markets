@@ -15352,6 +15352,1183 @@ function animateStatPanels() {
   console.log(`[PCM] Part I audit: ${present}/${COMPONENTS.length} components (${pct}%)`);
 })();
 
+
+/* =====================================================
+   CYCLE 5 — PERFECT PART I COMPONENTS
+   bottom menu, copy overlay, top nav, side nav,
+   progress bar, controls, cinema bars, vignette,
+   loader, home wordmark, auto-glide, flash, tags,
+   connector line, mode switcher, sub-step nav,
+   poetic block, lifestyle gallery, scrollbar
+   ===================================================== */
+
+(function CYCLE5_BOTTOM_MENU_PERFECT(){
+  if(window._c5bm)return; window._c5bm=true;
+  var s=document.createElement('style'); s.id='c5-bm';
+  s.textContent=`
+  #bottom-menu{position:fixed!important;bottom:0!important;left:0!important;width:100%!important;z-index:200!important;background:linear-gradient(to top,rgba(6,9,10,.97) 0%,rgba(6,9,10,.82) 55%,transparent 100%)!important;padding:16px 28px 20px!important;pointer-events:auto!important}
+  #bottom-menu .bm-rail{display:flex!important;justify-content:space-around!important;align-items:flex-end!important}
+  #bottom-menu .bm-btn{flex:0 0 auto;display:flex!important;flex-direction:column!important;align-items:center!important;gap:3px!important;cursor:pointer!important;background:none!important;border:none!important;padding:5px 6px 8px!important;position:relative!important;transition:opacity .28s ease!important}
+  #bottom-menu .bm-num{font-family:'Space Mono',monospace!important;font-size:9px!important;letter-spacing:.24em!important;color:rgba(201,169,110,.38)!important;line-height:1!important;transition:color .28s ease!important}
+  #bottom-menu .bm-name{font-family:'Cormorant Garamond',serif!important;font-size:13.5px!important;font-weight:500!important;letter-spacing:.16em!important;text-transform:uppercase!important;color:rgba(227,238,230,.46)!important;line-height:1!important;white-space:nowrap!important;transition:color .28s ease!important}
+  #bottom-menu .bm-btn::after{content:''!important;position:absolute!important;bottom:0!important;left:50%!important;transform:translateX(-50%)!important;width:0!important;height:1px!important;background:#c9a96e!important;box-shadow:0 0 10px #c9a96e!important;transition:width .4s cubic-bezier(.16,1,.3,1)!important}
+  #bottom-menu .bm-btn.active .bm-name{color:#c9a96e!important}
+  #bottom-menu .bm-btn.active .bm-num{color:rgba(201,169,110,.8)!important}
+  #bottom-menu .bm-btn.active::after{width:75%!important}
+  #bottom-menu .bm-btn:hover:not(.active) .bm-name{color:rgba(227,238,230,.78)!important}
+  #bottom-menu .bm-progress{height:1px!important;background:rgba(201,169,110,.12)!important;margin-top:13px!important;position:relative!important;overflow:hidden!important}
+  #bottom-menu .bm-progress-fill{position:absolute!important;left:0!important;top:0!important;height:100%!important;background:#c9a96e!important;box-shadow:0 0 14px rgba(201,169,110,.7)!important;transition:width 1.4s cubic-bezier(.25,1,.5,1)!important}
+  @media(max-width:768px){#bottom-menu{padding:10px 6px 12px!important}#bottom-menu .bm-name{font-size:9px!important}#bottom-menu .bm-num{font-size:8px!important}}`;
+  document.head.appendChild(s);
+  
+  var NAMES=['Home','Firm','Platform','Sr. Debt','Sub Cap','Equity','Execution','Underwriting','Compliance','Engage'];
+  function rebuild(){
+    var el=document.getElementById('bottom-menu');
+    if(!el){setTimeout(rebuild,450);return;}
+    if(el.dataset.c5){upd(el);return;}
+    el.dataset.c5='1';
+    el.innerHTML='';
+    var rail=document.createElement('div'); rail.className='bm-rail';
+    NAMES.forEach(function(n,i){
+      var b=document.createElement('button'); b.className='bm-btn'; b.dataset.sec=i;
+      b.setAttribute('aria-label',n);
+      b.innerHTML='<span class="bm-num">'+('0'+(i+1)).slice(-2)+'</span><span class="bm-name">'+n+'</span>';
+      b.addEventListener('click',function(){if(window.goToSection)window.goToSection(i,i>(window.activeIdx||0)?1:-1);});
+      rail.appendChild(b);
+    });
+    var pg=document.createElement('div'); pg.className='bm-progress';
+    pg.innerHTML='<div class="bm-progress-fill" id="bm-pf"></div>';
+    el.appendChild(rail); el.appendChild(pg);
+    upd(el);
+  }
+  function upd(el){
+    var idx=window.activeIdx||0;
+    el.querySelectorAll('.bm-btn').forEach(function(b,i){b.classList.toggle('active',i===idx);});
+    var pf=document.getElementById('bm-pf')||el.querySelector('.bm-progress-fill');
+    if(pf)pf.style.width=(idx/9*100)+'%';
+  }
+  var o=new MutationObserver(function(){var el=document.getElementById('bottom-menu');if(el)upd(el);});
+  o.observe(document.body,{attributes:true,attributeFilter:['data-section']});
+  setTimeout(rebuild,400);
+})();
+
+(function CYCLE5_SCENE_COPY_PERFECT(){
+  if(window._c5sc)return; window._c5sc=true;
+  var s=document.createElement('style'); s.id='c5-sc';
+  s.textContent=`
+  .scene-copy{position:fixed!important;right:54px!important;top:50%!important;transform:translateY(calc(-50% + 28px))!important;width:340px!important;max-width:calc(100vw - 120px)!important;opacity:0!important;pointer-events:none!important;z-index:100!important;transition:opacity .72s ease,transform .72s cubic-bezier(.16,1,.3,1)!important}
+  .scene-copy.visible{opacity:1!important;transform:translateY(-50%)!important}
+  .scene-copy .copy-pretitle{font-family:'Space Mono',monospace!important;font-size:9.5px!important;letter-spacing:.32em!important;color:rgba(201,169,110,.72)!important;text-transform:uppercase!important;margin-bottom:10px!important;display:block!important}
+  .scene-copy .copy-rule{width:34px!important;height:1px!important;background:linear-gradient(to right,#c9a96e,transparent)!important;margin-bottom:14px!important}
+  .scene-copy .copy-title{font-family:'Cormorant Garamond',serif!important;font-size:36px!important;font-weight:500!important;letter-spacing:.04em!important;color:#e3eee6!important;line-height:1.08!important;margin-bottom:10px!important}
+  .scene-copy .copy-subtitle{font-family:'Space Grotesk',sans-serif!important;font-size:12px!important;color:rgba(201,169,110,.65)!important;letter-spacing:.08em!important;margin-bottom:14px!important}
+  .scene-copy .copy-body{font-family:'Space Grotesk',sans-serif!important;font-size:13px!important;line-height:1.72!important;color:rgba(227,238,230,.7)!important;margin-bottom:18px!important}
+  .scene-copy .copy-stats{display:flex!important;gap:24px!important;margin-bottom:14px!important}
+  .scene-copy .copy-stat-value{font-family:'Cormorant Garamond',serif!important;font-size:24px!important;font-weight:500!important;color:#c9a96e!important;line-height:1!important}
+  .scene-copy .copy-stat-label{font-family:'Space Mono',monospace!important;font-size:8.5px!important;letter-spacing:.26em!important;color:rgba(227,238,230,.42)!important;text-transform:uppercase!important;margin-top:4px!important}
+  .scene-copy .copy-tags{display:flex!important;flex-wrap:wrap!important;gap:5px!important;margin-top:12px!important}
+  .scene-copy .copy-tag{font-family:'Space Mono',monospace!important;font-size:8.5px!important;letter-spacing:.17em!important;color:rgba(201,169,110,.58)!important;border:1px solid rgba(201,169,110,.22)!important;padding:3px 7px!important;text-transform:uppercase!important}
+  body[data-section="0"] .scene-copy{right:auto!important;left:50%!important;top:auto!important;bottom:140px!important;transform:translate(-50%,20px)!important;width:520px!important;text-align:center!important}
+  body[data-section="0"] .scene-copy.visible{transform:translate(-50%,0)!important}
+  body[data-section="0"] .scene-copy .copy-title{font-size:50px!important}
+  body[data-section="0"] .scene-copy .copy-rule{margin:0 auto 14px!important;background:linear-gradient(to right,transparent,#c9a96e,transparent)!important;width:80px!important}
+  body[data-section="0"] .scene-copy .copy-stats{justify-content:center!important}
+  @media(max-width:768px){.scene-copy{right:14px!important;width:calc(100vw - 28px)!important;top:auto!important;bottom:110px!important;transform:translateY(18px)!important}
+  .scene-copy.visible{transform:translateY(0)!important}
+  body[data-section="0"] .scene-copy{left:14px!important;width:calc(100vw - 28px)!important;transform:translateY(18px)!important}}`;
+  document.head.appendChild(s);
+})();
+
+(function CYCLE5_TOPNAV_PERFECT(){
+  if(window._c5tn)return; window._c5tn=true;
+  var s=document.createElement('style');
+  s.textContent=`
+  #top-nav{position:fixed!important;top:0!important;left:0!important;right:0!important;z-index:300!important;padding:20px 32px 0!important;display:flex!important;justify-content:space-between!important;align-items:flex-start!important;pointer-events:none!important}
+  #top-nav .tn-l{pointer-events:auto!important}
+  #top-nav .tn-wm{font-family:'Cormorant Garamond',serif!important;font-size:17px!important;font-weight:500!important;letter-spacing:.22em!important;text-transform:uppercase!important;color:#e3eee6!important;cursor:pointer!important;line-height:1!important}
+  #top-nav .tn-tg{font-family:'Space Mono',monospace!important;font-size:8.5px!important;letter-spacing:.32em!important;color:rgba(201,169,110,.55)!important;text-transform:uppercase!important;margin-top:4px!important}
+  #top-nav .tn-r{text-align:right!important;pointer-events:auto!important}
+  #top-nav .tn-ct{font-family:'Cormorant Garamond',serif!important;font-size:28px!important;font-weight:300!important;color:rgba(227,238,230,.22)!important;line-height:1!important}
+  #top-nav .tn-ct .cur{color:rgba(201,169,110,.58)!important}
+  #top-nav .tn-cap{font-family:'Space Mono',monospace!important;font-size:8.5px!important;letter-spacing:.22em!important;color:rgba(227,238,230,.28)!important;text-transform:uppercase!important;margin-top:2px!important}
+  @media(max-width:768px){#top-nav{padding:12px 16px 0!important}#top-nav .tn-wm{font-size:13px!important}#top-nav .tn-ct{font-size:20px!important}}`;
+  document.head.appendChild(s);
+  var CAPS=['Home','Firm Overview','Platform Edge','Senior Debt','Sub Capital','Equity','Execution','Underwriting','Compliance','Engage'];
+  function uTN(){
+    var el=document.getElementById('top-nav'); if(!el)return;
+    if(!el.dataset.c5){
+      el.dataset.c5='1';
+      el.innerHTML='<div class="tn-l"><div class="tn-wm" onclick="if(window.goToSection)window.goToSection(0,-1)">Patel Capital Markets</div><div class="tn-tg">Engineering Creative Finance</div></div><div class="tn-r"><div class="tn-ct"><span class="cur">01</span> / 10</div><div class="tn-cap">Home</div></div>';
+    }
+    var idx=window.activeIdx||0;
+    var ct=el.querySelector('.tn-ct'); if(ct)ct.innerHTML='<span class="cur">'+('0'+(idx+1)).slice(-2)+'</span> / 10';
+    var cap=el.querySelector('.tn-cap'); if(cap)cap.textContent=CAPS[idx]||'';
+  }
+  var o=new MutationObserver(uTN); o.observe(document.body,{attributes:true,attributeFilter:['data-section']});
+  setTimeout(uTN,500);
+})();
+
+(function CYCLE5_SIDENAV_PERFECT(){
+  if(window._c5sn)return; window._c5sn=true;
+  var s=document.createElement('style');
+  s.textContent=`
+  #side-nav{position:fixed!important;right:22px!important;top:50%!important;transform:translateY(-50%)!important;z-index:200!important;display:flex!important;flex-direction:column!important;gap:9px!important;pointer-events:auto!important}
+  #side-nav .snd{width:5px!important;height:5px!important;border-radius:50%!important;background:rgba(201,169,110,.28)!important;cursor:pointer!important;transition:all .32s cubic-bezier(.16,1,.3,1)!important;position:relative!important}
+  #side-nav .snd.active{background:#c9a96e!important;box-shadow:0 0 9px rgba(201,169,110,.65)!important;transform:scale(1.65)!important}
+  #side-nav .snd:hover:not(.active){background:rgba(201,169,110,.6)!important;transform:scale(1.35)!important}
+  #side-nav .snd .sntt{position:absolute!important;right:calc(100% + 13px)!important;top:50%!important;transform:translateY(-50%)!important;background:rgba(6,9,10,.9)!important;border:1px solid rgba(201,169,110,.28)!important;padding:4px 9px!important;white-space:nowrap!important;font-family:'Space Mono',monospace!important;font-size:8.5px!important;letter-spacing:.17em!important;color:#c9a96e!important;text-transform:uppercase!important;opacity:0!important;pointer-events:none!important;transition:opacity .2s ease!important}
+  #side-nav .snd:hover .sntt{opacity:1!important}
+  @media(max-width:768px){#side-nav{display:none!important}}`;
+  document.head.appendChild(s);
+  var NAMES=['Home','Firm','Platform','Senior Debt','Sub Capital','Equity','Execution','Underwriting','Compliance','Engage'];
+  function rebuildSN(){
+    var el=document.getElementById('side-nav');
+    if(!el){var ne=document.createElement('div');ne.id='side-nav';document.body.appendChild(ne);el=ne;}
+    if(el.dataset.c5){updSN(el);return;}
+    el.dataset.c5='1'; el.innerHTML='';
+    NAMES.forEach(function(n,i){
+      var d=document.createElement('div'); d.className='snd'; d.dataset.s=i;
+      d.setAttribute('role','button'); d.setAttribute('tabindex','0'); d.setAttribute('aria-label',n);
+      d.innerHTML='<div class="sntt">'+n+'</div>';
+      d.addEventListener('click',function(){if(window.goToSection)window.goToSection(i,i>(window.activeIdx||0)?1:-1);});
+      d.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' ')d.click();});
+      el.appendChild(d);
+    });
+    updSN(el);
+  }
+  function updSN(el){
+    var idx=window.activeIdx||0;
+    el.querySelectorAll('.snd').forEach(function(d,i){d.classList.toggle('active',i===idx);});
+  }
+  var o=new MutationObserver(function(){var el=document.getElementById('side-nav');if(el)updSN(el);});
+  o.observe(document.body,{attributes:true,attributeFilter:['data-section']});
+  setTimeout(rebuildSN,500);
+})();
+
+(function CYCLE5_PROGRESSBAR_PERFECT(){
+  if(window._c5pb)return; window._c5pb=true;
+  var s=document.createElement('style');
+  s.textContent=`
+  #pcm-top-progress{position:fixed!important;top:0!important;left:0!important;width:100%!important;height:1px!important;background:rgba(201,169,110,.1)!important;z-index:500!important;pointer-events:none!important}
+  #pcm-top-progress .pb-fill{height:100%!important;background:#c9a96e!important;box-shadow:0 0 12px rgba(201,169,110,.8)!important;transition:width 1.4s cubic-bezier(.25,1,.5,1)!important;width:0%!important}`;
+  document.head.appendChild(s);
+  var el=document.getElementById('pcm-top-progress');
+  if(!el){el=document.createElement('div');el.id='pcm-top-progress';el.innerHTML='<div class="pb-fill"></div>';document.body.appendChild(el);}
+  else if(!el.querySelector('.pb-fill')){el.innerHTML='<div class="pb-fill"></div>';}
+  function updPB(){
+    var fill=document.querySelector('#pcm-top-progress .pb-fill');
+    if(fill)fill.style.width=((window.activeIdx||0)/9*100)+'%';
+  }
+  var o=new MutationObserver(updPB); o.observe(document.body,{attributes:true,attributeFilter:['data-section']});
+})();
+
+(function CYCLE5_CONTROLS_PERFECT(){
+  if(window._c5cc)return; window._c5cc=true;
+  var s=document.createElement('style');
+  s.textContent=`
+  #controls-cluster{position:fixed!important;bottom:82px!important;right:26px!important;z-index:300!important;display:flex!important;flex-direction:column!important;gap:9px!important}
+  #controls-cluster .ccb{width:36px!important;height:36px!important;border-radius:50%!important;border:1px solid rgba(201,169,110,.25)!important;background:rgba(6,9,10,.7)!important;backdrop-filter:blur(8px)!important;color:rgba(201,169,110,.72)!important;font-size:13px!important;cursor:pointer!important;display:flex!important;align-items:center!important;justify-content:center!important;transition:all .22s ease!important;font-family:'Space Mono',monospace!important;letter-spacing:.05em!important}
+  #controls-cluster .ccb:hover{background:rgba(201,169,110,.1)!important;border-color:rgba(201,169,110,.55)!important;color:#c9a96e!important;box-shadow:0 0 14px rgba(201,169,110,.18)!important}
+  #controls-cluster .ccb.cc-on{background:rgba(201,169,110,.16)!important;border-color:#c9a96e!important;color:#c9a96e!important}
+  @media(max-width:768px){#controls-cluster{bottom:88px!important;right:10px!important}#controls-cluster .ccb{width:30px!important;height:30px!important;font-size:11px!important}}`;
+  document.head.appendChild(s);
+})();
+
+(function CYCLE5_CINEMA_BARS(){
+  if(window._c5cb)return; window._c5cb=true;
+  if(!document.querySelector('.cinema-bar--top')){
+    var t=document.createElement('div'); t.className='cinema-bar cinema-bar--top';
+    t.style.cssText='position:fixed;top:0;left:0;width:100%;height:0;background:#000;z-index:9999;transition:height .62s cubic-bezier(.77,0,.18,1);pointer-events:none';
+    var b=document.createElement('div'); b.className='cinema-bar cinema-bar--bottom';
+    b.style.cssText='position:fixed;bottom:0;left:0;width:100%;height:0;background:#000;z-index:9999;transition:height .62s cubic-bezier(.77,0,.18,1);pointer-events:none';
+    document.body.appendChild(t); document.body.appendChild(b);
+  }
+  var cs=document.createElement('style');
+  cs.textContent='body.transitioning .cinema-bar--top{height:68px!important}body.transitioning .cinema-bar--bottom{height:68px!important}';
+  document.head.appendChild(cs);
+})();
+
+(function CYCLE5_VIGNETTE_PERFECT(){
+  if(window._c5vg)return; window._c5vg=true;
+  var s=document.createElement('style');
+  s.textContent=`#vignette-overlay{position:fixed!important;inset:0!important;z-index:4!important;pointer-events:none!important;background:radial-gradient(ellipse at center,transparent 40%,rgba(6,9,10,.52) 75%,rgba(6,9,10,.88) 100%)!important}`;
+  document.head.appendChild(s);
+  if(!document.getElementById('vignette-overlay')){
+    var v=document.createElement('div'); v.id='vignette-overlay'; document.body.appendChild(v);
+  }
+})();
+
+(function CYCLE5_LOADER_PERFECT(){
+  if(window._c5ld)return; window._c5ld=true;
+  var s=document.createElement('style');
+  s.textContent=`
+  #pcm-loader{position:fixed!important;inset:0!important;z-index:10000!important;background:#06090a!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;opacity:1!important;transition:opacity .95s ease!important}
+  #pcm-loader.dismissed{opacity:0!important;pointer-events:none!important}
+  #pcm-loader .loader-wordmark{font-family:'Cormorant Garamond',serif!important;font-size:26px!important;font-weight:500!important;letter-spacing:.28em!important;text-transform:uppercase!important;color:#e3eee6!important;margin-bottom:6px!important}
+  #pcm-loader .loader-slogan{font-family:'Space Mono',monospace!important;font-size:8.5px!important;letter-spacing:.36em!important;color:rgba(201,169,110,.55)!important;text-transform:uppercase!important;margin-bottom:38px!important}
+  #pcm-loader .loader-spinner{width:32px!important;height:32px!important;border:1px solid rgba(201,169,110,.18)!important;border-top-color:#c9a96e!important;border-radius:50%!important;animation:pcm-spin 1.05s linear infinite!important;margin-bottom:24px!important}
+  @keyframes pcm-spin{to{transform:rotate(360deg)}}
+  #pcm-loader .loader-hairline{width:220px!important;height:1px!important;background:rgba(201,169,110,.13)!important;margin-bottom:18px!important;position:relative!important;overflow:hidden!important}
+  #pcm-loader .loader-hairline::after{content:''!important;position:absolute!important;left:-100%!important;top:0!important;width:100%!important;height:100%!important;background:linear-gradient(to right,transparent,#c9a96e,transparent)!important;animation:pcm-sweep 1.75s ease-in-out infinite!important}
+  @keyframes pcm-sweep{to{left:100%}}
+  #pcm-loader .loader-status{font-family:'Space Mono',monospace!important;font-size:8.5px!important;letter-spacing:.22em!important;color:rgba(201,169,110,.4)!important;text-transform:uppercase!important}`;
+  document.head.appendChild(s);
+})();
+
+(function CYCLE5_HOME_WORDMARK(){
+  if(window._c5hw)return; window._c5hw=true;
+  var s=document.createElement('style');
+  s.textContent=`
+  #home-wordmark{position:fixed!important;left:50%!important;top:50%!important;transform:translate(-50%,calc(-50% - 148px))!important;text-align:center!important;z-index:88!important;pointer-events:none!important;opacity:0!important;transition:opacity .85s ease!important}
+  body[data-section="0"] #home-wordmark{opacity:1!important}
+  #home-wordmark .hw-name{font-family:'Cormorant Garamond',serif!important;font-size:60px!important;font-weight:400!important;letter-spacing:.12em!important;color:#e3eee6!important;line-height:1!important}
+  #home-wordmark .hw-hr{width:100%!important;height:1px!important;background:linear-gradient(to right,transparent,#c9a96e,transparent)!important;margin:10px 0!important}
+  #home-wordmark .hw-sl{font-family:'Space Mono',monospace!important;font-size:10px!important;letter-spacing:.38em!important;color:rgba(201,169,110,.72)!important;text-transform:uppercase!important}
+  @media(max-width:768px){#home-wordmark .hw-name{font-size:36px!important}}`;
+  document.head.appendChild(s);
+  if(!document.getElementById('home-wordmark')){
+    var hw=document.createElement('div'); hw.id='home-wordmark';
+    hw.innerHTML='<div class="hw-name">Patel Capital Markets</div><div class="hw-hr"></div><div class="hw-sl">Control The Leverage</div>';
+    document.body.appendChild(hw);
+  }
+})();
+
+(function CYCLE5_FLASH_ENSURE(){
+  if(window._c5fl)return; window._c5fl=true;
+  if(!document.getElementById('flash-overlay')){
+    var fo=document.createElement('div'); fo.id='flash-overlay';
+    fo.style.cssText='position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:9998;transition:opacity .11s ease';
+    document.body.appendChild(fo);
+  }
+  window.doFlash=function(){
+    var fo=document.getElementById('flash-overlay'); if(!fo)return;
+    fo.style.opacity='.2'; setTimeout(function(){fo.style.opacity='0';},120);
+  };
+})();
+
+(function CYCLE5_AUTOGL_STRENGTHEN(){
+  if(window._c5ag)return; window._c5ag=true;
+  var accum=0,last=0,locked=false;
+  function trig(dir){
+    if(locked||window.isTransitioning)return;
+    var cur=window.activeIdx||0, next=Math.max(0,Math.min(9,cur+dir));
+    if(next===cur)return;
+    locked=true; accum=0; window.pcmDollyAccum=0;
+    if(window.doFlash)window.doFlash();
+    if(window.goToSection)window.goToSection(next,dir);
+    setTimeout(function(){locked=false;},1850);
+  }
+  window.addEventListener('wheel',function(e){
+    if(window.isTransitioning||locked)return;
+    e.preventDefault();
+    var dy=e.deltaY;
+    if(Math.abs(dy)>26){trig(dy>0?1:-1);return;}
+    accum+=dy*.0014; accum=Math.max(-1.5,Math.min(1.5,accum));
+    window.pcmDollyAccum=accum*.45; last=performance.now();
+    if(Math.abs(accum)>.7)trig(accum>0?1:-1);
+  },{passive:false});
+  (function decay(){
+    if(performance.now()-last>175){accum*=.88;if(Math.abs(accum)<.01)accum=0;window.pcmDollyAccum=accum*.45;}
+    requestAnimationFrame(decay);
+  })();
+  var ty0=0;
+  window.addEventListener('touchstart',function(e){ty0=e.touches[0].clientY;},{passive:true});
+  window.addEventListener('touchend',function(e){
+    var dy=ty0-e.changedTouches[0].clientY;
+    if(Math.abs(dy)>40)trig(dy>0?1:-1);
+  },{passive:true});
+})();
+
+(function CYCLE5_GTS_ENSURE(){
+  if(window._c5gts)return; window._c5gts=true;
+  if(!document.body.hasAttribute('data-section'))document.body.setAttribute('data-section','0');
+  var orig=window.goToSection;
+  if(orig&&!orig._c5){
+    window.goToSection=function(idx,dir){
+      var i=Math.max(0,Math.min(9,idx||0));
+      window.activeIdx=i;
+      document.body.setAttribute('data-section',String(i));
+      return orig.apply(this,arguments);
+    };
+    window.goToSection._c5=true;
+  }
+})();
+
+(function CYCLE5_CONNECTOR_PERFECT(){
+  if(window._c5cn)return; window._c5cn=true;
+  var s=document.createElement('style');
+  s.textContent=`
+  #connector-line-wrap{position:absolute!important;left:50%!important;top:50%!important;transform:translate(-50%,-50%)!important;width:700px!important;pointer-events:none!important;opacity:0!important;transition:opacity .6s ease!important;z-index:50!important}
+  body[data-section="6"] #connector-line-wrap{opacity:1!important}
+  #connector-line-wrap svg{width:100%!important;height:auto!important;overflow:visible!important}
+  .cl-path{fill:none;stroke:rgba(201,169,110,.18);stroke-width:1}
+  .cl-active{stroke:#c9a96e;stroke-dasharray:600;stroke-dashoffset:600;transition:stroke-dashoffset 2.2s cubic-bezier(.25,1,.5,1)}
+  .cl-active.drawn{stroke-dashoffset:0}
+  .cl-dot{fill:#c9a96e;r:5;opacity:0;transition:opacity .3s ease,r .3s ease}
+  .cl-dot.visible{opacity:1}
+  .cl-lbl{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.22em;fill:rgba(227,238,230,.5);text-transform:uppercase}
+  .cl-lbl.active-lbl{fill:#c9a96e}`;
+  document.head.appendChild(s);
+  
+  if(!document.getElementById('connector-line-wrap')){
+    var wrap=document.createElement('div'); wrap.id='connector-line-wrap';
+    var stages=[{x:50,label:'Discovery'},{x:200,label:'Underwriting'},{x:350,label:'Structure'},{x:500,label:'Terms'},{x:650,label:'Close'}];
+    var svgH=120;
+    var svgStr='<svg viewBox="0 0 700 '+svgH+'">';
+    svgStr+='<path class="cl-path" d="M50,50 L650,50"/>';
+    svgStr+='<path id="cl-active-path" class="cl-path cl-active" d="M50,50 L650,50"/>';
+    stages.forEach(function(st,i){
+      svgStr+='<circle id="cld-'+i+'" class="cl-dot" cx="'+st.x+'" cy="50" r="5"/>';
+      svgStr+='<text class="cl-lbl" id="cll-'+i+'" x="'+st.x+'" y="80" text-anchor="middle">'+st.label+'</text>';
+    });
+    svgStr+='</svg>';
+    wrap.innerHTML=svgStr;
+    document.body.appendChild(wrap);
+  }
+  
+  var stageIdx=0, stageTimer=null;
+  function advCL(){
+    stageIdx=(stageIdx+1)%5;
+    updCL(stageIdx);
+  }
+  function updCL(si){
+    var path=document.getElementById('cl-active-path');
+    if(path){path.classList.remove('drawn');requestAnimationFrame(function(){path.classList.add('drawn');});}
+    for(var i=0;i<5;i++){
+      var dot=document.getElementById('cld-'+i);
+      var lbl=document.getElementById('cll-'+i);
+      if(dot){dot.classList.toggle('visible',i<=si);if(i<=si)dot.style.r='6';else dot.style.r='5';}
+      if(lbl)lbl.classList.toggle('active-lbl',i===si);
+    }
+  }
+  var clObs=new MutationObserver(function(){
+    var s=document.body.getAttribute('data-section');
+    if(s==='6'){if(!stageTimer){stageIdx=0;updCL(0);stageTimer=setInterval(advCL,1800);}}
+    else{if(stageTimer){clearInterval(stageTimer);stageTimer=null;}}
+  });
+  clObs.observe(document.body,{attributes:true,attributeFilter:['data-section']});
+})();
+
+(function CYCLE5_POETIC_PERFECT(){
+  if(window._c5pt)return; window._c5pt=true;
+  var s=document.createElement('style');
+  s.textContent=`
+  .poetic-block{position:relative!important;padding:28px 0!important;pointer-events:none!important}
+  .poetic-block .pb-line{font-family:'Cormorant Garamond',serif!important;font-size:22px!important;font-weight:400!important;font-style:italic!important;letter-spacing:.06em!important;color:rgba(227,238,230,.62)!important;line-height:1.55!important;opacity:0!important;transform:translateY(12px)!important;transition:opacity .65s ease,transform .65s cubic-bezier(.16,1,.3,1)!important}
+  .poetic-block .pb-line.revealed{opacity:1!important;transform:translateY(0)!important}
+  .poetic-block .pb-accent{color:#c9a96e!important;font-style:normal!important}
+  @media(max-width:768px){.poetic-block .pb-line{font-size:16px!important}}`;
+  document.head.appendChild(s);
+  
+  var LINES={
+    0:['Capital structure is the most underused','form of value creation in real estate.'],
+    1:['<span class="pb-accent">Control The Leverage</span>','is not a tagline — it is a discipline.'],
+    2:['Three levers. One stack.','Every layer engineered.'],
+    3:['First in. Last to risk.','<span class="pb-accent">Foundational to every deal.</span>'],
+    4:['Below the senior.','Above the common.','The risk-tranche layer.'],
+    5:['The sponsor moves the asset.','Capital moves with the sponsor.'],
+    6:['Discovery is listening.<br>Underwriting is stress-testing.<br>Structuring is engineering.<br>Term sheet is the test.<br>Close is the proof.'],
+    7:['Modeled.<br><span class="pb-accent">Stress-tested.</span><br>Defensible.'],
+    8:['Compliance is structure,<br>not paperwork.'],
+    9:['The deals that don\'t fit anywhere else<br>are the ones <span class="pb-accent">we\'re built for</span>.']
+  };
+  
+  function buildPoetic(idx){
+    var lines=LINES[idx]||[];
+    var wrapId='poetic-'+idx;
+    var existing=document.getElementById(wrapId);
+    if(!existing){
+      existing=document.createElement('div');
+      existing.id=wrapId; existing.className='poetic-block';
+      existing.style.cssText='position:fixed;left:52px;bottom:140px;z-index:95;pointer-events:none;width:320px;opacity:0;transition:opacity .6s ease';
+      document.body.appendChild(existing);
+    }
+    existing.innerHTML=lines.map(function(l){return '<div class="pb-line">'+l+'</div>';}).join('');
+    return existing;
+  }
+  
+  function revPoetic(idx){
+    // Hide all
+    document.querySelectorAll('.poetic-block[id^="poetic-"]').forEach(function(el){
+      el.style.opacity='0';
+      el.querySelectorAll('.pb-line').forEach(function(l){l.classList.remove('revealed');});
+    });
+    var el=buildPoetic(idx);
+    setTimeout(function(){
+      el.style.opacity='1';
+      el.querySelectorAll('.pb-line').forEach(function(l,i){
+        setTimeout(function(){l.classList.add('revealed');},120+i*160);
+      });
+    },950);
+  }
+  
+  var ptObs=new MutationObserver(function(){revPoetic(window.activeIdx||0);});
+  ptObs.observe(document.body,{attributes:true,attributeFilter:['data-section']});
+  setTimeout(function(){revPoetic(window.activeIdx||0);},1200);
+})();
+
+(function CYCLE5_LIFESTYLE_GALLERY(){
+  if(window._c5lg)return; window._c5lg=true;
+  var s=document.createElement('style');
+  s.textContent=`
+  #lifestyle-gallery{position:fixed!important;left:0!important;top:0!important;width:100%!important;height:100%!important;z-index:3!important;pointer-events:none!important;opacity:0!important;transition:opacity .9s ease!important}
+  body[data-section="5"] #lifestyle-gallery{opacity:.18!important}
+  body[data-section="1"] #lifestyle-gallery{opacity:.10!important}
+  #lifestyle-gallery .lg-img{position:absolute!important;width:280px!important;height:380px!important;object-fit:cover!important;filter:grayscale(100%) contrast(1.1)!important;border:1px solid rgba(201,169,110,.12)!important}
+  #lifestyle-gallery .lg-img:nth-child(1){left:4%!important;top:8%!important;transform:rotate(-2deg)!important}
+  #lifestyle-gallery .lg-img:nth-child(2){right:3%!important;top:12%!important;transform:rotate(1.5deg)!important}`;
+  document.head.appendChild(s);
+  if(!document.getElementById('lifestyle-gallery')){
+    var g=document.createElement('div'); g.id='lifestyle-gallery';
+    // Use generated gradient images as placeholders
+    g.innerHTML=`
+      <div class="lg-img" style="background:linear-gradient(135deg,rgba(26,37,32,1) 0%,rgba(45,62,54,1) 50%,rgba(15,24,20,1) 100%)"></div>
+      <div class="lg-img" style="background:linear-gradient(225deg,rgba(15,24,20,1) 0%,rgba(26,37,32,1) 60%,rgba(45,62,54,1) 100%)"></div>`;
+    document.body.insertBefore(g,document.body.firstChild);
+  }
+})();
+
+(function CYCLE5_CUSTOM_SCROLLBAR(){
+  if(window._c5csb)return; window._c5csb=true;
+  var s=document.createElement('style');
+  s.textContent=`
+  #custom-scrollbar{position:fixed!important;right:6px!important;top:10%!important;height:80%!important;width:2px!important;z-index:250!important;background:rgba(201,169,110,.1)!important;pointer-events:none!important}
+  #custom-scrollbar .csb-thumb{position:absolute!important;left:0!important;width:100%!important;background:#c9a96e!important;box-shadow:0 0 6px rgba(201,169,110,.5)!important;transition:top .3s ease,height .3s ease!important;border-radius:1px!important}`;
+  document.head.appendChild(s);
+  if(!document.getElementById('custom-scrollbar')){
+    var csb=document.createElement('div'); csb.id='custom-scrollbar';
+    csb.innerHTML='<div class="csb-thumb"></div>';
+    document.body.appendChild(csb);
+  }
+  function updCSB(){
+    var th=document.querySelector('#custom-scrollbar .csb-thumb'); if(!th)return;
+    var pct=(window.activeIdx||0)/9;
+    var trackH=document.getElementById('custom-scrollbar')?.offsetHeight||200;
+    var thumbH=Math.max(16,trackH/10);
+    th.style.height=thumbH+'px';
+    th.style.top=(pct*(trackH-thumbH))+'px';
+  }
+  var o=new MutationObserver(updCSB); o.observe(document.body,{attributes:true,attributeFilter:['data-section']});
+})();
+
+(function CYCLE5_STAT_COUNTUP(){
+  if(window._c5su)return; window._c5su=true;
+  function countup(el,target,dur){
+    var isNum=/^[\\d,.×%$+–\\-]+$/.test(target.replace(/[^0-9.]/g,'').length>0?'1':'');
+    var clean=parseFloat(target.replace(/[^0-9.]/g,''));
+    if(isNaN(clean)){el.textContent=target;return;}
+    var pre=target.match(/^[^0-9]*/)?.[0]||'';
+    var suf=target.match(/[^0-9.×%+–]+$/)?.[0]||'';
+    var dec=target.includes('.')?((target.split('.')[1]||'').replace(/[^0-9]/g,'').length):0;
+    var t0=performance.now();
+    (function fr(){
+      var t=Math.min(1,(performance.now()-t0)/dur);
+      var ease=1-Math.pow(1-t,3);
+      el.textContent=pre+(clean*ease).toFixed(dec)+suf;
+      if(t<1)requestAnimationFrame(fr); else el.textContent=target;
+    })();
+  }
+  window.pcmCountup=countup;
+  var o=new MutationObserver(function(){
+    setTimeout(function(){
+      document.querySelectorAll('.stat-value[data-val],.copy-stat-value[data-val]').forEach(function(el){
+        countup(el,el.getAttribute('data-val')||el.textContent,1100);
+      });
+    },800);
+  });
+  o.observe(document.body,{attributes:true,attributeFilter:['data-section']});
+})();
+
+(function CYCLE5_SECTION_AUDIO(){
+  if(window._c5sa)return; window._c5sa=true;
+  // Per-section tonal variation: slightly shift oscillator detuning on section change
+  var DETUNES=[0,2,-3,5,-2,4,-5,3,-1,6];
+  var o=new MutationObserver(function(){
+    var idx=window.activeIdx||0;
+    if(window.pcmOsc1){try{window.pcmOsc1.detune.setTargetAtTime(DETUNES[idx]*10,window.pcmAudioCtx.currentTime,0.5);}catch(e){}}
+    if(window.pcmOsc2){try{window.pcmOsc2.detune.setTargetAtTime(-DETUNES[idx]*8,window.pcmAudioCtx.currentTime,0.5);}catch(e){}}
+  });
+  o.observe(document.body,{attributes:true,attributeFilter:['data-section']});
+})();
+
+(function CYCLE5_SCROLL_CUE_PERFECT(){
+  if(window._c5sq)return; window._c5sq=true;
+  var s=document.createElement('style');
+  s.textContent=`
+  #scroll-cue{position:fixed!important;bottom:96px!important;left:50%!important;transform:translateX(-50%)!important;z-index:180!important;display:flex!important;flex-direction:column!important;align-items:center!important;gap:8px!important;pointer-events:none!important;opacity:0!important;transition:opacity .6s ease!important}
+  body[data-section="0"] #scroll-cue.show{opacity:1!important}
+  #scroll-cue .sq-text{font-family:'Space Mono',monospace!important;font-size:9px!important;letter-spacing:.3em!important;color:rgba(201,169,110,.6)!important;text-transform:uppercase!important}
+  #scroll-cue .sq-arrow{width:1px!important;height:28px!important;background:linear-gradient(to bottom,#c9a96e,transparent)!important;animation:sq-pulse 1.8s ease-in-out infinite!important}
+  @keyframes sq-pulse{0%,100%{opacity:.4;transform:scaleY(.8)}50%{opacity:1;transform:scaleY(1)}}`;
+  document.head.appendChild(s);
+  var sc=document.getElementById('scroll-cue');
+  if(!sc){sc=document.createElement('div');sc.id='scroll-cue';sc.innerHTML='<div class="sq-text">Scroll</div><div class="sq-arrow"></div>';document.body.appendChild(sc);}
+  setTimeout(function(){sc.classList.add('show');},3200);
+  window.addEventListener('wheel',function(){sc.classList.remove('show');},{once:true,passive:true});
+  window.addEventListener('touchend',function(){sc.classList.remove('show');},{once:true,passive:true});
+  var sqO=new MutationObserver(function(){
+    sc.classList.toggle('show',document.body.getAttribute('data-section')==='0');
+  });
+  sqO.observe(document.body,{attributes:true,attributeFilter:['data-section']});
+})();
+
+(function CYCLE5_MODE_PERFECT(){
+  if(window._c5ms)return; window._c5ms=true;
+  var s=document.createElement('style');
+  s.textContent=`
+  #mode-switcher-wrap{position:fixed!important;left:52px!important;bottom:100px!important;z-index:95!important;width:320px!important;opacity:0!important;pointer-events:none!important;transition:opacity .55s ease!important}
+  body[data-section="2"] #mode-switcher-wrap,
+  body[data-section="3"] #mode-switcher-wrap,
+  body[data-section="4"] #mode-switcher-wrap,
+  body[data-section="5"] #mode-switcher-wrap,
+  body[data-section="7"] #mode-switcher-wrap{opacity:1!important;pointer-events:auto!important}
+  .mode-tabs{display:flex!important;gap:2px!important;margin-bottom:14px!important;border-bottom:1px solid rgba(201,169,110,.15)!important}
+  .mode-tab{font-family:'Space Mono',monospace!important;font-size:9px!important;letter-spacing:.22em!important;text-transform:uppercase!important;color:rgba(227,238,230,.38)!important;padding:6px 12px 8px!important;cursor:pointer!important;border:none!important;background:none!important;position:relative!important;transition:color .25s ease!important}
+  .mode-tab.active{color:#c9a96e!important}
+  .mode-tab.active::after{content:''!important;position:absolute!important;bottom:-1px!important;left:0!important;width:100%!important;height:1px!important;background:#c9a96e!important;box-shadow:0 0 8px #c9a96e!important}
+  .mode-panel{display:none!important}
+  .mode-panel.active{display:block!important}
+  .mode-panel-name{font-family:'Cormorant Garamond',serif!important;font-size:28px!important;font-weight:500!important;color:#e3eee6!important;margin-bottom:8px!important}
+  .mode-panel-body{font-family:'Space Grotesk',sans-serif!important;font-size:13px!important;line-height:1.68!important;color:rgba(227,238,230,.65)!important;margin-bottom:14px!important}
+  .mode-panel-stats{display:flex!important;gap:20px!important}
+  .mode-stat-v{font-family:'Cormorant Garamond',serif!important;font-size:22px!important;color:#c9a96e!important}
+  .mode-stat-l{font-family:'Space Mono',monospace!important;font-size:8px!important;letter-spacing:.24em!important;color:rgba(227,238,230,.38)!important;text-transform:uppercase!important;margin-top:3px!important}`;
+  document.head.appendChild(s);
+  
+  var MODES={
+    2:[{n:'Structural',b:'Optionality others miss — covenant engineering, tranche stacking, conversion features.',stats:[['1','Layer']]},
+       {n:'Reach',b:'Senior to common, every layer. One advisor, full stack.',stats:[['2','Layers']]},
+       {n:'Access',b:'Institutional capital, no institutional friction.',stats:[['3','Edge']]}],
+    3:[{n:'Acquisition',b:'Purchase financing across asset classes. Bank, CMBS, agency. Speed and certainty.',stats:[['$15M–$500M','Size'],['SOFR+175–275','Spread']]},
+       {n:'Refinance',b:'Rate-and-term and cash-out. Lock in better basis, extract equity, reset covenants.',stats:[['6–10wk','Close']]},
+       {n:'Bridge',b:'Short-duration value-add. Light value-add, lease-up, repositioning.',stats:[['12–36mo','Term']]},
+       {n:'Construction',b:'Ground-up and major renovation. Senior construction, sometimes mezz behind.',stats:[['18–48mo','Term']]}],
+    4:[{n:'Mezzanine',b:'Subordinate debt with intercreditor. Coupon + sometimes warrants or kickers.',stats:[['10–13%','Coupon']]},
+       {n:'Preferred',b:'Equity-flavored subordination. Cumulative dividend + redemption.',stats:[['11–14%','Pref']]},
+       {n:'Uni-Tranche',b:'Single-paper combo of senior + mezz. Simpler exec for the right deal.',stats:[['L+450–700','Blended']]}],
+    5:[{n:'One-Off JV',b:'Single-deal partnership. Promote + waterfall + governance.',stats:[['1','Deal']]},
+       {n:'Programmatic',b:'Multi-asset commitment. Capital reserved across a vintage.',stats:[['3–6','Assets']]},
+       {n:'Common',b:'Pari-passu common equity. Same risk as sponsor.',stats:[['1×','Risk Parity']]}],
+    7:[{n:'DSCR',b:'Debt service coverage at base + stress. 1.20× minimum stress hurdle.',stats:[['1.20×','Min Stress']]},
+       {n:'LTC · LTV',b:'Loan-to-cost and loan-to-value. Constraints across the stack.',stats:[['65–85%','Range']]},
+       {n:'Sensitivity',b:'Rate, rent, expense, exit cap. 50+ scenarios.',stats:[['50+','Scenarios']]}]
+  };
+  
+  if(!document.getElementById('mode-switcher-wrap')){
+    var wrap=document.createElement('div'); wrap.id='mode-switcher-wrap';
+    document.body.appendChild(wrap);
+  }
+  
+  function buildModes(idx){
+    var wrap=document.getElementById('mode-switcher-wrap'); if(!wrap)return;
+    var modes=MODES[idx]; if(!modes){wrap.innerHTML='';return;}
+    wrap.innerHTML='<div class="mode-tabs">'+modes.map(function(m,i){return '<button class="mode-tab'+(i===0?' active':'')+'" data-mi="'+i+'">'+m.n+'</button>';}).join('')+'</div>'+
+      modes.map(function(m,i){return '<div class="mode-panel'+(i===0?' active':'')+'"><div class="mode-panel-name">'+m.n+'</div><div class="mode-panel-body">'+m.b+'</div><div class="mode-panel-stats">'+m.stats.map(function(st){return '<div><div class="mode-stat-v" data-val="'+st[0]+'">'+st[0]+'</div><div class="mode-stat-l">'+st[1]+'</div></div>';}).join('')+'</div></div>';}).join('');
+    wrap.querySelectorAll('.mode-tab').forEach(function(tb){
+      tb.addEventListener('click',function(){
+        var mi=parseInt(tb.dataset.mi);
+        wrap.querySelectorAll('.mode-tab').forEach(function(t,ti){t.classList.toggle('active',ti===mi);});
+        wrap.querySelectorAll('.mode-panel').forEach(function(p,pi){p.classList.toggle('active',pi===mi);});
+      });
+    });
+  }
+  
+  var msO=new MutationObserver(function(){buildModes(window.activeIdx||0);});
+  msO.observe(document.body,{attributes:true,attributeFilter:['data-section']});
+  setTimeout(function(){buildModes(window.activeIdx||0);},700);
+})();
+
+(function CYCLE5_STATUS_CONSOLE_PERFECT(){
+  if(window._c5sc2)return; window._c5sc2=true;
+  var s=document.createElement('style');
+  s.textContent=`
+  #status-console{position:fixed!important;top:72px!important;left:32px!important;z-index:290!important;font-family:'Space Mono',monospace!important;font-size:8.5px!important;letter-spacing:.12em!important;color:rgba(127,184,156,.55)!important;pointer-events:none!important;line-height:1.6!important;max-width:280px!important}
+  #status-console .sc-ln{opacity:0;transform:translateX(-4px);transition:opacity .4s ease,transform .4s ease}
+  #status-console .sc-ln.show{opacity:1;transform:translateX(0)}`;
+  document.head.appendChild(s);
+  var el=document.getElementById('status-console');
+  if(!el){el=document.createElement('div');el.id='status-console';document.body.appendChild(el);}
+  var msgs=['// PCM THREE.JS r160','// POSTPROCESSING 6.36','// WEBGL2 ENABLED','// ACES FILMIC TONEMAPPING','// HDRI ENV: ROOM','// 7-LIGHT RIG ACTIVE','// BLOOM + CHROMA + VIGNETTE','// 240 PARTICLE MOTES','// DRAG · CLICK · SCROLL'];
+  msgs.forEach(function(m,i){
+    var ln=document.createElement('div'); ln.className='sc-ln'; ln.textContent=m;
+    el.appendChild(ln);
+    setTimeout(function(){ln.classList.add('show');},800+i*180);
+  });
+  setTimeout(function(){el.style.opacity='0';el.style.transition='opacity 1.4s ease';},6500);
+})();
+
+(function CYCLE5_HINT_CLUSTER_PERFECT(){
+  if(window._c5hc)return; window._c5hc=true;
+  var s=document.createElement('style');
+  s.textContent=`
+  #hint-cluster{position:fixed!important;bottom:80px!important;left:32px!important;z-index:190!important;display:flex!important;flex-direction:column!important;gap:5px!important;pointer-events:none!important;opacity:1!important;transition:opacity 1.5s ease!important}
+  #hint-cluster .hc-line{font-family:'Space Mono',monospace!important;font-size:8.5px!important;letter-spacing:.2em!important;color:rgba(227,238,230,.3)!important;text-transform:uppercase!important}
+  #hint-cluster .hc-line kbd{font-family:'Space Mono',monospace!important;color:rgba(201,169,110,.5)!important;border:1px solid rgba(201,169,110,.2)!important;padding:1px 4px!important;font-size:8px!important}`;
+  document.head.appendChild(s);
+  if(!document.getElementById('hint-cluster')){
+    var hc=document.createElement('div'); hc.id='hint-cluster';
+    hc.innerHTML='<div class="hc-line"><kbd>Scroll</kbd> Navigate</div><div class="hc-line"><kbd>Drag</kbd> Rotate</div><div class="hc-line"><kbd>Click</kbd> Inspect</div><div class="hc-line"><kbd>H</kbd> Shortcuts</div>';
+    document.body.appendChild(hc);
+    setTimeout(function(){hc.style.opacity='0';},9000);
+  }
+})();
+
+/* Ensure canvas exists and is z-index 1 */
+(function CYCLE5_CANVAS_ZFIX(){
+  if(window._c5cz)return; window._c5cz=true;
+  var s=document.createElement('style');
+  s.textContent='canvas{position:fixed!important;top:0!important;left:0!important;width:100%!important;height:100%!important;z-index:1!important;display:block!important}#vignette-overlay{z-index:4!important}.scene-copy{z-index:100!important}.poetic-block{z-index:95!important}#home-wordmark{z-index:88!important}#bottom-menu{z-index:200!important}#side-nav{z-index:200!important}#top-nav{z-index:300!important}#controls-cluster{z-index:300!important}#pcm-loader{z-index:10000!important}';
+  document.head.appendChild(s);
+})();
+
+/* Final: trigger section 0 state on load */
+(function CYCLE5_INIT_SECTION0(){
+  if(window._c5i0)return; window._c5i0=true;
+  function initS0(){
+    if(!document.body.hasAttribute('data-section')){
+      document.body.setAttribute('data-section','0');
+    }
+  }
+  if(document.readyState==='complete'||document.readyState==='interactive'){initS0();}
+  else{document.addEventListener('DOMContentLoaded',initS0);}
+  window.addEventListener('pcm:sceneready',function(){
+    setTimeout(function(){
+      document.body.setAttribute('data-section','0');
+      window.activeIdx=0;
+    },100);
+  },{once:true});
+})();
+
+
+/* =====================================================
+   CYCLE 6 — DETAIL CARD · KBD HELP · SUB-STEP NAV ·
+   SECTION BG · CONTACT FORM · PER-SECTION PP ·
+   MASK LAYER · SECTION END INDICATOR · LONG BLOCK ·
+   BLOCK GRID · HOTPOINT · MENU OVERLAY PERFECT
+   ===================================================== */
+
+(function CYCLE6_DETAIL_CARD_PERFECT(){
+  if(window._c6dc)return; window._c6dc=true;
+  var s=document.createElement('style');
+  s.textContent=`
+  .detail-card{position:fixed!important;z-index:8000!important;background:rgba(6,9,10,.96)!important;border:1px solid rgba(201,169,110,.35)!important;backdrop-filter:blur(18px)!important;padding:26px 28px 24px!important;min-width:260px!important;max-width:340px!important;pointer-events:auto!important;opacity:0!important;transform:translateY(8px) scale(.97)!important;transition:opacity .32s ease,transform .32s cubic-bezier(.16,1,.3,1)!important}
+  .detail-card.open{opacity:1!important;transform:translateY(0) scale(1)!important}
+  .detail-card__label{font-family:'Space Mono',monospace!important;font-size:9px!important;letter-spacing:.32em!important;color:rgba(201,169,110,.65)!important;text-transform:uppercase!important;margin-bottom:8px!important}
+  .detail-card__title{font-family:'Cormorant Garamond',serif!important;font-size:28px!important;font-weight:500!important;color:#e3eee6!important;line-height:1.1!important;margin-bottom:10px!important}
+  .detail-card__rule{width:32px!important;height:1px!important;background:#c9a96e!important;margin-bottom:12px!important}
+  .detail-card__body{font-family:'Space Grotesk',sans-serif!important;font-size:13px!important;line-height:1.68!important;color:rgba(227,238,230,.7)!important;margin-bottom:16px!important}
+  .detail-card__close{font-family:'Space Mono',monospace!important;font-size:9px!important;letter-spacing:.22em!important;color:rgba(201,169,110,.55)!important;cursor:pointer!important;background:none!important;border:none!important;padding:0!important;text-transform:uppercase!important;transition:color .2s ease!important}
+  .detail-card__close:hover{color:#c9a96e!important}`;
+  document.head.appendChild(s);
+
+  var PARTS={
+    person:{label:'Sponsor',title:'The Operator',body:'Real estate sponsors who bring the deal, the local intelligence, the operating expertise. The figure standing on the long side of the lever — the one moving the asset.'},
+    coin:{label:'Capital',title:'The Counterweight',body:'Senior debt, mezzanine, preferred equity, common JV. Dollars sized and structured to each transaction. The disc on the short side of the lever.'},
+    fulcrum:{label:'Fulcrum',title:'Where Structure Lives',body:'Where structure meets leverage. The capital-stack engineering that lets a small sliver of equity move a large asset. Our entire practice lives here.'},
+    upArrow:{label:'Lift',title:'Yield Enhancement',body:'Cheaper coupon, longer tenor, smarter covenants. Programmatic value creation through structure — not market timing.'},
+    downArrow:{label:'Load',title:'Risk Transfer',body:'Subordinate capital and credit enhancement that absorbs the first loss so the senior stays cheap. Engineered subordination is the product.'},
+    ringOuter:{label:'The Stack',title:'Everything Together',body:'The complete capital stack — engineered top-to-bottom for each transaction. Bound by underwriting, not by template.'}
+  };
+
+  var card=document.getElementById('detail-card');
+  if(!card){card=document.createElement('div');card.id='detail-card';card.className='detail-card';document.body.appendChild(card);}
+
+  function openCard(partId,x,y){
+    var d=PARTS[partId]; if(!d)return;
+    var vw=window.innerWidth,vh=window.innerHeight;
+    var cx=Math.min(Math.max(x,20),vw-360);
+    var cy=Math.min(Math.max(y-80,20),vh-280);
+    card.style.left=cx+'px'; card.style.top=cy+'px';
+    card.innerHTML='<div class="detail-card__label">'+d.label+'</div><div class="detail-card__title">'+d.title+'</div><div class="detail-card__rule"></div><div class="detail-card__body">'+d.body+'</div><button class="detail-card__close" onclick="document.getElementById(\'detail-card\').classList.remove(\'open\')">Close ×</button>';
+    requestAnimationFrame(function(){card.classList.add('open');});
+  }
+  window.openDetailCard=openCard;
+  window.closeDetailCard=function(){card.classList.remove('open');};
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')window.closeDetailCard();});
+
+  // Wire canvas click to open card
+  var canvas=document.querySelector('canvas');
+  if(canvas){
+    canvas.addEventListener('click',function(e){
+      var pid=window.lastPickedPartId;
+      if(pid)openCard(pid,e.clientX,e.clientY);
+    });
+  } else {
+    window.addEventListener('pcm:sceneready',function(){
+      var cv=document.querySelector('canvas');
+      if(cv)cv.addEventListener('click',function(e){var pid=window.lastPickedPartId;if(pid)openCard(pid,e.clientX,e.clientY);});
+    },{once:true});
+  }
+})();
+
+(function CYCLE6_KBD_HELP_PERFECT(){
+  if(window._c6kh)return; window._c6kh=true;
+  var s=document.createElement('style');
+  s.textContent=`
+  #kbd-help{position:fixed!important;inset:0!important;z-index:9000!important;background:rgba(6,9,10,.88)!important;backdrop-filter:blur(20px)!important;display:flex!important;align-items:center!important;justify-content:center!important;opacity:0!important;pointer-events:none!important;transition:opacity .35s ease!important}
+  #kbd-help.open{opacity:1!important;pointer-events:auto!important}
+  #kbd-help .kh-panel{background:rgba(15,24,20,.95)!important;border:1px solid rgba(201,169,110,.28)!important;padding:40px 48px!important;min-width:420px!important;max-width:560px!important}
+  #kbd-help .kh-title{font-family:'Cormorant Garamond',serif!important;font-size:26px!important;font-weight:500!important;color:#e3eee6!important;margin-bottom:6px!important}
+  #kbd-help .kh-sub{font-family:'Space Mono',monospace!important;font-size:9px!important;letter-spacing:.28em!important;color:rgba(201,169,110,.55)!important;text-transform:uppercase!important;margin-bottom:28px!important}
+  #kbd-help .kh-rule{width:40px!important;height:1px!important;background:#c9a96e!important;margin-bottom:28px!important}
+  #kbd-help .kh-grid{display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px 32px!important}
+  #kbd-help .kh-row{display:flex!important;align-items:center!important;gap:10px!important}
+  #kbd-help .kh-key{font-family:'Space Mono',monospace!important;font-size:9px!important;color:#c9a96e!important;border:1px solid rgba(201,169,110,.3)!important;padding:2px 7px!important;min-width:28px!important;text-align:center!important;background:rgba(201,169,110,.05)!important}
+  #kbd-help .kh-desc{font-family:'Space Grotesk',sans-serif!important;font-size:12px!important;color:rgba(227,238,230,.6)!important}
+  #kbd-help .kh-close{font-family:'Space Mono',monospace!important;font-size:9px!important;letter-spacing:.22em!important;color:rgba(201,169,110,.55)!important;cursor:pointer!important;background:none!important;border:none!important;margin-top:28px!important;text-transform:uppercase!important;transition:color .2s ease!important}
+  #kbd-help .kh-close:hover{color:#c9a96e!important}`;
+  document.head.appendChild(s);
+
+  if(!document.getElementById('kbd-help')){
+    var kh=document.createElement('div'); kh.id='kbd-help';
+    var KEYS=[
+      ['Scroll','Navigate sections'],['Arrow ↑↓','Prev / Next'],['1–0','Jump to section'],
+      ['Drag','Rotate 3D logo'],['Click','Inspect part'],['E','Explode mode'],
+      ['W','Wireframe mode'],['M','Audio toggle'],['R','Reset to Home'],['H','This overlay']
+    ];
+    kh.innerHTML='<div class="kh-panel"><div class="kh-title">Keyboard Shortcuts</div><div class="kh-sub">Patel Capital Markets</div><div class="kh-rule"></div><div class="kh-grid">'+
+      KEYS.map(function(k){return '<div class="kh-row"><span class="kh-key">'+k[0]+'</span><span class="kh-desc">'+k[1]+'</span></div>';}).join('')+
+      '</div><button class="kh-close" onclick="document.getElementById(\'kbd-help\').classList.remove(\'open\')">Close [Esc]</button></div>';
+    document.body.appendChild(kh);
+    document.addEventListener('keydown',function(e){
+      if(e.key==='h'||e.key==='H'){document.getElementById('kbd-help').classList.toggle('open');}
+      if(e.key==='Escape'){document.getElementById('kbd-help').classList.remove('open');}
+    });
+    kh.addEventListener('click',function(ev){if(ev.target===kh)kh.classList.remove('open');});
+  }
+})();
+
+(function CYCLE6_SUBSTEP_NAV(){
+  if(window._c6ss)return; window._c6ss=true;
+  var s=document.createElement('style');
+  s.textContent=`
+  #sub-step-nav{position:fixed!important;left:52px!important;top:50%!important;transform:translateY(-50%)!important;z-index:95!important;display:flex!important;flex-direction:column!important;gap:7px!important;opacity:0!important;transition:opacity .5s ease!important;pointer-events:none!important}
+  body[data-section="3"] #sub-step-nav,
+  body[data-section="4"] #sub-step-nav,
+  body[data-section="5"] #sub-step-nav,
+  body[data-section="7"] #sub-step-nav{opacity:1!important}
+  #sub-step-nav .ss-dash{width:20px!important;height:1px!important;background:rgba(201,169,110,.28)!important;transition:all .3s ease!important;cursor:default!important}
+  #sub-step-nav .ss-dash.active{width:36px!important;background:#c9a96e!important;box-shadow:0 0 8px rgba(201,169,110,.5)!important}
+  #sub-step-nav .ss-label{font-family:'Space Mono',monospace!important;font-size:8px!important;letter-spacing:.2em!important;color:rgba(201,169,110,.5)!important;text-transform:uppercase!important;margin-left:44px!important;position:absolute!important;white-space:nowrap!important;opacity:0!important;transition:opacity .25s ease!important}
+  #sub-step-nav .ss-dash.active + .ss-label{opacity:1!important}`;
+  document.head.appendChild(s);
+
+  var STEPS={3:['Acquisition','Refinance','Bridge','Construction'],4:['Mezzanine','Preferred','Uni-Tranche'],5:['One-Off JV','Programmatic','Common'],7:['DSCR','LTC · LTV','Sensitivity']};
+  var activeStep=0;
+
+  if(!document.getElementById('sub-step-nav')){
+    var ssn=document.createElement('div'); ssn.id='sub-step-nav'; document.body.appendChild(ssn);
+  }
+
+  function buildSSN(idx){
+    var el=document.getElementById('sub-step-nav'); if(!el)return;
+    var steps=STEPS[idx]; if(!steps){el.innerHTML='';return;}
+    el.innerHTML=steps.map(function(s,i){return '<div class="ss-dash'+(i===0?' active':'')+'"></div>';}).join('');
+    activeStep=0;
+  }
+
+  window.pcmAdvanceSubStep=function(){
+    var idx=window.activeIdx||0; var steps=STEPS[idx]; if(!steps)return;
+    activeStep=(activeStep+1)%steps.length;
+    var dashes=document.querySelectorAll('#sub-step-nav .ss-dash');
+    dashes.forEach(function(d,i){d.classList.toggle('active',i===activeStep);});
+    // Also advance mode switcher
+    var tabs=document.querySelectorAll('.mode-tab');
+    var panels=document.querySelectorAll('.mode-panel');
+    if(tabs[activeStep]){
+      tabs.forEach(function(t,ti){t.classList.toggle('active',ti===activeStep);});
+      panels.forEach(function(p,pi){p.classList.toggle('active',pi===activeStep);});
+    }
+  };
+
+  var ssO=new MutationObserver(function(){buildSSN(window.activeIdx||0);});
+  ssO.observe(document.body,{attributes:true,attributeFilter:['data-section']});
+  setTimeout(function(){buildSSN(window.activeIdx||0);},800);
+})();
+
+(function CYCLE6_SECTION_BG(){
+  if(window._c6bg)return; window._c6bg=true;
+  var s=document.createElement('style');
+  s.textContent=`
+  #section-bg{position:fixed!important;inset:0!important;z-index:2!important;pointer-events:none!important;transition:background .9s ease,opacity .9s ease!important}
+  body[data-section="0"] #section-bg{background:radial-gradient(ellipse at 50% 60%,rgba(26,37,32,.18) 0%,rgba(6,9,10,0) 70%)!important}
+  body[data-section="1"] #section-bg{background:radial-gradient(ellipse at 30% 50%,rgba(45,62,54,.22) 0%,rgba(6,9,10,0) 65%)!important}
+  body[data-section="2"] #section-bg{background:radial-gradient(ellipse at 70% 40%,rgba(26,37,32,.2) 0%,rgba(6,9,10,0) 60%)!important}
+  body[data-section="3"] #section-bg{background:radial-gradient(ellipse at 40% 60%,rgba(201,169,110,.06) 0%,rgba(6,9,10,0) 65%)!important}
+  body[data-section="4"] #section-bg{background:radial-gradient(ellipse at 60% 50%,rgba(201,169,110,.05) 0%,rgba(6,9,10,0) 60%)!important}
+  body[data-section="5"] #section-bg{background:radial-gradient(ellipse at 35% 45%,rgba(127,184,156,.06) 0%,rgba(6,9,10,0) 65%)!important}
+  body[data-section="6"] #section-bg{background:radial-gradient(ellipse at 65% 55%,rgba(26,37,32,.25) 0%,rgba(6,9,10,0) 60%)!important}
+  body[data-section="7"] #section-bg{background:radial-gradient(ellipse at 45% 50%,rgba(201,169,110,.07) 0%,rgba(6,9,10,0) 60%)!important}
+  body[data-section="8"] #section-bg{background:radial-gradient(ellipse at 55% 45%,rgba(15,24,20,.3) 0%,rgba(6,9,10,0) 60%)!important}
+  body[data-section="9"] #section-bg{background:radial-gradient(ellipse at 50% 55%,rgba(201,169,110,.08) 0%,rgba(6,9,10,0) 65%)!important}`;
+  document.head.appendChild(s);
+  if(!document.getElementById('section-bg')){
+    var bg=document.createElement('div'); bg.id='section-bg'; document.body.insertBefore(bg,document.body.firstChild);
+  }
+})();
+
+(function CYCLE6_LONG_BLOCK_PERFECT(){
+  if(window._c6lb)return; window._c6lb=true;
+  var s=document.createElement('style');
+  s.textContent=`
+  #long-block-wrap{position:fixed!important;left:52px!important;bottom:160px!important;width:360px!important;z-index:90!important;opacity:0!important;transition:opacity .65s ease,transform .65s cubic-bezier(.16,1,.3,1)!important;transform:translateY(16px)!important;pointer-events:none!important}
+  body[data-section="1"] #long-block-wrap,
+  body[data-section="6"] #long-block-wrap{opacity:1!important;transform:translateY(0)!important}
+  #long-block-wrap .lb-body{font-family:'Space Grotesk',sans-serif!important;font-size:13px!important;line-height:1.78!important;color:rgba(227,238,230,.6)!important;margin-bottom:16px!important}
+  #long-block-wrap .lb-callout{font-family:'Cormorant Garamond',serif!important;font-size:20px!important;font-style:italic!important;font-weight:400!important;color:rgba(201,169,110,.85)!important;border-left:2px solid #c9a96e!important;padding-left:16px!important;line-height:1.45!important}`;
+  document.head.appendChild(s);
+
+  var LB_DATA={
+    1:{body:'Founded on the principle that capital structure is the most under-leveraged form of value creation in real estate. Every layer of the stack is a design decision — not a default.',callout:'"The structure is the strategy."'},
+    6:{body:'Discovery is listening. Underwriting is stress-testing. Structuring is engineering. Term sheet is the test of every assumption. Close is the proof that the work was right.',callout:'"The cadence is the product."'}
+  };
+
+  if(!document.getElementById('long-block-wrap')){
+    var lb=document.createElement('div'); lb.id='long-block-wrap'; document.body.appendChild(lb);
+  }
+
+  function buildLB(idx){
+    var el=document.getElementById('long-block-wrap'); if(!el)return;
+    var d=LB_DATA[idx];
+    if(!d){el.innerHTML='';return;}
+    el.innerHTML='<div class="lb-body">'+d.body+'</div><div class="lb-callout">'+d.callout+'</div>';
+  }
+  var lbO=new MutationObserver(function(){buildLB(window.activeIdx||0);});
+  lbO.observe(document.body,{attributes:true,attributeFilter:['data-section']});
+  setTimeout(function(){buildLB(window.activeIdx||0);},800);
+})();
+
+(function CYCLE6_BLOCK_GRID_PERFECT(){
+  if(window._c6bgr)return; window._c6bgr=true;
+  var s=document.createElement('style');
+  s.textContent=`
+  #block-grid-wrap{position:fixed!important;left:52px!important;top:50%!important;transform:translateY(-30%)!important;width:340px!important;z-index:90!important;opacity:0!important;transition:opacity .6s ease!important;pointer-events:none!important}
+  body[data-section="2"] #block-grid-wrap,
+  body[data-section="8"] #block-grid-wrap{opacity:1!important}
+  #block-grid-wrap .bg-grid{display:grid!important;grid-template-columns:1fr 1fr!important;gap:16px!important}
+  #block-grid-wrap .bg-item{border:1px solid rgba(201,169,110,.15)!important;padding:16px!important;background:rgba(6,9,10,.4)!important}
+  #block-grid-wrap .bg-val{font-family:'Cormorant Garamond',serif!important;font-size:32px!important;font-weight:500!important;color:#c9a96e!important;line-height:1!important;margin-bottom:6px!important}
+  #block-grid-wrap .bg-lbl{font-family:'Space Mono',monospace!important;font-size:8.5px!important;letter-spacing:.24em!important;color:rgba(227,238,230,.4)!important;text-transform:uppercase!important;margin-bottom:6px!important}
+  #block-grid-wrap .bg-desc{font-family:'Space Grotesk',sans-serif!important;font-size:11.5px!important;color:rgba(227,238,230,.55)!important;line-height:1.55!important}`;
+  document.head.appendChild(s);
+
+  var BG_DATA={
+    2:[{val:'1',lbl:'Structural',desc:'Covenant engineering, tranche stacking, conversion features'},
+       {val:'2',lbl:'Reach',desc:'Senior to common equity. One advisor, full stack'},
+       {val:'3',lbl:'Access',desc:'Institutional capital, no institutional friction'},
+       {val:'∞',lbl:'Possibility',desc:'Optionality others miss, built into every structure'}],
+    8:[{val:'50+',lbl:'Scenarios',desc:'Rate, rent, expense, exit cap sensitivity runs'},
+       {val:'1.20×',lbl:'Min DSCR',desc:'Debt service coverage stress hurdle'},
+       {val:'SOC 2',lbl:'Type II',desc:'Institutional-grade documentation standard'},
+       {val:'100%',lbl:'Defensible',desc:'Every model built to survive an investment committee'}]
+  };
+
+  if(!document.getElementById('block-grid-wrap')){
+    var bgw=document.createElement('div'); bgw.id='block-grid-wrap'; document.body.appendChild(bgw);
+  }
+
+  function buildBG(idx){
+    var el=document.getElementById('block-grid-wrap'); if(!el)return;
+    var items=BG_DATA[idx];
+    if(!items){el.innerHTML='';return;}
+    el.innerHTML='<div class="bg-grid">'+items.map(function(it,i){
+      return '<div class="bg-item" style="animation-delay:'+(i*80)+'ms"><div class="bg-val">'+it.val+'</div><div class="bg-lbl">'+it.lbl+'</div><div class="bg-desc">'+it.desc+'</div></div>';
+    }).join('')+'</div>';
+  }
+  var bgO=new MutationObserver(function(){buildBG(window.activeIdx||0);});
+  bgO.observe(document.body,{attributes:true,attributeFilter:['data-section']});
+  setTimeout(function(){buildBG(window.activeIdx||0);},800);
+})();
+
+(function CYCLE6_SECTION_END_INDICATOR(){
+  if(window._c6sei)return; window._c6sei=true;
+  var s=document.createElement('style');
+  s.textContent=`
+  #section-end{position:fixed!important;bottom:68px!important;left:50%!important;transform:translateX(-50%)!important;z-index:180!important;display:flex!important;flex-direction:column!important;align-items:center!important;gap:5px!important;pointer-events:none!important;opacity:0!important;transition:opacity .6s ease!important}
+  #section-end.show{opacity:1!important}
+  #section-end .sei-line{font-family:'Space Mono',monospace!important;font-size:8.5px!important;letter-spacing:.28em!important;color:rgba(201,169,110,.45)!important;text-transform:uppercase!important}
+  #section-end .sei-arrow{display:flex!important;flex-direction:column!important;align-items:center!important;gap:2px!important}
+  #section-end .sei-tick{width:1px!important;height:5px!important;background:rgba(201,169,110,.35)!important;animation:sei-fall .9s ease-in-out infinite!important}
+  #section-end .sei-tick:nth-child(2){animation-delay:.15s!important;opacity:.6!important}
+  #section-end .sei-tick:nth-child(3){animation-delay:.3s!important;opacity:.35!important}
+  @keyframes sei-fall{0%,100%{transform:scaleY(.6);opacity:.3}50%{transform:scaleY(1);opacity:1}}`;
+  document.head.appendChild(s);
+
+  if(!document.getElementById('section-end')){
+    var sei=document.createElement('div'); sei.id='section-end';
+    sei.innerHTML='<div class="sei-line">Continue</div><div class="sei-arrow"><div class="sei-tick"></div><div class="sei-tick"></div><div class="sei-tick"></div></div>';
+    document.body.appendChild(sei);
+  }
+
+  var seiTimer=null;
+  function showSEI(){
+    seiTimer=setTimeout(function(){
+      var el=document.getElementById('section-end'); if(el)el.classList.add('show');
+    },3400);
+  }
+  function hideSEI(){
+    if(seiTimer)clearTimeout(seiTimer);
+    var el=document.getElementById('section-end'); if(el)el.classList.remove('show');
+  }
+
+  var seiO=new MutationObserver(function(){hideSEI();showSEI();});
+  seiO.observe(document.body,{attributes:true,attributeFilter:['data-section']});
+  showSEI();
+  window.addEventListener('wheel',hideSEI,{passive:true});
+  window.addEventListener('touchend',hideSEI,{passive:true});
+})();
+
+(function CYCLE6_MASK_LAYER(){
+  if(window._c6ml)return; window._c6ml=true;
+  var s=document.createElement('style');
+  s.textContent=`
+  #mask-layer{position:fixed!important;inset:0!important;z-index:5!important;pointer-events:none!important;opacity:0!important;transition:opacity 1.1s ease!important}
+  body[data-section="8"] #mask-layer{opacity:.12!important;background:radial-gradient(ellipse at 50% 50%,transparent 30%,rgba(6,9,10,.9) 100%)!important}
+  body[data-section="0"] #mask-layer{opacity:.06!important;background:radial-gradient(ellipse at 50% 50%,transparent 40%,rgba(6,9,10,.6) 100%)!important}`;
+  document.head.appendChild(s);
+  if(!document.getElementById('mask-layer')){
+    var ml=document.createElement('div'); ml.id='mask-layer'; document.body.appendChild(ml);
+  }
+})();
+
+(function CYCLE6_MENU_OVERLAY_PERFECT(){
+  if(window._c6mo)return; window._c6mo=true;
+  var s=document.createElement('style');
+  s.textContent=`
+  #menu-overlay{position:fixed!important;inset:0!important;z-index:7000!important;background:rgba(6,9,10,.97)!important;backdrop-filter:blur(24px)!important;display:flex!important;align-items:center!important;justify-content:center!important;opacity:0!important;pointer-events:none!important;transition:opacity .45s ease!important}
+  #menu-overlay.open{opacity:1!important;pointer-events:auto!important}
+  #menu-overlay .mo-inner{display:grid!important;grid-template-columns:1fr 1fr!important;gap:6px 48px!important}
+  #menu-overlay .mo-item{display:flex!important;align-items:center!important;gap:16px!important;padding:12px 0!important;cursor:pointer!important;border-bottom:1px solid rgba(201,169,110,.08)!important;transition:border-color .25s ease!important}
+  #menu-overlay .mo-item:hover{border-color:rgba(201,169,110,.35)!important}
+  #menu-overlay .mo-num{font-family:'Space Mono',monospace!important;font-size:10px!important;letter-spacing:.22em!important;color:rgba(201,169,110,.4)!important;width:28px!important}
+  #menu-overlay .mo-name{font-family:'Cormorant Garamond',serif!important;font-size:28px!important;font-weight:500!important;letter-spacing:.06em!important;color:rgba(227,238,230,.75)!important;transition:color .25s ease!important}
+  #menu-overlay .mo-item:hover .mo-name{color:#e3eee6!important}
+  #menu-overlay .mo-close{position:absolute!important;top:32px!important;right:36px!important;font-family:'Space Mono',monospace!important;font-size:9px!important;letter-spacing:.28em!important;color:rgba(201,169,110,.5)!important;cursor:pointer!important;background:none!important;border:none!important;text-transform:uppercase!important}
+  #menu-toggle-btn{position:fixed!important;top:24px!important;right:36px!important;z-index:400!important;background:none!important;border:none!important;cursor:pointer!important;display:flex!important;flex-direction:column!important;gap:5px!important;padding:6px!important}
+  #menu-toggle-btn .mh-line{width:22px!important;height:1px!important;background:rgba(201,169,110,.55)!important;transition:all .3s ease!important}
+  #menu-toggle-btn:hover .mh-line{background:#c9a96e!important}`;
+  document.head.appendChild(s);
+
+  var NAMES=['Home','Firm Overview','Platform Edge','Senior Debt','Subordinate Capital','Joint-Venture Equity','Execution','Underwriting','Compliance','Engage'];
+
+  function buildMO(){
+    var el=document.getElementById('menu-overlay'); if(!el)return;
+    if(el.dataset.c6)return;
+    el.dataset.c6='1';
+    el.innerHTML='<button class="mo-close" id="mo-close-btn">Close [Esc]</button><div class="mo-inner">'+
+      NAMES.map(function(n,i){return '<div class="mo-item" data-s="'+i+'"><span class="mo-num">'+('0'+(i+1)).slice(-2)+'</span><span class="mo-name">'+n+'</span></div>';}).join('')+'</div>';
+    el.querySelectorAll('.mo-item').forEach(function(item){
+      item.addEventListener('click',function(){
+        var si=parseInt(item.dataset.s);
+        el.classList.remove('open');
+        if(window.goToSection)window.goToSection(si,si>(window.activeIdx||0)?1:-1);
+      });
+    });
+    document.getElementById('mo-close-btn').addEventListener('click',function(){el.classList.remove('open');});
+    el.addEventListener('click',function(e){if(e.target===el)el.classList.remove('open');});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape')el.classList.remove('open');});
+  }
+
+  var btn=document.getElementById('menu-toggle-btn');
+  if(!btn){btn=document.createElement('button');btn.id='menu-toggle-btn';btn.setAttribute('aria-label','Open menu');btn.innerHTML='<div class="mh-line"></div><div class="mh-line"></div><div class="mh-line"></div>';document.body.appendChild(btn);}
+  btn.addEventListener('click',function(){
+    var mo=document.getElementById('menu-overlay');
+    if(!mo)return;
+    if(!mo.dataset.c6)buildMO();
+    mo.classList.toggle('open');
+  });
+
+  setTimeout(buildMO,600);
+  // Backslash key opens menu
+  document.addEventListener('keydown',function(e){if(e.key==='\\')document.getElementById('menu-overlay')?.classList.toggle('open');});
+})();
+
+(function CYCLE6_CONTACT_FORM_PERFECT(){
+  if(window._c6cf)return; window._c6cf=true;
+  var s=document.createElement('style');
+  s.textContent=`
+  #contact-form-wrap{position:fixed!important;right:54px!important;top:50%!important;transform:translateY(-50%)!important;width:360px!important;z-index:100!important;opacity:0!important;pointer-events:none!important;transition:opacity .65s ease!important}
+  body[data-section="9"] #contact-form-wrap{opacity:1!important;pointer-events:auto!important}
+  #contact-form-wrap .cf-title{font-family:'Cormorant Garamond',serif!important;font-size:32px!important;font-weight:500!important;color:#e3eee6!important;margin-bottom:6px!important}
+  #contact-form-wrap .cf-sub{font-family:'Space Mono',monospace!important;font-size:9px!important;letter-spacing:.28em!important;color:rgba(201,169,110,.55)!important;text-transform:uppercase!important;margin-bottom:22px!important}
+  #contact-form-wrap .cf-rule{width:36px!important;height:1px!important;background:#c9a96e!important;margin-bottom:22px!important}
+  #contact-form-wrap .cf-field{margin-bottom:14px!important}
+  #contact-form-wrap .cf-label{font-family:'Space Mono',monospace!important;font-size:8.5px!important;letter-spacing:.24em!important;color:rgba(201,169,110,.55)!important;text-transform:uppercase!important;display:block!important;margin-bottom:5px!important}
+  #contact-form-wrap .cf-input,#contact-form-wrap .cf-select,#contact-form-wrap .cf-textarea{width:100%!important;background:rgba(15,24,20,.6)!important;border:1px solid rgba(201,169,110,.2)!important;color:#e3eee6!important;font-family:'Space Grotesk',sans-serif!important;font-size:13px!important;padding:9px 12px!important;outline:none!important;transition:border-color .25s ease!important;box-sizing:border-box!important}
+  #contact-form-wrap .cf-input:focus,#contact-form-wrap .cf-select:focus,#contact-form-wrap .cf-textarea:focus{border-color:rgba(201,169,110,.55)!important}
+  #contact-form-wrap .cf-select option{background:#0f1814!important}
+  #contact-form-wrap .cf-textarea{resize:none!important;height:80px!important}
+  #contact-form-wrap .cf-submit{width:100%!important;background:rgba(201,169,110,.1)!important;border:1px solid rgba(201,169,110,.4)!important;color:#c9a96e!important;font-family:'Space Mono',monospace!important;font-size:10px!important;letter-spacing:.28em!important;text-transform:uppercase!important;padding:12px!important;cursor:pointer!important;transition:all .28s ease!important;margin-top:6px!important}
+  #contact-form-wrap .cf-submit:hover{background:rgba(201,169,110,.18)!important;border-color:#c9a96e!important}
+  #contact-form-wrap .cf-success{display:none!important;font-family:'Cormorant Garamond',serif!important;font-size:22px!important;color:#c9a96e!important;text-align:center!important;padding:32px 0!important}`;
+  document.head.appendChild(s);
+
+  if(!document.getElementById('contact-form-wrap')){
+    var cfw=document.createElement('div'); cfw.id='contact-form-wrap';
+    cfw.innerHTML=`<div class="cf-title">Bring Us Your Deal</div>
+<div class="cf-sub">deals@patelcapital.markets</div>
+<div class="cf-rule"></div>
+<form class="contact-form" id="contact-form">
+<div class="cf-field"><label class="cf-label">Name</label><input class="cf-input" name="name" type="text" required></div>
+<div class="cf-field"><label class="cf-label">Email</label><input class="cf-input" name="email" type="email" required></div>
+<div class="cf-field"><label class="cf-label">Deal Type</label><select class="cf-select" name="dealType"><option value="">Select...</option><option>Senior Debt</option><option>Mezzanine</option><option>Preferred Equity</option><option>JV Equity</option><option>Construction</option></select></div>
+<div class="cf-field"><label class="cf-label">Deal Size</label><input class="cf-input" name="size" type="text" placeholder="e.g. $45M"></div>
+<div class="cf-field"><label class="cf-label">Message</label><textarea class="cf-textarea" name="message"></textarea></div>
+<button class="cf-submit" type="submit">Submit Deal →</button>
+</form>
+<div class="cf-success" id="cf-success">Thank you. We will be in touch.</div>`;
+    document.body.appendChild(cfw);
+
+    document.getElementById('contact-form').addEventListener('submit',function(e){
+      e.preventDefault();
+      var fd=new FormData(e.target);
+      var body=JSON.stringify({name:fd.get('name'),email:fd.get('email'),dealType:fd.get('dealType'),size:fd.get('size'),message:fd.get('message')});
+      fetch('/api/contact',{method:'POST',headers:{'Content-Type':'application/json'},body:body})
+        .catch(function(){window.location.href='mailto:deals@patelcapital.markets?subject=Deal%20Inquiry&body='+encodeURIComponent('Name: '+fd.get('name')+'\nEmail: '+fd.get('email')+'\nType: '+fd.get('dealType')+'\nSize: '+fd.get('size')+'\nMessage: '+fd.get('message'));});
+      e.target.style.display='none';
+      document.getElementById('cf-success').style.display='block';
+    });
+  }
+})();
+
+(function CYCLE6_FOOTER_PERFECT(){
+  if(window._c6ft)return; window._c6ft=true;
+  var s=document.createElement('style');
+  s.textContent=`
+  #pcm-footer{position:fixed!important;bottom:0!important;left:0!important;right:0!important;z-index:190!important;display:flex!important;justify-content:space-between!important;align-items:flex-end!important;padding:0 32px 6px!important;pointer-events:none!important}
+  #pcm-footer .ft-left{font-family:'Space Mono',monospace!important;font-size:8px!important;letter-spacing:.18em!important;color:rgba(227,238,230,.22)!important;pointer-events:auto!important}
+  #pcm-footer .ft-right{font-family:'Space Mono',monospace!important;font-size:8px!important;letter-spacing:.18em!important;color:rgba(201,169,110,.28)!important;pointer-events:auto!important;cursor:pointer!important}
+  #pcm-footer .ft-right:hover{color:rgba(201,169,110,.6)!important}`;
+  document.head.appendChild(s);
+  if(!document.getElementById('pcm-footer')){
+    var ft=document.createElement('div'); ft.id='pcm-footer';
+    ft.innerHTML='<div class="ft-left">© 2024 Patel Capital Markets · deals@patelcapital.markets</div><div class="ft-right" id="ft-credits" onclick="document.getElementById(\'credits-modal\')?.classList.add(\'open\')">Credits</div>';
+    document.body.appendChild(ft);
+  }
+})();
+
+(function CYCLE6_COOKIE_NOTICE_PERFECT(){
+  if(window._c6cn)return; window._c6cn=true;
+  var s=document.createElement('style');
+  s.textContent=`
+  #cookie-notice{position:fixed!important;bottom:82px!important;right:28px!important;z-index:6000!important;background:rgba(6,9,10,.96)!important;border:1px solid rgba(201,169,110,.28)!important;backdrop-filter:blur(16px)!important;padding:20px 22px!important;max-width:300px!important;opacity:0!important;pointer-events:none!important;transform:translateY(8px)!important;transition:opacity .4s ease,transform .4s ease!important}
+  #cookie-notice.show{opacity:1!important;pointer-events:auto!important;transform:translateY(0)!important}
+  #cookie-notice .cn-title{font-family:'Cormorant Garamond',serif!important;font-size:18px!important;font-weight:500!important;color:#e3eee6!important;margin-bottom:8px!important}
+  #cookie-notice .cn-body{font-family:'Space Grotesk',sans-serif!important;font-size:12px!important;color:rgba(227,238,230,.58)!important;line-height:1.55!important;margin-bottom:14px!important}
+  #cookie-notice .cn-actions{display:flex!important;gap:8px!important}
+  #cookie-notice .cn-accept{flex:1!important;background:rgba(201,169,110,.12)!important;border:1px solid rgba(201,169,110,.4)!important;color:#c9a96e!important;font-family:'Space Mono',monospace!important;font-size:8.5px!important;letter-spacing:.2em!important;text-transform:uppercase!important;padding:8px!important;cursor:pointer!important;transition:all .22s ease!important}
+  #cookie-notice .cn-accept:hover{background:rgba(201,169,110,.2)!important}
+  #cookie-notice .cn-decline{flex:1!important;background:none!important;border:1px solid rgba(227,238,230,.12)!important;color:rgba(227,238,230,.4)!important;font-family:'Space Mono',monospace!important;font-size:8.5px!important;letter-spacing:.2em!important;text-transform:uppercase!important;padding:8px!important;cursor:pointer!important}`;
+  document.head.appendChild(s);
+
+  if(localStorage.getItem('pcm-cookie-consent'))return;
+  if(!document.getElementById('cookie-notice')){
+    var cn=document.createElement('div'); cn.id='cookie-notice';
+    cn.innerHTML='<div class="cn-title">Cookie Notice</div><div class="cn-body">We use minimal analytics to improve your experience. No personal data is sold or shared.</div><div class="cn-actions"><button class="cn-accept">Accept</button><button class="cn-decline">Decline</button></div>';
+    document.body.appendChild(cn);
+    setTimeout(function(){cn.classList.add('show');},2800);
+    cn.querySelector('.cn-accept').addEventListener('click',function(){localStorage.setItem('pcm-cookie-consent','accepted');cn.classList.remove('show');});
+    cn.querySelector('.cn-decline').addEventListener('click',function(){localStorage.setItem('pcm-cookie-consent','declined');cn.classList.remove('show');});
+  }
+})();
+
+(function CYCLE6_CREDITS_MODAL_PERFECT(){
+  if(window._c6cm)return; window._c6cm=true;
+  var s=document.createElement('style');
+  s.textContent=`
+  #credits-modal{position:fixed!important;inset:0!important;z-index:8500!important;background:rgba(6,9,10,.92)!important;backdrop-filter:blur(22px)!important;display:flex!important;align-items:center!important;justify-content:center!important;opacity:0!important;pointer-events:none!important;transition:opacity .35s ease!important}
+  #credits-modal.open{opacity:1!important;pointer-events:auto!important}
+  #credits-modal .cm-panel{background:rgba(15,24,20,.98)!important;border:1px solid rgba(201,169,110,.22)!important;padding:44px 52px!important;min-width:380px!important}
+  #credits-modal .cm-title{font-family:'Cormorant Garamond',serif!important;font-size:28px!important;font-weight:500!important;color:#e3eee6!important;margin-bottom:6px!important}
+  #credits-modal .cm-rule{width:36px!important;height:1px!important;background:#c9a96e!important;margin:14px 0 24px!important}
+  #credits-modal .cm-item{font-family:'Space Grotesk',sans-serif!important;font-size:13px!important;color:rgba(227,238,230,.6)!important;margin-bottom:8px!important}
+  #credits-modal .cm-item span{color:rgba(201,169,110,.75)!important}
+  #credits-modal .cm-close{font-family:'Space Mono',monospace!important;font-size:9px!important;letter-spacing:.22em!important;color:rgba(201,169,110,.5)!important;cursor:pointer!important;background:none!important;border:none!important;margin-top:24px!important;text-transform:uppercase!important}`;
+  document.head.appendChild(s);
+  if(!document.getElementById('credits-modal')){
+    var cm=document.createElement('div'); cm.id='credits-modal';
+    cm.innerHTML='<div class="cm-panel"><div class="cm-title">Credits</div><div class="cm-rule"></div><div class="cm-item">Studio — <span>Patel Capital Markets</span></div><div class="cm-item">3D — <span>Three.js r160</span></div><div class="cm-item">Postprocessing — <span>6.36.4</span></div><div class="cm-item">Typography — <span>Cormorant Garamond · Space Grotesk · Space Mono</span></div><div class="cm-item">Architecture — <span>Vite 5 · React 18 · TypeScript</span></div><button class="cm-close" onclick="document.getElementById(\'credits-modal\').classList.remove(\'open\')">Close [Esc]</button></div>';
+    document.body.appendChild(cm);
+    cm.addEventListener('click',function(e){if(e.target===cm)cm.classList.remove('open');});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape')cm.classList.remove('open');});
+  }
+})();
+
+(function CYCLE6_PWA_PROMPT_PERFECT(){
+  if(window._c6pwa)return; window._c6pwa=true;
+  var s=document.createElement('style');
+  s.textContent=`
+  #pwa-install-prompt{position:fixed!important;bottom:82px!important;left:28px!important;z-index:6000!important;background:rgba(6,9,10,.96)!important;border:1px solid rgba(201,169,110,.28)!important;backdrop-filter:blur(16px)!important;padding:20px 22px!important;max-width:290px!important;opacity:0!important;pointer-events:none!important;transform:translateY(8px)!important;transition:opacity .4s ease,transform .4s ease!important}
+  #pwa-install-prompt.show{opacity:1!important;pointer-events:auto!important;transform:translateY(0)!important}
+  #pwa-install-prompt .pp-title{font-family:'Cormorant Garamond',serif!important;font-size:18px!important;color:#e3eee6!important;margin-bottom:6px!important}
+  #pwa-install-prompt .pp-body{font-family:'Space Grotesk',sans-serif!important;font-size:11.5px!important;color:rgba(227,238,230,.55)!important;line-height:1.5!important;margin-bottom:14px!important}
+  #pwa-install-prompt .pp-actions{display:flex!important;gap:8px!important}
+  #pwa-install-prompt .pp-install{flex:1!important;background:rgba(201,169,110,.12)!important;border:1px solid rgba(201,169,110,.4)!important;color:#c9a96e!important;font-family:'Space Mono',monospace!important;font-size:8.5px!important;letter-spacing:.2em!important;text-transform:uppercase!important;padding:8px!important;cursor:pointer!important}
+  #pwa-install-prompt .pp-dismiss{flex:1!important;background:none!important;border:1px solid rgba(227,238,230,.1)!important;color:rgba(227,238,230,.38)!important;font-family:'Space Mono',monospace!important;font-size:8.5px!important;letter-spacing:.2em!important;text-transform:uppercase!important;padding:8px!important;cursor:pointer!important}`;
+  document.head.appendChild(s);
+  var deferredPrompt=null;
+  window.addEventListener('beforeinstallprompt',function(e){
+    e.preventDefault(); deferredPrompt=e;
+    var el=document.getElementById('pwa-install-prompt'); if(!el)return;
+    setTimeout(function(){el.classList.add('show');},5000);
+  });
+  if(!document.getElementById('pwa-install-prompt')){
+    var pp=document.createElement('div'); pp.id='pwa-install-prompt';
+    pp.innerHTML='<div class="pp-title">Install PCM</div><div class="pp-body">Add Patel Capital Markets to your home screen for the full experience.</div><div class="pp-actions"><button class="pp-install">Install</button><button class="pp-dismiss">Dismiss</button></div>';
+    document.body.appendChild(pp);
+    pp.querySelector('.pp-install').addEventListener('click',function(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null;}pp.classList.remove('show');});
+    pp.querySelector('.pp-dismiss').addEventListener('click',function(){pp.classList.remove('show');});
+  }
+})();
+
+(function CYCLE6_LANDSCAPE_GATE_PERFECT(){
+  if(window._c6lg)return; window._c6lg=true;
+  var s=document.createElement('style');
+  s.textContent=`
+  #landscape-gate{position:fixed!important;inset:0!important;z-index:99999!important;background:#06090a!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:16px!important;opacity:0!important;pointer-events:none!important;transition:opacity .4s ease!important}
+  #landscape-gate.show{opacity:1!important;pointer-events:auto!important}
+  #landscape-gate .lg-icon{font-size:36px!important;animation:lg-rotate 2s ease-in-out infinite!important}
+  @keyframes lg-rotate{0%,100%{transform:rotate(0deg)}50%{transform:rotate(90deg)}}
+  #landscape-gate .lg-text{font-family:'Space Mono',monospace!important;font-size:10px!important;letter-spacing:.28em!important;color:rgba(201,169,110,.65)!important;text-transform:uppercase!important}
+  @media(orientation:portrait) and (max-width:768px){#landscape-gate{opacity:1!important;pointer-events:auto!important}}
+  @media(orientation:landscape),(min-width:769px){#landscape-gate{opacity:0!important;pointer-events:none!important}}`;
+  document.head.appendChild(s);
+  if(!document.getElementById('landscape-gate')){
+    var lg=document.createElement('div'); lg.id='landscape-gate';
+    lg.innerHTML='<div class="lg-icon">⟳</div><div class="lg-text">Rotate for best experience</div>';
+    document.body.appendChild(lg);
+  }
+})();
+
+(function CYCLE6_SKIP_LINK_PERFECT(){
+  if(window._c6sl)return; window._c6sl=true;
+  var s=document.createElement('style');
+  s.textContent=`
+  #skip-to-content{position:fixed!important;top:-100px!important;left:20px!important;z-index:99999!important;background:#c9a96e!important;color:#06090a!important;font-family:'Space Mono',monospace!important;font-size:10px!important;letter-spacing:.22em!important;text-transform:uppercase!important;padding:10px 16px!important;text-decoration:none!important;transition:top .25s ease!important}
+  #skip-to-content:focus{top:20px!important}`;
+  document.head.appendChild(s);
+  if(!document.getElementById('skip-to-content')){
+    var sl=document.createElement('a'); sl.id='skip-to-content'; sl.href='#main-content'; sl.textContent='Skip to content';
+    document.body.insertBefore(sl,document.body.firstChild);
+  }
+  if(!document.getElementById('main-content')){
+    var mc=document.createElement('div'); mc.id='main-content'; mc.setAttribute('tabindex','-1'); document.body.appendChild(mc);
+  }
+})();
+
+(function CYCLE6_ARIA_ANNOUNCER(){
+  if(window._c6aa)return; window._c6aa=true;
+  var el=document.getElementById('pcm-live-announce');
+  if(!el){el=document.createElement('div');el.id='pcm-live-announce';el.setAttribute('aria-live','polite');el.setAttribute('aria-atomic','true');el.style.cssText='position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden';document.body.appendChild(el);}
+  var NAMES=['Home','Firm Overview','Platform Edge','Senior Debt','Subordinate Capital','Equity','Execution','Underwriting','Compliance','Engage'];
+  var aaO=new MutationObserver(function(){
+    var idx=window.activeIdx||0;
+    el.textContent='';
+    requestAnimationFrame(function(){el.textContent='Section '+(idx+1)+': '+NAMES[idx];});
+  });
+  aaO.observe(document.body,{attributes:true,attributeFilter:['data-section']});
+})();
+
 </script>
 
 <!-- PART I: Contact Form — Section 9 Engage -->
