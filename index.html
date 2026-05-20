@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#c9a96e" />
   <title>Patel Capital Markets — Engineering Creative Finance</title>
-  <!-- PCM v35 -->
+  <!-- PCM v36 -->
   <meta name="description" content="Commercial real estate capital advisory structuring debt, mezzanine, preferred equity, and joint-venture capital for institutional and entrepreneurial sponsors." />
 
   <!-- Open Graph -->
@@ -606,7 +606,7 @@ body.transitioning .cinema-bar {
 .scene-copy .pre-title {
   font-family: var(--font-mono);
   font-size: 10px;
-  letter-spacing: 0.32em;
+  letter-spacing: 0.42em;
   color: var(--brass);
   text-transform: uppercase;
   display: block;
@@ -673,7 +673,10 @@ body.transitioning .cinema-bar {
   background: var(--brass);
   margin: 1rem auto;
   border: none;
+  box-shadow: 0 0 14px rgba(201,169,110,0.6), 0 0 4px rgba(201,169,110,0.9);
+  transition: width 0.5s ease;
 }
+.scene-copy.visible .title-rule { width: 52px; }
 
 /* ------------------------------------------------------------
    14. SCENE COPY — BODY TEXT
@@ -6092,7 +6095,8 @@ function buildPCMLogo(THREE) {
       blending: THREE.NormalBlending
     });
     const sprite = new THREE.Sprite(mat);
-    sprite.scale.set(w / 100, h / 100, 1);
+    // Scale to 8.5× ring width: 1280/150 ≈ 8.5 world units
+    sprite.scale.set(w / 150, h / 150, 1);
     return sprite;
   }
 
@@ -8656,6 +8660,7 @@ const STATUS_LINES = [
     if (typeof window._applyAudioPitch === 'function') window._applyAudioPitch(idx);
   if (typeof window._updateCardinalGlow === 'function') window._updateCardinalGlow(idx);
   if (typeof window._applyBgTint === 'function') window._applyBgTint(idx);
+  if (typeof window._updateDocTitle === 'function') window._updateDocTitle(idx);
   // v35: Show cinematic title after camera settles
   const _ctSettle = (function(sIdx) {
     return function() {
@@ -8666,7 +8671,11 @@ const STATUS_LINES = [
   })(idx);
   setTimeout(_ctSettle, Math.round(TRANS_DUR * 1000) + 200);
   if (window._targetLeverTilt !== undefined) {
-      window._targetLeverTilt = PRESETS[idx] ? PRESETS[idx].tilt : 0.16;
+      // v36: spring lever target
+  if (typeof window._setLeverTarget === 'function') {
+    window._setLeverTarget(PRESETS[idx] ? PRESETS[idx].tilt : 0.16);
+  }
+  window._targetLeverTilt = PRESETS[idx] ? PRESETS[idx].tilt : 0.16;
     }
     }
 
@@ -9505,6 +9514,11 @@ document.addEventListener('pointerdown', e => {
   dragStartY = e.clientY;
 });
 
+// v36: track hover state for orbital dot speed boost
+window.isHovering = false;
+document.addEventListener('pointerenter', e => { if (e.target && e.target.closest('#scene-canvas, canvas')) window.isHovering = true; });
+document.addEventListener('pointerleave', e => { if (e.target && e.target.closest('#scene-canvas, canvas')) window.isHovering = false; });
+
 document.addEventListener('pointermove', e => {
   if (e.pointerType === 'touch') return;
   if (dragPending && !isDragging) {
@@ -9972,6 +9986,72 @@ window._applyBgTint = function(idx) {
   u.uTintStrength.value = 1.0;
 };
 
+
+// ── v36: Document title update per section ──────────────────────────────
+window._sectionDocTitles = [
+  'Patel Capital Markets — Engineering Creative Finance',
+  'About PCM — Control The Leverage',
+  'Platform Edge — PCM',
+  'Senior Debt — PCM Capital Stack',
+  'Subordinate Capital — PCM',
+  'Joint-Venture Equity — PCM',
+  'Execution Process — PCM',
+  'Underwriting — PCM Diligence',
+  'Compliance — PCM Standards',
+  'Contact PCM — Bring Us Your Deal'
+];
+
+window._updateDocTitle = function(idx) {
+  const title = window._sectionDocTitles[idx];
+  if (title) document.title = title;
+};
+
+
+// ── v36: Poetic block per-line stagger reveal ────────────────────────────
+window._animatePoeticBlock = function(poeticEl) {
+  if (!poeticEl || poeticEl.style.display === 'none') return;
+  const lines = poeticEl.querySelectorAll('.poetic-line');
+  if (!lines.length) return;
+  // Reset to hidden
+  gsap.set(lines, { opacity: 0, y: 16 });
+  // Stagger reveal
+  gsap.to(lines, {
+    opacity: 1,
+    y: 0,
+    duration: 0.62,
+    stagger: 0.22,
+    ease: 'power2.out',
+    delay: 0.9
+  });
+};
+
+
+// ── v36: Lever spring-overshoot on section transition ───────────────────
+window._leverSpring = {
+  target: 0.16,
+  current: 0.16,
+  velocity: 0,
+  stiffness: 0.12,
+  damping: 0.72
+};
+
+window._setLeverTarget = function(tilt) {
+  // Set target with overshoot impulse for spring feel
+  window._leverSpring.target = tilt;
+  // Add initial velocity impulse in the direction of change
+  const delta = tilt - window._leverSpring.current;
+  window._leverSpring.velocity += delta * 0.08;
+};
+
+window._stepLeverSpring = function() {
+  const s = window._leverSpring;
+  const force = (s.target - s.current) * s.stiffness;
+  s.velocity += force;
+  s.velocity *= s.damping;
+  s.current  += s.velocity;
+  return s.current;
+};
+
 window._scrubModeTilts = [0.22, 0.10, 0.06, -0.04];
   window._targetLeverTilt = 0.16; // default
 
@@ -10189,8 +10269,13 @@ function animate() {
     camera.lookAt(camLookSmooth);
 
     // Lever tilt smooth lerp toward target
-    if (window._targetLeverTilt !== undefined && window.leverGroup) {
-      window.leverGroup.rotation.z = lerp(window.leverGroup.rotation.z, window._targetLeverTilt, 0.04);
+    // v36: spring lever animation (replaces simple lerp)
+  if (window._leverSpring !== undefined && window.leverGroup) {
+    const ls = window._leverSpring;
+    if (ls.target !== undefined) {
+      const springVal = window._stepLeverSpring();
+      window.leverGroup.rotation.z = springVal;
+    }
     }
     // Drag rotation lerp
     dragRotX = lerp(dragRotX, window.dragRotXTarget || 0, 0.1);
@@ -10216,10 +10301,12 @@ function animate() {
 
   // Orbital dots
   if (window.orbitalDots) {
+    const orbitSpeed = 0.4 + (window.isHovering ? 0.22 : 0.0);
     window.orbitalDots.forEach((dot, i) => {
-      const phase = dot.userData.phase + t * 0.4 * direction;
+      const phase = dot.userData.phase + t * orbitSpeed * direction;
       dot.position.set(Math.cos(phase) * 3.4, Math.sin(phase) * 3.4, 0);
-      const pulse = 0.88 + Math.sin(t * 1.8 + i * 0.63) * 0.38 + Math.sin(t * 3.5 + i * 1.2) * 0.12;
+      const hoverBoost = window.isHovering ? 0.14 : 0.0;
+      const pulse = 0.88 + Math.sin(t * 1.8 + i * 0.63) * (0.38 + hoverBoost) + Math.sin(t * 3.5 + i * 1.2) * 0.12;
       dot.scale.setScalar(pulse);
     });
   }
@@ -11063,6 +11150,10 @@ function showSectionCopy(idx) {
         { opacity: 0.92, x: 0, duration: 0.7, ease: 'power2.out', delay: 0.68 }
       );
     }
+
+    // V36 — Poetic block stagger reveal
+    const poeticRevealEl = document.getElementById('copy-poetic');
+    if (typeof window._animatePoeticBlock === 'function') window._animatePoeticBlock(poeticRevealEl);
 
     // V23 — Long block reveal
     const longReveal = document.getElementById('copy-long');
