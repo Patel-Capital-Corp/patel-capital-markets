@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#c9a96e" />
   <title>Patel Capital Markets — Engineering Creative Finance</title>
-  <!-- PCM v34 -->
+  <!-- PCM v35 -->
   <meta name="description" content="Commercial real estate capital advisory structuring debt, mezzanine, preferred equity, and joint-venture capital for institutional and entrepreneurial sponsors." />
 
   <!-- Open Graph -->
@@ -681,7 +681,7 @@ body.transitioning .cinema-bar {
 .scene-copy .body-text {
   font-family: var(--font-body);
   font-size: 15.5px;
-  line-height: 1.72;
+  line-height: 1.78;
   color: var(--ink);
   max-width: 540px;
   margin: 0 auto;
@@ -930,7 +930,7 @@ body.transitioning .cinema-bar {
 
 .section-btn__label {
   font-family: var(--font-serif);
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 500;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -2000,6 +2000,61 @@ body::-webkit-scrollbar-thumb:hover { background: rgba(201,169,110,0.55); }
   }
 }
 
+
+
+/* ── v35: Cinematic section title overlay ─────────────────────────────────── */
+#cinematic-title {
+  position: fixed;
+  left: 50%;
+  top: 44%;
+  transform: translate(-50%, -50%) translateY(22px);
+  z-index: 122;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.75s cubic-bezier(0.16,1,0.3,1),
+              transform 0.75s cubic-bezier(0.16,1,0.3,1);
+  text-align: center;
+  white-space: nowrap;
+}
+#cinematic-title.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) translateY(0px);
+}
+#cinematic-title .ct-pre {
+  display: block;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.40em;
+  color: var(--brass);
+  opacity: 0.75;
+  margin-bottom: 9px;
+  text-transform: uppercase;
+}
+#cinematic-title .ct-main {
+  display: block;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(36px, 5.5vw, 74px);
+  font-weight: 500;
+  letter-spacing: 0.10em;
+  color: rgba(227,238,230,0.88);
+  line-height: 1;
+}
+#cinematic-title .ct-rule {
+  display: block;
+  width: 50px;
+  height: 1px;
+  background: var(--brass);
+  margin: 13px auto 0;
+  opacity: 0.72;
+  box-shadow: 0 0 10px var(--brass);
+  transition: width 0.65s ease 0.35s;
+}
+#cinematic-title.show .ct-rule { width: 110px; }
+body.transitioning #cinematic-title,
+body.menu-open #cinematic-title {
+  opacity: 0 !important;
+  pointer-events: none;
+}
 
 /* === Supplemental component styles === */
 /* =============================================================
@@ -5271,7 +5326,15 @@ textarea.engage-input-v2 { resize: none; line-height: 1.6; }
   })();
   </script>
 
-  <a href="#main-content" class="skip-to-content">Skip to content</a>
+  
+<!-- v35 Cinematic section title overlay -->
+<div id="cinematic-title" aria-hidden="true">
+  <span class="ct-pre" id="ct-pre-text"></span>
+  <span class="ct-main" id="ct-main-text"></span>
+  <span class="ct-rule"></span>
+</div>
+
+<a href="#main-content" class="skip-to-content">Skip to content</a>
 
   <noscript>
     <div style="padding:40px;font-family:Georgia,serif;color:#c9a96e;background:#06090a;text-align:center;">
@@ -5665,34 +5728,48 @@ function buildPCMLogo(THREE) {
   coinGroup.add(lowerArc);
   // ── Canvas coin face — sharp $ symbol as texture
   (function() {
+    // v35b: 768×768 multi-layer embossed coin face
     const cc = document.createElement('canvas');
-    cc.width = 512; cc.height = 512;
+    cc.width = 768; cc.height = 768;
     const cx = cc.getContext('2d');
-    // Base gold gradient
-    const grd = cx.createRadialGradient(256,256,40, 256,256,248);
-    grd.addColorStop(0, '#e8c97e');
-    grd.addColorStop(0.6, '#d4a84e');
-    grd.addColorStop(1, '#9e7228');
+    // Base gold radial gradient — rich coin gold
+    const grd = cx.createRadialGradient(384,384,30, 384,384,376);
+    grd.addColorStop(0.00, '#ffe898');
+    grd.addColorStop(0.28, '#e0b84e');
+    grd.addColorStop(0.60, '#c49038');
+    grd.addColorStop(0.84, '#b07828');
+    grd.addColorStop(1.00, '#8c5a14');
     cx.fillStyle = grd;
-    cx.beginPath(); cx.arc(256,256,248,0,Math.PI*2); cx.fill();
-    // Engraved rim
-    cx.strokeStyle = 'rgba(26,37,32,0.55)';
-    cx.lineWidth = 14;
-    cx.beginPath(); cx.arc(256,256,240,0,Math.PI*2); cx.stroke();
-    cx.strokeStyle = 'rgba(26,37,32,0.3)';
-    cx.lineWidth = 5;
-    cx.beginPath(); cx.arc(256,256,224,0,Math.PI*2); cx.stroke();
-    // $ symbol — deeply engraved dark-green
-    cx.font = 'bold 238px Georgia,serif';
-    cx.fillStyle = 'rgba(15,24,20,0.88)';
-    cx.textAlign = 'center'; cx.textBaseline = 'middle';
-    cx.fillText('$', 256, 264);
-    // Highlight pass (slight metallic sheen)
-    const shine = cx.createLinearGradient(80,80,440,440);
-    shine.addColorStop(0, 'rgba(255,240,200,0.18)');
-    shine.addColorStop(1, 'rgba(255,240,200,0)');
+    cx.beginPath(); cx.arc(384,384,372,0,Math.PI*2); cx.fill();
+    // Rim detail rings
+    cx.strokeStyle = 'rgba(255,220,100,0.42)';
+    cx.lineWidth = 7;
+    cx.beginPath(); cx.arc(384,384,362,0,Math.PI*2); cx.stroke();
+    cx.strokeStyle = 'rgba(26,37,32,0.62)';
+    cx.lineWidth = 18;
+    cx.beginPath(); cx.arc(384,384,356,0,Math.PI*2); cx.stroke();
+    cx.strokeStyle = 'rgba(255,210,90,0.22)';
+    cx.lineWidth = 4;
+    cx.beginPath(); cx.arc(384,384,342,0,Math.PI*2); cx.stroke();
+    // Metallic sheen overlay
+    const shine = cx.createLinearGradient(120,80,500,640);
+    shine.addColorStop(0.00, 'rgba(255,255,230,0.32)');
+    shine.addColorStop(0.45, 'rgba(255,245,190,0.10)');
+    shine.addColorStop(1.00, 'rgba(0,0,0,0.16)');
     cx.fillStyle = shine;
-    cx.beginPath(); cx.arc(256,256,248,0,Math.PI*2); cx.fill();
+    cx.beginPath(); cx.arc(384,384,372,0,Math.PI*2); cx.fill();
+    // Three-pass depth-engraved $ — the MAIN event
+    cx.font = '500 340px Georgia,"Times New Roman",serif';
+    cx.textAlign = 'center'; cx.textBaseline = 'middle';
+    // Deep shadow pass (engraved recess — offset right+down)
+    cx.fillStyle = 'rgba(4,10,6,0.70)';
+    cx.fillText('$', 388, 396);
+    // Main glyph — very dark forest green
+    cx.fillStyle = '#080f0a';
+    cx.fillText('$', 384, 390);
+    // Top-left highlight (raised letter illusion)
+    cx.fillStyle = 'rgba(255,240,140,0.22)';
+    cx.fillText('$', 380, 384);
 
     const tex = new THREE.CanvasTexture(cc);
     const faceMat = new THREE.MeshBasicMaterial({
@@ -5879,6 +5956,7 @@ function buildPCMLogo(THREE) {
     haloMat
   );
   haloDisc.position.z = -1.2;
+  window.haloDisc = haloDisc;
 
   // ── PARTICLES ──────────────────────────────────────────────────────────────
   const particleCount = 320; // v33: denser mote field
@@ -5972,6 +6050,7 @@ function buildPCMLogo(THREE) {
     })
   );
   bgPlane.position.z = -8;
+  window.bgPlane = bgPlane;
 
 
   // ── Logo text labels (reference image parity) ──────────────────────────────
@@ -6018,16 +6097,16 @@ function buildPCMLogo(THREE) {
   }
 
   const labelPCM = makeTextSprite('PATEL CAPITAL CORP.', {
-    fontSize: 46, weight: '500', letterSpacing: 0.28,
-    color: 'rgba(201,169,110,0.82)', w: 960, h: 72
+    fontSize: 54, weight: '500', letterSpacing: 0.30,
+    color: 'rgba(210,178,120,0.90)', w: 1280, h: 100
   });
   labelPCM.position.set(0, -4.7, 0.1);
   labelPCM.userData.isLabel = true;
 
   const labelSlogan = makeTextSprite('CONTROL THE LEVERAGE', {
-    fontSize: 34, weight: '400', letterSpacing: 0.35,
+    fontSize: 38, weight: '500', letterSpacing: 0.42,
     fontFace: 'Space Grotesk, system-ui, sans-serif',
-    color: 'rgba(232,220,196,0.55)', w: 1000, h: 56
+    color: 'rgba(232,220,196,0.68)', w: 1280, h: 72
   });
   labelSlogan.position.set(0, -5.45, 0.1);
   labelSlogan.userData.isLabel = true;
@@ -6038,6 +6117,9 @@ function buildPCMLogo(THREE) {
     // ── ASSEMBLE ROOT ──────────────────────────────────────────────────────────
   const root = new THREE.Group();
   root.add(outerRing, shadowRing, accentRing, tickGroup, leverGroup, fulcrumGroup, iconRow);
+  window.outerRing  = outerRing;
+  window.tickGroup  = tickGroup;
+  window.accentRing = accentRing;
   orbitalDots.forEach(d => root.add(d));
   root.add(haloDisc, particles, bgPlane);
   // Text labels
@@ -8552,11 +8634,38 @@ const STATUS_LINES = [
       window.applyTriangles(idx);
     }
 
+    // v35: Senior Debt — sustained scroll cycles through modes (0→3)
+    if (activeIdx === 3 && window.setMode && typeof window.setMode === 'function') {
+      const modeBtns = document.querySelectorAll('.mode-btn');
+      if (modeBtns.length > 1) {
+        const currentActive = Array.from(modeBtns).findIndex(b => b.classList.contains('active'));
+        if (Math.abs(scrollAccum) > 0.55) {
+          const direction = scrollAccum > 0 ? 1 : -1;
+          const next = Math.min(modeBtns.length - 1, Math.max(0, currentActive + direction));
+          if (next !== currentActive) {
+            window.setMode(next);
+            scrollAccum *= 0.25; // partial decay — don't immediately retrigger
+          }
+        }
+      }
+    }
     // Scrub swiper visibility (Senior Debt section)
     if (typeof window._syncScrubber === 'function') {
       window._syncScrubber(idx);
     // Reset lever tilt to preset on section change
-    if (window._targetLeverTilt !== undefined) {
+    if (typeof window._applyAudioPitch === 'function') window._applyAudioPitch(idx);
+  if (typeof window._updateCardinalGlow === 'function') window._updateCardinalGlow(idx);
+  if (typeof window._applyBgTint === 'function') window._applyBgTint(idx);
+  // v35: Show cinematic title after camera settles
+  const _ctSettle = (function(sIdx) {
+    return function() {
+      if (activeIdx === sIdx && typeof window._showCinematicTitle === 'function') {
+        window._showCinematicTitle(sIdx);
+      }
+    };
+  })(idx);
+  setTimeout(_ctSettle, Math.round(TRANS_DUR * 1000) + 200);
+  if (window._targetLeverTilt !== undefined) {
       window._targetLeverTilt = PRESETS[idx] ? PRESETS[idx].tilt : 0.16;
     }
     }
@@ -9728,7 +9837,142 @@ const PRESETS = [
 window.PRESETS = PRESETS;
 
   // ── Lever tilt tracking for scrub mode ──────────────────────
-  window._scrubModeTilts = [0.22, 0.10, 0.06, -0.04];
+  
+
+// ── v35: Cinematic section title controller ──────────────────────────────
+(function() {
+  const SECTION_TITLES = [
+    { pre: 'Patel Capital Markets', main: 'Engineering Creative Finance' },
+    { pre: 'About Us',              main: 'Control The Leverage' },
+    { pre: 'Why PCM',               main: 'Three Things We Do Differently' },
+    { pre: 'Capital Stack · Layer One', main: 'Senior Debt' },
+    { pre: 'Capital Stack · Layer Two', main: 'Subordinate Capital' },
+    { pre: 'Capital Stack · Layer Three', main: 'Joint-Venture Equity' },
+    { pre: 'How We Work',           main: 'The Cadence Is The Product' },
+    { pre: 'Diligence',             main: 'Modeled, Stress-Tested, Defensible' },
+    { pre: 'Standards',             main: 'Institutional By Design' },
+    { pre: 'Contact',               main: 'Bring Us Your Complex Deal' }
+  ];
+
+  let _ctTimer = null;
+  let _ctSection = -1;
+
+  window._showCinematicTitle = function(idx) {
+    const el = document.getElementById('cinematic-title');
+    const preEl = document.getElementById('ct-pre-text');
+    const mainEl = document.getElementById('ct-main-text');
+    if (!el || !preEl || !mainEl) return;
+
+    if (_ctTimer) clearTimeout(_ctTimer);
+
+    const data = SECTION_TITLES[idx];
+    if (!data) return;
+
+    // Only flash if section changed
+    if (_ctSection === idx && el.classList.contains('show')) return;
+    _ctSection = idx;
+
+    preEl.textContent  = data.pre;
+    mainEl.textContent = data.main;
+    el.classList.add('show');
+
+    // Auto-hide after 2.8s (it coexists with scene copy, then defers)
+    _ctTimer = setTimeout(function() {
+      el.classList.remove('show');
+    }, 2800);
+  };
+
+  window._hideCinematicTitle = function() {
+    const el = document.getElementById('cinematic-title');
+    if (el) el.classList.remove('show');
+    if (_ctTimer) clearTimeout(_ctTimer);
+  };
+})();
+
+
+// ── v35: Cardinal tick glow — illuminate active cardinal per section ──────
+(function() {
+  const _cardinalIndices = [0, 3, 6, 9]; // the 4 brass major ticks at cardinals
+  let _lastTickSection = -1;
+
+  window._updateCardinalGlow = function(idx) {
+    if (!window.tickGroup || _lastTickSection === idx) return;
+    _lastTickSection = idx;
+    const children = window.tickGroup.children;
+    if (!children || children.length === 0) return;
+    const glowIdx = idx % 4;
+    children.forEach((tick, i) => {
+      const isCardinal = (i % 3 === 0); // every 3rd = cardinal (0,3,6,9)
+      const isActive   = isCardinal && Math.floor(i / 3) === glowIdx;
+      if (tick.material) {
+        if (isActive) {
+          tick.material.emissive.setHex(0xc9a96e);
+          tick.material.emissiveIntensity = 0.55;
+        } else if (isCardinal) {
+          tick.material.emissive.setHex(0xc9a96e);
+          tick.material.emissiveIntensity = 0.08;
+        } else {
+          tick.material.emissive.setHex(0x000000);
+          tick.material.emissiveIntensity = 0;
+        }
+      }
+    });
+  };
+})();
+
+// ── v35: Per-section oscillator pitch table ──────────────────────────────
+//  Each entry: [base freq Hz, harmonic freq Hz]
+//  Tuned to complement the section's emotional register
+window._sectionPitches = [
+  [55.0,  82.5],   // 0 Home        — A1 + E2 (deep foundation)
+  [49.0,  73.4],   // 1 Firm        — G1 + D2 (grounded authority)
+  [61.7,  92.5],   // 2 Platform    — B1 + F#2 (upward momentum)
+  [65.4,  98.0],   // 3 Senior Debt — C2 + G2 (structural bedrock)
+  [58.3,  87.3],   // 4 Sub Cap     — Bb1 + F2 (tension + yield)
+  [69.3, 104.0],   // 5 Equity      — C#2 + Ab2 (speculative lift)
+  [55.0,  82.5],   // 6 Execution   — A1 + E2 (process cadence)
+  [51.9,  77.8],   // 7 Underwriting— Ab1 + Eb2 (rigour + caution)
+  [58.3,  87.3],   // 8 Compliance  — Bb1 + F2 (institutional weight)
+  [65.4, 110.0],   // 9 Engage      — C2 + A2 (open invitation)
+];
+
+window._applyAudioPitch = function(idx) {
+  const ae = window.audioEngine;
+  if (!ae || !ae.osc1 || !ae.osc2) return;
+  const pair = window._sectionPitches[idx];
+  if (!pair) return;
+  const t = ae.ctx.currentTime;
+  ae.osc1.frequency.setTargetAtTime(pair[0], t, 1.2);
+  ae.osc2.frequency.setTargetAtTime(pair[1], t, 1.2);
+};
+
+
+// ── v35b: Section background tint table ─────────────────────────────────
+// vec3 [r,g,b] subtle lift added to bg shader (max 0.018 per component)
+window._sectionTints = [
+  [0.02, 0.06, 0.04],   // 0 Home        — green warmth
+  [0.01, 0.04, 0.03],   // 1 Firm        — deep forest
+  [0.04, 0.06, 0.02],   // 2 Platform    — yellow-green
+  [0.02, 0.04, 0.06],   // 3 Senior Debt — cool blue-green
+  [0.04, 0.02, 0.02],   // 4 Sub Cap     — warm red hint
+  [0.06, 0.04, 0.00],   // 5 Equity      — gold atmospheric
+  [0.02, 0.05, 0.03],   // 6 Execution   — green process
+  [0.01, 0.02, 0.04],   // 7 Underwriting— cold analytical
+  [0.02, 0.03, 0.04],   // 8 Compliance  — institutional
+  [0.04, 0.06, 0.03],   // 9 Engage      — welcoming green
+];
+
+window._applyBgTint = function(idx) {
+  if (!window.bgPlane || !window.bgPlane.material) return;
+  const t = window._sectionTints[idx];
+  if (!t) return;
+  const u = window.bgPlane.material.uniforms;
+  if (!u || !u.uSectionTint) return;
+  u.uSectionTint.value.set(t[0], t[1], t[2]);
+  u.uTintStrength.value = 1.0;
+};
+
+window._scrubModeTilts = [0.22, 0.10, 0.06, -0.04];
   window._targetLeverTilt = 0.16; // default
 
 
@@ -9761,6 +10005,7 @@ function goToSection(idx, dir) {
 
   // Cinema bars
   document.body.classList.add('transitioning');
+    if (typeof window._hideCinematicTitle === 'function') window._hideCinematicTitle();
   setTimeout(() => document.body.classList.remove('transitioning'), 800);
 
   // MaskLayer reveal (wipe effect)
@@ -9982,9 +10227,17 @@ function animate() {
   // Halo disc pulse
 
   // Ring emissive micro-pulse (subtle breathing)
+  // v35b: outer ring emissive pulse
   if (window.outerRing && window.outerRing.material) {
     const ringPulse = 0.06 + Math.sin(t * 0.6) * 0.025 + Math.sin(t * 1.8) * 0.012;
     window.outerRing.material.emissiveIntensity = ringPulse;
+
+  // v35b: halo disc per-section color pulse
+  if (window.haloDisc && window.haloDisc.material) {
+    const haloBase = 0.06 + Math.sin(t * 0.8) * 0.015;
+    window.haloDisc.material.opacity = haloBase;
+  }
+
   }
   if (window.haloDisc) {
     window.haloDisc.material.opacity = 0.055 + Math.sin(t * 0.8) * 0.04 + Math.sin(t * 2.1) * 0.015;
@@ -9992,7 +10245,7 @@ function animate() {
 
   // Fulcrum glow ring oscillation
   if (window.fulcrumGlowRing) {
-    window.fulcrumGlowRing.material.opacity = 0.4 + Math.sin(t * 2.4) * 0.2;
+    window.fulcrumGlowRing.material.opacity = 0.50 + Math.sin(t * 3.2) * 0.28;
   }
 
   // Center spot flicker
@@ -10035,10 +10288,15 @@ function animate() {
     // scrollSpeed coupling — faster scroll accelerates particles briefly
     const scrollBoost = 1 + Math.abs(scrollAccum) * 0.8;
     for (let i = 0; i < 320; i++) {
-      // Evolve velocity with harmonic perturbation
-      vels[i * 3]     += Math.sin(t * 0.28 + phases[i] * 1.1) * 0.000025 * direction;
-      vels[i * 3 + 1] += Math.cos(t * 0.17 + phases[i] * 0.9) * 0.000018;
-      vels[i * 3 + 2] += Math.sin(t * 0.13 + phases[i] * 0.7) * 0.000012;
+      // v35b: spiral orbit component added to velocity
+      const spiralR = 0.000018 + (i % 11) * 0.0000022;
+      const spiralT = t * 0.12 * direction + (i / 320) * Math.PI * 2;
+      // Evolve velocity with harmonic perturbation + spiral
+      vels[i * 3]     += Math.sin(t * 0.28 + phases[i] * 1.1) * 0.000022 * direction
+                       + Math.cos(spiralT) * spiralR;
+      vels[i * 3 + 1] += Math.cos(t * 0.17 + phases[i] * 0.9) * 0.000016
+                       + Math.sin(spiralT) * spiralR * 0.65;
+      vels[i * 3 + 2] += Math.sin(t * 0.13 + phases[i] * 0.7) * 0.000011;
       // Dampen (keeps velocities bounded)
       vels[i * 3]     *= 0.992;
       vels[i * 3 + 1] *= 0.994;
