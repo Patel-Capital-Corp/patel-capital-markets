@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#c9a96e" />
   <title>Patel Capital Markets — Engineering Creative Finance</title>
-  <!-- PCM v33 -->
+  <!-- PCM v34 -->
   <meta name="description" content="Commercial real estate capital advisory structuring debt, mezzanine, preferred equity, and joint-venture capital for institutional and entrepreneurial sponsors." />
 
   <!-- Open Graph -->
@@ -5973,11 +5973,75 @@ function buildPCMLogo(THREE) {
   );
   bgPlane.position.z = -8;
 
-  // ── ASSEMBLE ROOT ──────────────────────────────────────────────────────────
+
+  // ── Logo text labels (reference image parity) ──────────────────────────────
+  // Two canvas sprites below the ring: "PATEL CAPITAL CORP." and "CONTROL THE LEVERAGE"
+  function makeTextSprite(text, opts) {
+    const {
+      fontFace = 'Cormorant Garamond, Georgia, serif',
+      fontSize = 52,
+      weight = '500',
+      letterSpacing = 0.22,
+      color = 'rgba(201,169,110,0.88)',
+      w = 960, h = 80
+    } = opts || {};
+    const cc = document.createElement('canvas');
+    cc.width = w; cc.height = h;
+    const cx = cc.getContext('2d');
+    cx.clearRect(0, 0, w, h);
+    // Subtle glow
+    cx.shadowColor = 'rgba(201,169,110,0.35)';
+    cx.shadowBlur = 8;
+    cx.font = weight + ' ' + fontSize + 'px ' + fontFace;
+    cx.fillStyle = color;
+    cx.textAlign = 'center';
+    cx.textBaseline = 'middle';
+    // Letter-spacing simulation: draw char by char
+    const chars = text.split('');
+    const totalW = cx.measureText(text).width + (chars.length - 1) * fontSize * letterSpacing;
+    let x = (w - totalW) / 2;
+    chars.forEach(ch => {
+      cx.fillText(ch, x + cx.measureText(ch).width / 2, h / 2);
+      x += cx.measureText(ch).width + fontSize * letterSpacing;
+    });
+    const tex = new THREE.CanvasTexture(cc);
+    const mat = new THREE.SpriteMaterial({
+      map: tex,
+      transparent: true,
+      opacity: 0.0,  // fade in after intro
+      depthWrite: false,
+      blending: THREE.NormalBlending
+    });
+    const sprite = new THREE.Sprite(mat);
+    sprite.scale.set(w / 100, h / 100, 1);
+    return sprite;
+  }
+
+  const labelPCM = makeTextSprite('PATEL CAPITAL CORP.', {
+    fontSize: 46, weight: '500', letterSpacing: 0.28,
+    color: 'rgba(201,169,110,0.82)', w: 960, h: 72
+  });
+  labelPCM.position.set(0, -4.7, 0.1);
+  labelPCM.userData.isLabel = true;
+
+  const labelSlogan = makeTextSprite('CONTROL THE LEVERAGE', {
+    fontSize: 34, weight: '400', letterSpacing: 0.35,
+    fontFace: 'Space Grotesk, system-ui, sans-serif',
+    color: 'rgba(232,220,196,0.55)', w: 1000, h: 56
+  });
+  labelSlogan.position.set(0, -5.45, 0.1);
+  labelSlogan.userData.isLabel = true;
+
+  window.labelPCM = labelPCM;
+  window.labelSlogan = labelSlogan;
+
+    // ── ASSEMBLE ROOT ──────────────────────────────────────────────────────────
   const root = new THREE.Group();
   root.add(outerRing, shadowRing, accentRing, tickGroup, leverGroup, fulcrumGroup, iconRow);
   orbitalDots.forEach(d => root.add(d));
   root.add(haloDisc, particles, bgPlane);
+  // Text labels
+  root.add(labelPCM, labelSlogan);
 
   return {
     root,
@@ -5995,7 +6059,9 @@ function buildPCMLogo(THREE) {
     bgPlane,
     glowRing,
     upArrowGroup,
-    downArrowGroup
+    downArrowGroup,
+    labelPCM,
+    labelSlogan
   };
 }
 
@@ -6318,7 +6384,34 @@ function updateCopyContent(idx) {
       }
     }
 
-  // LifestyleGallery for Equity (section 5)
+
+  // Firm Overview LongBlock (idx=1) — founder philosophy
+  if (idx === 1) {
+    const copyEl = document.querySelector('.scene-copy');
+    if (copyEl) {
+      const existingLB = copyEl.querySelector('.firm-long-block');
+      if (!existingLB) {
+        const lb = document.createElement('div');
+        lb.className = 'firm-long-block long-block';
+        lb.style.cssText = 'opacity:0;transform:translateY(14px);transition:opacity 0.9s ease 0.55s,transform 0.9s ease 0.55s;margin-top:18px;padding-top:14px;border-top:1px solid rgba(201,169,110,0.14);';
+        lb.innerHTML = '<p style="font-family:var(--font-body);font-size:13px;line-height:1.85;color:rgba(227,238,230,0.72);max-width:36ch;margin:0">'
+          + 'Most advisory firms optimize around a single layer — the senior debt, or the equity. '
+          + 'PCM was built on the conviction that value lives in the engineering of the entire stack. '
+          + 'Getting the senior to 55% versus 65% LTV can move the equity return by 400 basis points '
+          + 'without changing the asset. That precision is our practice.'
+          + '</p>';
+        const bodyEl = copyEl.querySelector('.body-text');
+        if (bodyEl) bodyEl.after(lb);
+        else copyEl.appendChild(lb);
+        setTimeout(function() {
+          lb.style.opacity = '1';
+          lb.style.transform = 'translateY(0)';
+        }, 600);
+      }
+    }
+  }
+
+    // LifestyleGallery for Equity (section 5)
   if (idx === 5) {
     const copyEl = document.querySelector('.scene-copy');
     if (copyEl) {
@@ -6997,7 +7090,8 @@ window.updateCopyContent = updateCopyContent;
     'Engage',
   ];
 
-  const STATUS_LINES = [
+  // PCM v34
+const STATUS_LINES = [
     [0,    'PCM · Cinematic Experience v1.0'],
     [100,  'Three.js r160 · ACES Filmic · PBR active'],
     [250,  'Postprocessing: Bloom + ChromAb + Vignette'],
@@ -8461,6 +8555,10 @@ window.updateCopyContent = updateCopyContent;
     // Scrub swiper visibility (Senior Debt section)
     if (typeof window._syncScrubber === 'function') {
       window._syncScrubber(idx);
+    // Reset lever tilt to preset on section change
+    if (window._targetLeverTilt !== undefined) {
+      window._targetLeverTilt = PRESETS[idx] ? PRESETS[idx].tilt : 0.16;
+    }
     }
 
     // Menu button aria-expanded state (in case it got out of sync)
@@ -8534,6 +8632,10 @@ document.getElementById('btn-menu');
     // Execution stages (idx=6)
     if (typeof window._setExecVisible === 'function') {
       window._setExecVisible(idx === 6);
+    }
+    // ConnectorLine for execution
+    if (typeof window._animateExecConnector === 'function') {
+      window._animateExecConnector(idx === 6);
     }
 
     // Engage cinematic (idx=9)
@@ -9625,6 +9727,11 @@ const PRESETS = [
 ];
 window.PRESETS = PRESETS;
 
+  // ── Lever tilt tracking for scrub mode ──────────────────────
+  window._scrubModeTilts = [0.22, 0.10, 0.06, -0.04];
+  window._targetLeverTilt = 0.16; // default
+
+
 // ---------------------------------------------------------------------------
 // 3. LERP HELPERS
 // ---------------------------------------------------------------------------
@@ -9836,6 +9943,10 @@ function animate() {
     camera.updateProjectionMatrix();
     camera.lookAt(camLookSmooth);
 
+    // Lever tilt smooth lerp toward target
+    if (window._targetLeverTilt !== undefined && window.leverGroup) {
+      window.leverGroup.rotation.z = lerp(window.leverGroup.rotation.z, window._targetLeverTilt, 0.04);
+    }
     // Drag rotation lerp
     dragRotX = lerp(dragRotX, window.dragRotXTarget || 0, 0.1);
     dragRotY = lerp(dragRotY, window.dragRotYTarget || 0, 0.1);
@@ -9869,6 +9980,12 @@ function animate() {
   }
 
   // Halo disc pulse
+
+  // Ring emissive micro-pulse (subtle breathing)
+  if (window.outerRing && window.outerRing.material) {
+    const ringPulse = 0.06 + Math.sin(t * 0.6) * 0.025 + Math.sin(t * 1.8) * 0.012;
+    window.outerRing.material.emissiveIntensity = ringPulse;
+  }
   if (window.haloDisc) {
     window.haloDisc.material.opacity = 0.055 + Math.sin(t * 0.8) * 0.04 + Math.sin(t * 2.1) * 0.015;
   }
@@ -9981,6 +10098,16 @@ function animate() {
         `0,${baseline} 4,${baseline} 6,${baseline} 8,${baseline} 10,${baseline} 12,${baseline} 14,${baseline} 16,${baseline} 18,${baseline} 20,${baseline} 22,${baseline} 24,${baseline} 28,${baseline}`
       );
     }
+  }
+
+
+  // Text label fade-in: smoothly increase opacity after intro
+  const targetLabelOpacity = introComplete ? 0.92 : 0;
+  if (window.labelPCM && window.labelPCM.material) {
+    window.labelPCM.material.opacity += (targetLabelOpacity - window.labelPCM.material.opacity) * 0.025;
+  }
+  if (window.labelSlogan && window.labelSlogan.material) {
+    window.labelSlogan.material.opacity += ((targetLabelOpacity * 0.6) - window.labelSlogan.material.opacity) * 0.022;
   }
 
   // Render
